@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "my-trip-app",
+    "slug": "my-trip-app",
+    "version": "1.0.0",
+    "android": {
+      "package": "com.nek777.mytripapp"
+    },
+    "ios": {
+      "bundleIdentifier": "com.nek777.mytripapp"
+    },
+    "plugins": [
+      [
+        "react-native-maps",
+        {
+          "iosGoogleMapsApiKey": "process.env.GOOGLE_MAPS_API_KEY"
+        }
+      ]
+    ]
+  }
+}
