@@ -1,10 +1,12 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import Swiper from "react-native-web-swiper";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
   const { showActionSheetWithOptions } = useActionSheet();
@@ -62,7 +64,15 @@ export default function HomeScreen() {
     );
   }, []);
 
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  // callbacks
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
   return (
+    // <GestureHandlerRootView className="flex-1">
     <ScrollView className="flex-1 bg-white">
       <Pressable
         onPress={onPress}
@@ -102,6 +112,13 @@ export default function HomeScreen() {
           <Text className="text-xl">도시 선택</Text>
         </Pressable>
       </View>
+
+      <BottomSheet ref={bottomSheetRef} onChange={handleSheetChanges}>
+        <BottomSheetView style={{ flex: 1 }}>
+          <Text>Awesome 🎉</Text>
+        </BottomSheetView>
+      </BottomSheet>
     </ScrollView>
+    // </GestureHandlerRootView>
   );
 }
