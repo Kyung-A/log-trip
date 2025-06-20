@@ -1,21 +1,14 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import { StyleSheet } from "react-native";
+import { TabBar } from "./components";
+import { NavigationContainer } from "@react-navigation/native";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        googleMapId={process.env.GOOGLE_MAP_ID_KEY}
-        scrollEnabled
-        zoomEnabled
-        zoomTapEnabled
-        style={styles.map}
-      />
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <TabBar />
+    </NavigationContainer>
   );
 }
 
