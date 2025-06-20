@@ -63,7 +63,7 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View className="p-4">
       <Pressable onPress={onPress} style={styles.camera}>
         <EvilIcons name="camera" size={80} color="#666666" />
       </Pressable>
