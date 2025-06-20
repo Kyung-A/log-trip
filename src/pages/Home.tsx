@@ -1,10 +1,10 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useCallback, useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
-import { StyleSheet } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
+import Swiper from "react-native-web-swiper";
 
 export default function HomeScreen() {
   const { showActionSheetWithOptions } = useActionSheet();
@@ -63,64 +63,45 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <View className="p-4">
-      <Pressable onPress={onPress} style={styles.camera}>
-        <EvilIcons name="camera" size={80} color="#666666" />
+    <ScrollView className="flex-1 bg-white">
+      <Pressable
+        onPress={onPress}
+        className="w-full bg-gray-200 flex items-center flex-row gap-x-2 justify-center py-2"
+      >
+        <EvilIcons name="camera" size={30} color="#4b5563" />
+        <Text className="text-[#4b5563]">사진 추가하기</Text>
       </Pressable>
-      <View style={styles.imgsContainer}>
-        {imgs &&
-          imgs.map((uri) => (
-            <View key={uri} style={styles.imgWrap}>
-              <Image source={{ uri }} style={styles.image} />
-              <Pressable
-                onPress={() => handleDeleted(uri)}
-                style={styles.closeBtn}
-              >
-                <Ionicons name="close" size={20} color="#fff" />
-              </Pressable>
-            </View>
-          ))}
+      <View className="w-full h-[250px]">
+        {imgs && imgs.length > 0 ? (
+          <Swiper
+            key={imgs?.join("|")}
+            loop
+            containerStyle={{ width: "100%", height: "100%" }}
+          >
+            {imgs?.map((uri) => (
+              <View key={uri} className="w-full h-full">
+                <Image source={{ uri }} className="w-full h-full" />
+                <Pressable
+                  onPress={() => handleDeleted(uri)}
+                  className="right-2 top-3 border-2 rounded-full border-white bg-[#00000099] absolute"
+                >
+                  <Ionicons name="close" size={20} color="#fff" />
+                </Pressable>
+              </View>
+            ))}
+          </Swiper>
+        ) : (
+          <View className="w-full h-full flex items-center justify-center flex-col bg-[#00000043]">
+            <Text className="text-lg">사진을 등록해 주세요!</Text>
+          </View>
+        )}
       </View>
-    </View>
+
+      <View>
+        <Pressable className="w-full p-4 border-gray-300 border-b">
+          <Text className="text-xl">도시 선택</Text>
+        </Pressable>
+      </View>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: "4%",
-  },
-  camera: {
-    width: 120,
-    height: 120,
-    backgroundColor: "#d9d7d7",
-    borderRadius: 6,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-  },
-  image: {
-    width: 90,
-    height: 90,
-    borderRadius: 4,
-  },
-  imgsContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginTop: 10,
-  },
-  imgWrap: {
-    position: "relative",
-  },
-  closeBtn: {
-    position: "absolute",
-    right: 4,
-    top: 6,
-    borderWidth: 1.5,
-    borderColor: "#fff",
-    borderRadius: 999,
-    backgroundColor: "#00000099",
-  },
-});
