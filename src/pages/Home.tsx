@@ -190,8 +190,20 @@ export default function HomeScreen() {
             ))}
           </View>
         </Pressable>
+
+        <View className="p-4">
+          <TextInput
+            className="text-xl font-semibold"
+            placeholder="제목을 작성해주세요"
+          />
+          <TextInput
+            className="mt-4 text-lg"
+            placeholder="내용을 작성해주세요"
+          />
+        </View>
       </ScrollView>
 
+      {/* 도시 선택 바텀 시트 */}
       <BottomSheet
         index={-1}
         snapPoints={SNAP_POINTS}
