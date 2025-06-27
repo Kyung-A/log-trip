@@ -1,18 +1,27 @@
 import * as ImagePicker from "expo-image-picker";
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  Button,
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import React, { useCallback, useRef, useState } from "react";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetScrollView,
-  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-web-swiper";
 
+const SNAP_POINTS = ["100%"];
+
 export default function HomeScreen() {
+  const bottomSheetRef = useRef<BottomSheet>(null);
   const { showActionSheetWithOptions } = useActionSheet();
   const [imgs, setImgs] = useState<string[] | null>(null);
 
@@ -68,7 +77,9 @@ export default function HomeScreen() {
     );
   }, []);
 
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const handleOpenPress = useCallback(() => {
+    bottomSheetRef.current?.expand();
+  }, []);
 
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
@@ -79,7 +90,7 @@ export default function HomeScreen() {
       <ScrollView className="flex-1 bg-white">
         <Pressable
           onPress={onPress}
-          className="w-full bg-gray-200 flex items-center flex-row gap-x-2 justify-center py-2"
+          className="flex flex-row items-center justify-center w-full py-2 bg-gray-200 gap-x-2"
         >
           <EvilIcons name="camera" size={30} color="#4b5563" />
           <Text className="text-[#4b5563]">사진 추가하기</Text>
@@ -111,17 +122,21 @@ export default function HomeScreen() {
         </View>
 
         <View>
-          <Pressable className="w-full p-4 border-gray-300 border-b">
+          <Pressable
+            onPress={handleOpenPress}
+            className="w-full p-4 border-b border-gray-300"
+          >
             <Text className="text-xl">도시 선택</Text>
           </Pressable>
         </View>
       </ScrollView>
+
       <BottomSheet
-        // index={1}
-        snapPoints={["100%"]}
+        index={-1}
+        snapPoints={SNAP_POINTS}
         ref={bottomSheetRef}
         onChange={handleSheetChanges}
-        // enableDynamicSizing={false}
+        enablePanDownToClose={true}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
             {...props}
@@ -130,8 +145,22 @@ export default function HomeScreen() {
           />
         )}
       >
-        <BottomSheetScrollView className="flex-1 bg-white">
-          <Text>Awesome 🎉</Text>
+        <BottomSheetScrollView className="flex-1 px-6 bg-white">
+          <View className="flex flex-row items-center justify-between w-full">
+            <Pressable>
+              <Ionicons name="close-outline" size={32} color="#000" />
+            </Pressable>
+            <Text className="text-xl font-semibold">도시 선택</Text>
+            <Button title="완료" />
+          </View>
+          <View className="flex flex-row items-center px-3 py-4 mt-6 rounded-lg bg-zinc-100">
+            <Ionicons name="search-outline" size={24} />
+            <TextInput
+              className="ml-3 text-lg"
+              textContentType="addressCity"
+              placeholder="도시 또는 나라 검색"
+            />
+          </View>
         </BottomSheetScrollView>
       </BottomSheet>
     </>
