@@ -1,4 +1,5 @@
 import {
+  Alert,
   Pressable,
   ScrollView,
   Switch,
@@ -28,6 +29,34 @@ export default function HomeScreen() {
     bottomSheetRef.current?.expand();
   }, []);
 
+  const handleChangeMode = useCallback((value) => {
+    if (value) {
+      Alert.alert(
+        "드로잉 모드로 전환 하시겠습니까?",
+        "드로잉 모드 전환시 작성한 텍스트는 사라집니다.",
+        [
+          {
+            text: "예",
+            onPress: () => setDrawingMode(true),
+          },
+          { text: "취소", onPress: () => {}, style: "cancel" },
+        ]
+      );
+    } else {
+      Alert.alert(
+        "텍스트 모드로 전환 하시겠습니까?",
+        "텍스트 모드 전환시 작성한 그림은 사라집니다.",
+        [
+          {
+            text: "예",
+            onPress: () => setDrawingMode(false),
+          },
+          { text: "취소", onPress: () => {}, style: "cancel" },
+        ]
+      );
+    }
+  }, []);
+
   return (
     <>
       <ScrollView className="flex-1 bg-white">
@@ -49,7 +78,7 @@ export default function HomeScreen() {
 
         <Pressable className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300">
           <Text className="mr-4 text-xl">드로잉 모드</Text>
-          <Switch value={isDrawingMode} onValueChange={setDrawingMode} />
+          <Switch value={isDrawingMode} onValueChange={handleChangeMode} />
         </Pressable>
 
         {!isDrawingMode && (
@@ -64,8 +93,9 @@ export default function HomeScreen() {
             />
           </View>
         )}
-        {isDrawingMode && <Drawing />}
       </ScrollView>
+
+      {isDrawingMode && <Drawing />}
 
       <CountriesBottomSheet
         bottomSheetRef={bottomSheetRef}
