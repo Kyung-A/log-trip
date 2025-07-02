@@ -1,7 +1,8 @@
-import { Dimensions, PanResponder, Pressable, View } from "react-native";
+import { Dimensions, PanResponder, Pressable, View, Text } from "react-native";
 import React, { useCallback, useRef, useState } from "react";
 import {
   Canvas,
+  CanvasRef,
   Path,
   Skia,
   SkPath,
@@ -9,10 +10,16 @@ import {
 } from "@shopify/react-native-skia";
 import Fontisto from "react-native-vector-icons/Fontisto";
 
-type ColoredPath = {
+interface IColoredPath {
   path: SkPath;
   color: string;
-};
+}
+
+interface IDrawingProps {
+  setOpenDrawing: React.Dispatch<React.SetStateAction<boolean>>;
+  canvasRef: React.RefObject<CanvasRef>;
+  isOpenDrawing: boolean;
+}
 
 const COLORS = {
   red: "#ef4444",
@@ -26,28 +33,86 @@ const COLORS = {
   black: "#000",
 };
 
-export default function Drawing() {
-  const canvasRef = useCanvasRef();
+export default function Drawing({
+  setOpenDrawing,
+  canvasRef,
+  isOpenDrawing,
+}: IDrawingProps) {
   const currentPath = useRef<SkPath>(Skia.Path.Make());
   const currentColor = useRef<string>(COLORS.black);
-  const [paths, setPaths] = useState<ColoredPath[]>([]);
+  const currentTool = useRef<string>("pen");
+
+  const [paths, setPaths] = useState<IColoredPath[]>([]);
+  const [, setTick] = useState(0);
+
+  const forceRender = () => setTick((t) => t + 1);
+
+  const eraseAtPoint = (x: number, y: number) => {
+    const padding = 10;
+
+    const currentBounds = currentPath.current.getBounds();
+    const currentLeft = currentBounds.x - padding;
+    const currentRight = currentBounds.x + currentBounds.width + padding;
+    const currentTop = currentBounds.y - padding;
+    const currentBottom = currentBounds.y + currentBounds.height + padding;
+
+    const isInCurrentPath =
+      x >= currentLeft &&
+      x <= currentRight &&
+      y >= currentTop &&
+      y <= currentBottom;
+
+    if (isInCurrentPath) {
+      currentPath.current = Skia.Path.Make();
+      forceRender();
+    }
+
+    setPaths((prev) =>
+      prev.filter(({ path }) => {
+        const bounds = path.getBounds();
+        const left = bounds.x - padding;
+        const right = bounds.x + bounds.width + padding;
+        const top = bounds.y - padding;
+        const bottom = bounds.y + bounds.height + padding;
+
+        return !(x >= left && x <= right && y >= top && y <= bottom);
+      })
+    );
+  };
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderGrant: (e) => {
         const { locationX, locationY } = e.nativeEvent;
+
+        if (currentTool.current === "eraser") {
+          eraseAtPoint(locationX, locationY);
+          return;
+        }
+
         currentPath.current = Skia.Path.Make();
         currentPath.current.moveTo(locationX, locationY);
       },
       onPanResponderMove: (e) => {
         const { locationX, locationY } = e.nativeEvent;
+
+        if (currentTool.current === "eraser") {
+          eraseAtPoint(locationX, locationY);
+          return;
+        }
+
         currentPath.current.lineTo(locationX, locationY);
+        forceRender();
       },
       onPanResponderRelease: () => {
+        if (currentTool.current === "eraser") return;
         setPaths((prev) => [
           ...prev,
-          { path: currentPath.current.copy(), color: currentColor.current },
+          {
+            path: currentPath.current.copy(),
+            color: currentColor.current,
+          },
         ]);
       },
     })
@@ -55,17 +120,24 @@ export default function Drawing() {
 
   const handleChangeColor = (color: string) => {
     currentColor.current = color;
+    currentTool.current = "pen";
   };
+
+  const handleAllClear = useCallback(() => {
+    setPaths([]);
+    currentPath.current = Skia.Path.Make();
+    forceRender();
+  }, []);
 
   return (
     <View
-      className="absolute top-0 left-0 flex-1 bg-white"
+      className={`absolute left-0 bg-white flex-1 ${isOpenDrawing ? "top-0" : "-top-[100vh]"}`}
       {...panResponder.panHandlers}
     >
       <Canvas
         style={{
           width: Dimensions.get("window").width,
-          height: Dimensions.get("window").height - 250,
+          height: Dimensions.get("window").height,
         }}
         ref={canvasRef}
       >
@@ -86,18 +158,34 @@ export default function Drawing() {
         />
       </Canvas>
 
-      <View className="flex flex-row items-end w-full px-4 gap-x-2">
-        {Object.entries(COLORS).map(([key, color]) => (
-          <Pressable
-            key={key}
-            onPress={() => handleChangeColor(color)}
-            style={{ backgroundColor: color }}
-            className="w-8 h-8 rounded-full"
-          />
-        ))}
-        <Pressable className="flex flex-col items-center justify-center ml-auto border-2 border-white rounded-full shadow w-14 h-14 bg-rose-400">
-          <Fontisto name="plus-a" size={30} color="#fff" />
-        </Pressable>
+      <View className="absolute left-0 w-full px-4 bottom-[200px]">
+        <View className="flex flex-row items-end gap-x-3">
+          <Pressable onPress={() => (currentTool.current = "eraser")}>
+            <Fontisto name="eraser" size={24} color="#707070" />
+          </Pressable>
+          <Pressable onPress={handleAllClear}>
+            <Text className="text-xl font-semibold text-[#707070]">AC</Text>
+          </Pressable>
+          <Pressable onPress={() => setOpenDrawing(false)}>
+            <Text className="text-xl font-semibold text-blue-500">
+              그리기 완료
+            </Text>
+          </Pressable>
+        </View>
+
+        <View className="flex flex-row items-end gap-x-2">
+          {Object.entries(COLORS).map(([key, color]) => (
+            <Pressable
+              key={key}
+              onPress={() => handleChangeColor(color)}
+              style={{ backgroundColor: color }}
+              className="w-8 h-8 rounded-full"
+            />
+          ))}
+          <Pressable className="flex flex-col items-center justify-center ml-auto border-2 border-white rounded-full shadow w-14 h-14 bg-rose-400">
+            <Fontisto name="plus-a" size={30} color="#fff" />
+          </Pressable>
+        </View>
       </View>
     </View>
   );

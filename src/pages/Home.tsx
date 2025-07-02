@@ -1,5 +1,6 @@
 import {
   Alert,
+  Button,
   Pressable,
   ScrollView,
   Switch,
@@ -15,8 +16,10 @@ import {
   UploadImages,
 } from "@/features/Diary/ui";
 import { ICountry } from "@/features/Diary/types";
+import { useCanvasRef } from "@shopify/react-native-skia";
 
 export default function HomeScreen() {
+  const canvasRef = useCanvasRef();
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const [imgs, setImgs] = useState<string[] | null>(null);
@@ -24,12 +27,14 @@ export default function HomeScreen() {
     ICountry[]
   >([]);
   const [isDrawingMode, setDrawingMode] = useState<boolean>(false);
+  const [isOpenDrawing, setOpenDrawing] = useState<boolean>(false);
 
   const handleOpenPress = useCallback(() => {
     bottomSheetRef.current?.expand();
   }, []);
 
   const handleChangeMode = useCallback((value) => {
+    console.log("1111");
     if (value) {
       Alert.alert(
         "드로잉 모드로 전환 하시겠습니까?",
@@ -37,7 +42,10 @@ export default function HomeScreen() {
         [
           {
             text: "예",
-            onPress: () => setDrawingMode(true),
+            onPress: () => {
+              setDrawingMode(true);
+              setOpenDrawing(true);
+            },
           },
           { text: "취소", onPress: () => {}, style: "cancel" },
         ]
@@ -76,12 +84,17 @@ export default function HomeScreen() {
           </View>
         </Pressable>
 
-        <Pressable className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300">
+        <Pressable className="flex flex-row flex-wrap items-center justify-between w-full p-4 border-b border-gray-300">
           <Text className="mr-4 text-xl">드로잉 모드</Text>
-          <Switch value={isDrawingMode} onValueChange={handleChangeMode} />
+          <View className="flex flex-row items-center gap-x-2">
+            {isDrawingMode && (
+              <Button onPress={() => setOpenDrawing(true)} title="열기" />
+            )}
+            <Switch value={isDrawingMode} onValueChange={handleChangeMode} />
+          </View>
         </Pressable>
 
-        {!isDrawingMode && (
+        {!isDrawingMode ? (
           <View className="p-4">
             <TextInput
               className="text-xl font-semibold"
@@ -92,15 +105,21 @@ export default function HomeScreen() {
               placeholder="내용을 작성해주세요"
             />
           </View>
+        ) : (
+          <View></View>
         )}
       </ScrollView>
-
-      {isDrawingMode && <Drawing />}
 
       <CountriesBottomSheet
         bottomSheetRef={bottomSheetRef}
         resultSelectedCountries={resultSelectedCountries}
         setResultSelectedCountries={setResultSelectedCountries}
+      />
+
+      <Drawing
+        setOpenDrawing={setOpenDrawing}
+        canvasRef={canvasRef}
+        isOpenDrawing={isOpenDrawing}
       />
     </>
   );
