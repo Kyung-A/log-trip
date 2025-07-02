@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Image, Pressable, Text, View } from "react-native";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-web-swiper";
@@ -13,6 +13,8 @@ interface IUploadImagesProps {
 
 export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
   const { showActionSheetWithOptions } = useActionSheet();
+  const [isOpenEditMode, setOpenEditMode] = useState<boolean>(false);
+  const [currentEditImage, setCurrentEditImage] = useState<string>();
 
   const handleDeleted = useCallback(
     (uri: string) => {
@@ -83,15 +85,25 @@ export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
             containerStyle={{ width: "100%", height: "100%" }}
           >
             {imgs?.map((uri) => (
-              <View key={uri} className="w-full h-full">
-                <Image source={{ uri }} className="w-full h-full" />
+              <Pressable
+                onPress={() => {
+                  setOpenEditMode(true);
+                  setCurrentEditImage(uri);
+                }}
+                key={uri}
+                className="w-full h-full"
+              >
+                <Image
+                  source={{ uri }}
+                  className="object-contain w-full h-full"
+                />
                 <Pressable
                   onPress={() => handleDeleted(uri)}
                   className="right-2 top-3 border-2 rounded-full border-white bg-[#00000099] absolute"
                 >
                   <Ionicons name="close" size={20} color="#fff" />
                 </Pressable>
-              </View>
+              </Pressable>
             ))}
           </Swiper>
         ) : (
@@ -100,6 +112,23 @@ export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
           </View>
         )}
       </View>
+
+      {!isOpenEditMode && (
+        <View className="absolute top-0 left-0 z-10 w-screen h-screen bg-black">
+          <View className="flex flex-col items-center justify-center w-full h-full px-10">
+            <Image
+              // source={{ uri: currentEditImage }}
+              source={{ uri: imgs[0] }}
+              style={{
+                width: "100%",
+                aspectRatio: 16 / 9,
+                resizeMode: "cover",
+              }}
+            />
+            <Pressable></Pressable>
+          </View>
+        </View>
+      )}
     </>
   );
 }
