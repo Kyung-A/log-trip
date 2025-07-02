@@ -1,6 +1,7 @@
 import {
   Alert,
   Button,
+  Dimensions,
   Pressable,
   ScrollView,
   Switch,
@@ -16,11 +17,24 @@ import {
   UploadImages,
 } from "@/features/Diary/ui";
 import { ICountry } from "@/features/Diary/types";
-import { useCanvasRef } from "@shopify/react-native-skia";
+import {
+  Canvas,
+  SkImage,
+  useCanvasRef,
+  Image,
+  Skia,
+  SkPath,
+} from "@shopify/react-native-skia";
+
+export interface IColoredPath {
+  path: SkPath;
+  color: string;
+}
 
 export default function HomeScreen() {
   const canvasRef = useCanvasRef();
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const currentPath = useRef<SkPath>(Skia.Path.Make());
 
   const [imgs, setImgs] = useState<string[] | null>(null);
   const [resultSelectedCountries, setResultSelectedCountries] = useState<
@@ -28,13 +42,20 @@ export default function HomeScreen() {
   >([]);
   const [isDrawingMode, setDrawingMode] = useState<boolean>(false);
   const [isOpenDrawing, setOpenDrawing] = useState<boolean>(false);
+  const [capturedImage, setCapturedImage] = useState<SkImage | null>(null);
+
+  const handleCapture = useCallback(() => {
+    const snapshot = canvasRef.current?.makeImageSnapshot();
+    if (snapshot) {
+      setCapturedImage(snapshot);
+    }
+  }, [canvasRef]);
 
   const handleOpenPress = useCallback(() => {
     bottomSheetRef.current?.expand();
   }, []);
 
   const handleChangeMode = useCallback((value) => {
-    console.log("1111");
     if (value) {
       Alert.alert(
         "드로잉 모드로 전환 하시겠습니까?",
@@ -57,7 +78,10 @@ export default function HomeScreen() {
         [
           {
             text: "예",
-            onPress: () => setDrawingMode(false),
+            onPress: () => {
+              setDrawingMode(false);
+              setCapturedImage(null);
+            },
           },
           { text: "취소", onPress: () => {}, style: "cancel" },
         ]
@@ -106,7 +130,18 @@ export default function HomeScreen() {
             />
           </View>
         ) : (
-          <View></View>
+          <Canvas
+            style={{
+              width: Dimensions.get("window").width,
+              height: Dimensions.get("window").height - 300,
+            }}
+          >
+            <Image
+              image={capturedImage}
+              width={Dimensions.get("window").width}
+              height={Dimensions.get("window").height - 100}
+            />
+          </Canvas>
         )}
       </ScrollView>
 
@@ -120,6 +155,7 @@ export default function HomeScreen() {
         setOpenDrawing={setOpenDrawing}
         canvasRef={canvasRef}
         isOpenDrawing={isOpenDrawing}
+        handleCapture={handleCapture}
       />
     </>
   );

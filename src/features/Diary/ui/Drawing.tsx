@@ -6,7 +6,6 @@ import {
   Path,
   Skia,
   SkPath,
-  useCanvasRef,
 } from "@shopify/react-native-skia";
 import Fontisto from "react-native-vector-icons/Fontisto";
 
@@ -19,6 +18,7 @@ interface IDrawingProps {
   setOpenDrawing: React.Dispatch<React.SetStateAction<boolean>>;
   canvasRef: React.RefObject<CanvasRef>;
   isOpenDrawing: boolean;
+  handleCapture: () => void;
 }
 
 const COLORS = {
@@ -37,6 +37,7 @@ export default function Drawing({
   setOpenDrawing,
   canvasRef,
   isOpenDrawing,
+  handleCapture,
 }: IDrawingProps) {
   const currentPath = useRef<SkPath>(Skia.Path.Make());
   const currentColor = useRef<string>(COLORS.black);
@@ -166,7 +167,12 @@ export default function Drawing({
           <Pressable onPress={handleAllClear}>
             <Text className="text-xl font-semibold text-[#707070]">AC</Text>
           </Pressable>
-          <Pressable onPress={() => setOpenDrawing(false)}>
+          <Pressable
+            onPress={() => {
+              setOpenDrawing(false);
+              handleCapture();
+            }}
+          >
             <Text className="text-xl font-semibold text-blue-500">
               그리기 완료
             </Text>
