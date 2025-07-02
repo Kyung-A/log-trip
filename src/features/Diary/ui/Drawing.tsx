@@ -1,4 +1,11 @@
-import { Dimensions, PanResponder, Pressable, View, Text } from "react-native";
+import {
+  Dimensions,
+  PanResponder,
+  Pressable,
+  View,
+  Text,
+  Image,
+} from "react-native";
 import React, { useCallback, useRef, useState } from "react";
 import {
   Canvas,
@@ -6,6 +13,8 @@ import {
   Path,
   Skia,
   SkPath,
+  Image as SkImage,
+  useImage,
 } from "@shopify/react-native-skia";
 import Fontisto from "react-native-vector-icons/Fontisto";
 
@@ -33,6 +42,14 @@ const COLORS = {
   black: "#000",
 };
 
+const BG = {
+  bg1: require("../../../../assets/bg1.jpg"),
+  bg2: require("../../../../assets/bg2.jpg"),
+  bg3: require("../../../../assets/bg3.jpg"),
+  bg4: require("../../../../assets/bg4.jpg"),
+  bg5: require("../../../../assets/bg5.jpg"),
+};
+
 export default function Drawing({
   setOpenDrawing,
   canvasRef,
@@ -44,6 +61,8 @@ export default function Drawing({
   const currentTool = useRef<string>("pen");
 
   const [paths, setPaths] = useState<IColoredPath[]>([]);
+  const [bgImage, setBgImage] = useState();
+  const image = useImage(bgImage);
   const [, setTick] = useState(0);
 
   const forceRender = () => setTick((t) => t + 1);
@@ -132,16 +151,24 @@ export default function Drawing({
 
   return (
     <View
-      className={`absolute left-0 bg-white flex-1 ${isOpenDrawing ? "top-0" : "-top-[100vh]"}`}
+      className={`absolute left-0 bg-white flex-1 h-screen ${isOpenDrawing ? "top-0" : "-top-[100vh]"}`}
       {...panResponder.panHandlers}
     >
       <Canvas
         style={{
           width: Dimensions.get("window").width,
-          height: Dimensions.get("window").height,
+          height: Dimensions.get("window").height - 370,
         }}
         ref={canvasRef}
       >
+        <SkImage
+          image={image}
+          x={0}
+          y={0}
+          width={Dimensions.get("window").width}
+          height={Dimensions.get("window").height - 370}
+          fit="cover"
+        />
         {paths.map((p, index) => (
           <Path
             key={`draw-${index}`}
@@ -159,7 +186,7 @@ export default function Drawing({
         />
       </Canvas>
 
-      <View className="absolute left-0 w-full px-4 bottom-[200px]">
+      <View className="w-full px-4 pt-4 border-t border-gray-300">
         <View className="flex flex-row items-end gap-x-3">
           <Pressable onPress={() => (currentTool.current = "eraser")}>
             <Fontisto name="eraser" size={24} color="#707070" />
@@ -191,6 +218,18 @@ export default function Drawing({
           <Pressable className="flex flex-col items-center justify-center ml-auto border-2 border-white rounded-full shadow w-14 h-14 bg-rose-400">
             <Fontisto name="plus-a" size={30} color="#fff" />
           </Pressable>
+        </View>
+
+        <View className="flex flex-row items-center mt-3 gap-x-2">
+          {Object.entries(BG).map(([key, value]) => (
+            <Pressable
+              onPress={() => setBgImage(value)}
+              key={key}
+              className="w-20 h-20"
+            >
+              <Image source={value} className="w-full h-full object-fit" />
+            </Pressable>
+          ))}
         </View>
       </View>
     </View>

@@ -133,13 +133,15 @@ export default function HomeScreen() {
           <Canvas
             style={{
               width: Dimensions.get("window").width,
-              height: Dimensions.get("window").height - 300,
+              height: Dimensions.get("window").height - 370,
             }}
           >
             <Image
               image={capturedImage}
+              x={0}
+              y={0}
               width={Dimensions.get("window").width}
-              height={Dimensions.get("window").height - 100}
+              height={Dimensions.get("window").height - 370}
             />
           </Canvas>
         )}
