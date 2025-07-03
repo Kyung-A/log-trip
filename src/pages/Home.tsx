@@ -22,7 +22,6 @@ import {
   SkImage,
   useCanvasRef,
   Image,
-  Skia,
   SkPath,
 } from "@shopify/react-native-skia";
 
@@ -34,7 +33,6 @@ export interface IColoredPath {
 export default function HomeScreen() {
   const canvasRef = useCanvasRef();
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const currentPath = useRef<SkPath>(Skia.Path.Make());
 
   const [imgs, setImgs] = useState<string[] | null>(null);
   const [resultSelectedCountries, setResultSelectedCountries] = useState<

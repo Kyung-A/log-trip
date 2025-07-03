@@ -1,10 +1,22 @@
 import * as ImagePicker from "expo-image-picker";
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { Image, Pressable, Text, View } from "react-native";
+import { Dimensions, Image, Pressable, Text, View } from "react-native";
 import React, { useCallback, useState } from "react";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-web-swiper";
+import {
+  Canvas,
+  Image as SkImage,
+  useCanvasRef,
+  useImage,
+} from "@shopify/react-native-skia";
+
+const FRAMES = {
+  frame1: require("../../../../assets/frame/frame1.png"),
+  frame2: require("../../../../assets/frame/frame2.png"),
+  frame3: require("../../../../assets/frame/frame3.png"),
+};
 
 interface IUploadImagesProps {
   imgs: string[];
@@ -12,9 +24,15 @@ interface IUploadImagesProps {
 }
 
 export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
+  const canvasRef = useCanvasRef();
   const { showActionSheetWithOptions } = useActionSheet();
   const [isOpenEditMode, setOpenEditMode] = useState<boolean>(false);
+
+  const [frameImage, setFrameImage] = useState<string>();
+  const frameImg = useImage(frameImage);
+
   const [currentEditImage, setCurrentEditImage] = useState<string>();
+  const editImage = useImage(currentEditImage);
 
   const handleDeleted = useCallback(
     (uri: string) => {
@@ -113,19 +131,53 @@ export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
         )}
       </View>
 
-      {!isOpenEditMode && (
-        <View className="absolute top-0 left-0 z-10 w-screen h-screen bg-black">
-          <View className="flex flex-col items-center justify-center w-full h-full px-10">
-            <Image
-              // source={{ uri: currentEditImage }}
-              source={{ uri: imgs[0] }}
+      {isOpenEditMode && (
+        <View className="absolute top-0 left-0 z-10 w-full h-screen bg-black">
+          <Pressable
+            onPress={() => setOpenEditMode(false)}
+            className="mt-4 ml-2"
+          >
+            <Ionicons name="close" size={30} color="#fff" />
+          </Pressable>
+
+          <View className="flex flex-col items-center w-full h-full pt-10">
+            <Canvas
               style={{
-                width: "100%",
-                aspectRatio: 16 / 9,
-                resizeMode: "cover",
+                width: 350,
+                height: 350,
+                overflow: "hidden",
               }}
-            />
-            <Pressable></Pressable>
+              ref={canvasRef}
+            >
+              <SkImage
+                image={editImage}
+                x={0}
+                y={0}
+                width={Dimensions.get("window").width}
+                height={Dimensions.get("window").height}
+                fit="cover"
+              />
+              <SkImage
+                image={frameImg}
+                x={0}
+                y={0}
+                width={350}
+                height={350}
+                fit="cover"
+              />
+            </Canvas>
+
+            <View className="flex flex-row items-center mt-24 gap-x-3">
+              {Object.entries(FRAMES).map(([key, value]) => (
+                <Pressable
+                  onPress={() => setFrameImage(value)}
+                  key={key}
+                  className="w-20 h-20"
+                >
+                  <Image source={value} className="w-full h-full object-fit" />
+                </Pressable>
+              ))}
+            </View>
           </View>
         </View>
       )}
