@@ -7,6 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-web-swiper";
 import {
   Canvas,
+  SkImage as SkImageType,
   Image as SkImage,
   useCanvasRef,
   useImage,
@@ -27,6 +28,7 @@ export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
   const canvasRef = useCanvasRef();
   const { showActionSheetWithOptions } = useActionSheet();
   const [isOpenEditMode, setOpenEditMode] = useState<boolean>(false);
+  const [capturedImage, setCapturedImage] = useState<SkImageType>();
 
   const [frameImage, setFrameImage] = useState<string>();
   const frameImg = useImage(frameImage);
@@ -86,6 +88,15 @@ export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
     );
   }, []);
 
+  const handleCapture = useCallback(() => {
+    const snapshot = canvasRef.current?.makeImageSnapshot();
+    if (snapshot) {
+      setCapturedImage(snapshot);
+    }
+  }, [canvasRef]);
+
+  // console.log(frameImg);
+
   return (
     <>
       <Pressable
@@ -132,16 +143,20 @@ export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
       </View>
 
       {isOpenEditMode && (
-        <View className="absolute top-0 left-0 z-10 w-full h-screen bg-black">
+        <View className="absolute top-0 left-0 z-10 flex-1 w-full h-screen bg-black">
           <Pressable
-            onPress={() => setOpenEditMode(false)}
-            className="mt-4 ml-2"
+            onPress={() => {
+              setOpenEditMode(false);
+              handleCapture();
+            }}
+            className="absolute top-0 left-0 w-16 h-16"
           >
             <Ionicons name="close" size={30} color="#fff" />
           </Pressable>
 
-          <View className="flex flex-col items-center w-full h-full pt-10">
+          <View className="flex flex-col items-center w-full h-full bg-red-300 gap-y-20">
             <Canvas
+              pointerEvents="none"
               style={{
                 width: 350,
                 height: 350,
@@ -153,8 +168,8 @@ export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
                 image={editImage}
                 x={0}
                 y={0}
-                width={Dimensions.get("window").width}
-                height={Dimensions.get("window").height}
+                width={350}
+                height={350}
                 fit="cover"
               />
               <SkImage
@@ -167,12 +182,15 @@ export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
               />
             </Canvas>
 
-            <View className="flex flex-row items-center mt-24 gap-x-3">
+            <View className="flex flex-row items-center gap-x-3">
               {Object.entries(FRAMES).map(([key, value]) => (
                 <Pressable
-                  onPress={() => setFrameImage(value)}
+                  onPress={() => {
+                    setFrameImage(value);
+                    console.log("22222", "이미지11");
+                  }}
                   key={key}
-                  className="w-20 h-20"
+                  className="block w-20 h-20"
                 >
                   <Image source={value} className="w-full h-full object-fit" />
                 </Pressable>
