@@ -42,7 +42,7 @@ export default function HomeScreen() {
   const [isOpenDrawing, setOpenDrawing] = useState<boolean>(false);
   const [capturedImage, setCapturedImage] = useState<SkImage | null>(null);
 
-  const handleCapture = useCallback(() => {
+  const handleCaptureContent = useCallback(() => {
     const snapshot = canvasRef.current?.makeImageSnapshot();
     if (snapshot) {
       setCapturedImage(snapshot);
@@ -155,8 +155,64 @@ export default function HomeScreen() {
         setOpenDrawing={setOpenDrawing}
         canvasRef={canvasRef}
         isOpenDrawing={isOpenDrawing}
-        handleCapture={handleCapture}
+        handleCapture={handleCaptureContent}
       />
+
+      {isOpenEditMode && (
+        <View className="absolute top-0 left-0 z-10 flex flex-col items-center justify-between flex-1 w-full bg-black">
+          <Pressable
+            onPress={() => {
+              setOpenEditMode(false);
+              handleCapture();
+            }}
+            className="w-16 h-16 "
+          >
+            <Ionicons name="close" size={30} color="#fff" />
+          </Pressable>
+
+          <Canvas
+            pointerEvents="none"
+            style={{
+              width: 350,
+              height: 350,
+              overflow: "hidden",
+            }}
+            ref={canvasRef}
+          >
+            <SkImage
+              image={editImage}
+              x={0}
+              y={0}
+              width={350}
+              height={350}
+              fit="cover"
+            />
+            <SkImage
+              image={frameImg}
+              x={0}
+              y={0}
+              width={350}
+              height={350}
+              fit="cover"
+            />
+          </Canvas>
+
+          <View className="flex flex-row items-center gap-x-3">
+            {Object.entries(FRAMES).map(([key, value]) => (
+              <Pressable
+                onPress={() => {
+                  setFrameImage(value);
+                  console.log("22222", "이미지11");
+                }}
+                key={key}
+                className="block w-20 h-20"
+              >
+                <Image source={value} className="w-full h-full object-fit" />
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      )}
     </>
   );
 }
