@@ -1,6 +1,14 @@
-import { ScrollView, Text, View, Image, Dimensions } from "react-native";
+import {
+  ScrollView,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  Pressable,
+} from "react-native";
 import Swiper from "react-native-web-swiper";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Fontisto from "react-native-vector-icons/Fontisto";
 
 const MOCK_DATA = [
   {
@@ -43,120 +51,130 @@ const MOCK_DATA = [
 
 export default function DiaryScreen() {
   return (
-    <ScrollView className="bg-[#eaeaea]">
-      {MOCK_DATA.map((v) =>
-        v.isDrawing ? (
-          <View key={v.id} className="w-full h-auto mb-3 bg-white">
-            <View className="flex-row items-center p-4 gap-x-2">
-              <View className="rounded-full w-14 h-14 bg-slate-200"></View>
-              <Text>{v.username}</Text>
-            </View>
+    <>
+      <ScrollView className="bg-[#eaeaea]">
+        {MOCK_DATA.map((v) =>
+          v.isDrawing ? (
+            <View key={v.id} className="w-full h-auto mb-3 bg-white">
+              <View className="flex-row items-center p-4 gap-x-2">
+                <View className="rounded-full w-14 h-14 bg-slate-200"></View>
+                <Text>{v.username}</Text>
+              </View>
 
-            <Swiper
-              key="my"
-              loop
-              controlsEnabled={false}
-              containerStyle={{
-                width: "100%",
-                height: 350,
-              }}
-            >
-              {v.images.map((img) => (
-                <Image
-                  key={img}
-                  source={{ uri: img }}
-                  resizeMode="cover"
-                  className="w-full h-full mx-auto"
-                />
-              ))}
-            </Swiper>
-
-            <View className="flex-col px-4 my-3 gap-y-3">
-              <View className="flex-row gap-x-4">
-                {v.cities.map((v) => (
-                  <View
-                    key={v.name}
-                    className="px-2 py-1 bg-gray-100 rounded-md"
-                  >
-                    <Text className="text-base">{v.name}</Text>
-                    <Text className="-mt-0.5 text-sm text-gray-600">
-                      {v.countryName}
-                    </Text>
-                  </View>
+              <Swiper
+                key="my"
+                loop
+                controlsEnabled={false}
+                containerStyle={{
+                  width: "100%",
+                  height: 350,
+                }}
+              >
+                {v.images.map((img) => (
+                  <Image
+                    key={img}
+                    source={{ uri: img }}
+                    resizeMode="cover"
+                    className="w-full h-full mx-auto"
+                  />
                 ))}
-              </View>
-              <View className="flex-row items-center gap-x-2">
-                <Ionicons name="calendar-outline" size={18} color="#4b5563" />
-                <Text className="text-base text-gray-600">{v.travelDate}</Text>
-              </View>
-            </View>
+              </Swiper>
 
-            <View
-              style={{
-                width: Dimensions.get("window").width,
-                height: Dimensions.get("window").height - 370,
-              }}
-            >
-              <Image
-                source={require("../../assets/test.png")}
-                resizeMode="cover"
-                className="w-full h-full"
-              />
-            </View>
-          </View>
-        ) : (
-          <View key={v.id} className="w-full h-auto mb-2 bg-white">
-            <View className="flex-row items-center p-4 gap-x-2">
-              <View className="rounded-full w-14 h-14 bg-slate-200"></View>
-              <Text>{v.username}</Text>
-            </View>
+              <View className="flex-col px-4 my-3 gap-y-3">
+                <View className="flex-row gap-x-4">
+                  {v.cities.map((v) => (
+                    <View
+                      key={v.name}
+                      className="px-2 py-1 bg-gray-100 rounded-md"
+                    >
+                      <Text className="text-base">{v.name}</Text>
+                      <Text className="-mt-0.5 text-sm text-gray-600">
+                        {v.countryName}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+                <View className="flex-row items-center gap-x-2">
+                  <Ionicons name="calendar-outline" size={18} color="#4b5563" />
+                  <Text className="text-base text-gray-600">
+                    {v.travelDate}
+                  </Text>
+                </View>
+              </View>
 
-            <Swiper
-              key="my"
-              loop
-              controlsEnabled={false}
-              containerStyle={{
-                width: "100%",
-                height: 350,
-              }}
-            >
-              {v.images.map((img) => (
+              <View
+                style={{
+                  width: Dimensions.get("window").width,
+                  height: Dimensions.get("window").height - 370,
+                }}
+              >
                 <Image
-                  key={img}
-                  source={{ uri: img }}
+                  source={require("../../assets/test.png")}
                   resizeMode="cover"
-                  className="w-full h-full mx-auto"
+                  className="w-full h-full"
                 />
-              ))}
-            </Swiper>
-
-            <View className="flex-col px-4 my-3 gap-y-3">
-              <Text className="text-xl font-semibold">{v.title}</Text>
-
-              <View className="flex-row gap-x-4">
-                {v.cities.map((v) => (
-                  <View
-                    key={v.name}
-                    className="px-2 py-1 bg-gray-100 rounded-md"
-                  >
-                    <Text className="text-base">{v.name}</Text>
-                    <Text className="-mt-0.5 text-sm text-gray-600">
-                      {v.countryName}
-                    </Text>
-                  </View>
-                ))}
               </View>
-
-              <View className="flex-row items-center gap-x-2">
-                <Ionicons name="calendar-outline" size={18} color="#4b5563" />
-                <Text className="text-base text-gray-600">{v.travelDate}</Text>
-              </View>
-
-              <Text>{v.content}</Text>
             </View>
-          </View>
-        )
-      )}
-    </ScrollView>
+          ) : (
+            <View key={v.id} className="w-full h-auto mb-2 bg-white">
+              <View className="flex-row items-center p-4 gap-x-2">
+                <View className="rounded-full w-14 h-14 bg-slate-200"></View>
+                <Text>{v.username}</Text>
+              </View>
+
+              <Swiper
+                key="my"
+                loop
+                controlsEnabled={false}
+                containerStyle={{
+                  width: "100%",
+                  height: 350,
+                }}
+              >
+                {v.images.map((img) => (
+                  <Image
+                    key={img}
+                    source={{ uri: img }}
+                    resizeMode="cover"
+                    className="w-full h-full mx-auto"
+                  />
+                ))}
+              </Swiper>
+
+              <View className="flex-col px-4 my-3 gap-y-3">
+                <Text className="text-xl font-semibold">{v.title}</Text>
+
+                <View className="flex-row gap-x-4">
+                  {v.cities.map((v) => (
+                    <View
+                      key={v.name}
+                      className="px-2 py-1 bg-gray-100 rounded-md"
+                    >
+                      <Text className="text-base">{v.name}</Text>
+                      <Text className="-mt-0.5 text-sm text-gray-600">
+                        {v.countryName}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+
+                <View className="flex-row items-center gap-x-2">
+                  <Ionicons name="calendar-outline" size={18} color="#4b5563" />
+                  <Text className="text-base text-gray-600">
+                    {v.travelDate}
+                  </Text>
+                </View>
+
+                <Text>{v.content}</Text>
+              </View>
+            </View>
+          )
+        )}
+      </ScrollView>
+
+      <Pressable className="absolute flex flex-col items-center justify-center bg-black rounded-full shadow right-3 bottom-3 w-14 h-14">
+        <Fontisto name="plus-a" size={30} color="#fff" />
+      </Pressable>
+    </>
   );
 }
