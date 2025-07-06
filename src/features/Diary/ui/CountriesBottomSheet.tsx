@@ -107,9 +107,9 @@ export default function CountriesBottomSheet({
             />
           </View>
           <View className="flex flex-row flex-wrap gap-2 mt-4">
-            {selectedCountries.map((v) => (
+            {selectedCountries.map((v, idx) => (
               <Text
-                key={`${v.code}-${v.country}`}
+                key={`${v.code}-${v.country}-${idx}`}
                 className="p-2 rounded bg-[#ebebeb] font-semibold"
               >
                 {v.name}

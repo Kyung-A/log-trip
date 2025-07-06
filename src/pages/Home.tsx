@@ -143,6 +143,10 @@ export default function HomeScreen() {
           </View>
         </Pressable>
 
+        <Pressable className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300">
+          <Text className="mr-4 text-xl">여행일</Text>
+        </Pressable>
+
         <Pressable className="flex flex-row flex-wrap items-center justify-between w-full p-4 border-b border-gray-300">
           <Text className="mr-4 text-xl">드로잉 모드</Text>
           <View className="flex flex-row items-center gap-x-2">
