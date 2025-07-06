@@ -64,7 +64,7 @@ export default function HomeScreen() {
     const snapshot = editCanvasRef.current?.makeImageSnapshot();
     if (!snapshot) return;
 
-    const b64 = snapshot.encodeToBase64?.() ?? snapshot.encodeToBase64(4, 100);
+    const b64 = snapshot.encodeToBase64?.() ?? snapshot.encodeToBase64(3, 100);
     const newUri = `data:image/png;base64,${b64}`;
 
     setImgs((prev) =>
@@ -112,10 +112,12 @@ export default function HomeScreen() {
     }
   }, []);
 
-  const handleCloseEditMode = useCallback(() => {
-    setOpenEditMode(false);
+  const handleCloseEditMode = () => {
     handleCaptureEditImage();
-  }, []);
+    setOpenEditMode(false);
+    setFrameImage(null);
+    setCurrentEditImage(null);
+  };
 
   return (
     <>
