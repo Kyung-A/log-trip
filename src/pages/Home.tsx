@@ -26,6 +26,7 @@ import {
   SkPath,
   useImage,
 } from "@shopify/react-native-skia";
+import DatePicker from "react-native-date-picker";
 
 export interface IColoredPath {
   path: SkPath;
@@ -51,6 +52,9 @@ export default function HomeScreen() {
   const frameImg = useImage(frameImage);
   const [currentEditImage, setCurrentEditImage] = useState<string>();
   const editImage = useImage(currentEditImage);
+
+  const [date, setDate] = useState(new Date());
+  const [openDateModal, setOpenDateModal] = useState(false);
 
   const handleCaptureContent = useCallback(() => {
     const snapshot = contentCanvasRef.current?.makeImageSnapshot();
@@ -143,8 +147,23 @@ export default function HomeScreen() {
           </View>
         </Pressable>
 
-        <Pressable className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300">
-          <Text className="mr-4 text-xl">여행일</Text>
+        <Pressable
+          onPress={() => setOpenDateModal(true)}
+          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
+        >
+          <Text className="mr-4 text-xl">{String(date) ?? "여행일"}</Text>
+          <DatePicker
+            modal
+            open={openDateModal}
+            date={date}
+            onConfirm={(date) => {
+              setOpenDateModal(false);
+              setDate(date);
+            }}
+            onCancel={() => {
+              setOpenDateModal(false);
+            }}
+          />
         </Pressable>
 
         <Pressable className="flex flex-row flex-wrap items-center justify-between w-full p-4 border-b border-gray-300">

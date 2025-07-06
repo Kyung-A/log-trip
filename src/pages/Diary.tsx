@@ -1,6 +1,6 @@
 import { ScrollView, Text, View, Image, Dimensions } from "react-native";
 import Swiper from "react-native-web-swiper";
-import Feather from "react-native-vector-icons/Feather";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const MOCK_DATA = [
   {
@@ -22,7 +22,7 @@ const MOCK_DATA = [
     ],
     isDrawing: true,
     createdAt: "2025-03-24 12:11:54",
-    travelDate: "2025-03-24 12:11:54",
+    travelDate: "2025-03-24",
   },
   {
     id: 2,
@@ -37,7 +37,7 @@ const MOCK_DATA = [
     cities: [{ countryName: "일본", name: "홋카이도" }],
     isDrawing: false,
     createdAt: "2025-03-24 12:11:54",
-    travelDate: "2025-03-24 12:11:54",
+    travelDate: "2025-03-24",
   },
 ];
 
@@ -86,7 +86,7 @@ export default function DiaryScreen() {
                 ))}
               </View>
               <View className="flex-row items-center gap-x-2">
-                <Feather name="clock" size={18} color="#4b5563" />
+                <Ionicons name="calendar-outline" size={18} color="#4b5563" />
                 <Text className="text-base text-gray-600">{v.travelDate}</Text>
               </View>
             </View>
@@ -148,7 +148,7 @@ export default function DiaryScreen() {
               </View>
 
               <View className="flex-row items-center gap-x-2">
-                <Feather name="clock" size={18} color="#4b5563" />
+                <Ionicons name="calendar-outline" size={18} color="#4b5563" />
                 <Text className="text-base text-gray-600">{v.travelDate}</Text>
               </View>
 
