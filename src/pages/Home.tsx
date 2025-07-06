@@ -8,13 +8,13 @@ import {
   Text,
   TextInput,
   View,
-  Image,
 } from "react-native";
 import React, { useCallback, useRef, useState } from "react";
 import BottomSheet from "@gorhom/bottom-sheet";
 import {
   CountriesBottomSheet,
   Drawing,
+  EditImage,
   UploadImages,
 } from "@/features/Diary/ui";
 import { ICountry } from "@/features/Diary/types";
@@ -26,13 +26,6 @@ import {
   SkPath,
   useImage,
 } from "@shopify/react-native-skia";
-import Ionicons from "react-native-vector-icons/Ionicons";
-
-const FRAMES = {
-  frame1: require("../../assets/frame/frame1.png"),
-  frame2: require("../../assets/frame/frame2.png"),
-  frame3: require("../../assets/frame/frame3.png"),
-};
 
 export interface IColoredPath {
   path: SkPath;
@@ -40,7 +33,8 @@ export interface IColoredPath {
 }
 
 export default function HomeScreen() {
-  const canvasRef = useCanvasRef();
+  const contentCanvasRef = useCanvasRef();
+  const editCanvasRef = useCanvasRef();
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const [imgs, setImgs] = useState<{ origin: string; uri: string }[]>([]);
@@ -59,15 +53,15 @@ export default function HomeScreen() {
   const editImage = useImage(currentEditImage);
 
   const handleCaptureContent = useCallback(() => {
-    const snapshot = canvasRef.current?.makeImageSnapshot();
+    const snapshot = contentCanvasRef.current?.makeImageSnapshot();
     if (snapshot) {
       setCapturedDrawingImage(snapshot);
     }
-  }, [canvasRef]);
+  }, [contentCanvasRef]);
 
   const handleCaptureEditImage = useCallback(() => {
     if (!currentEditImage) return;
-    const snapshot = canvasRef.current?.makeImageSnapshot();
+    const snapshot = editCanvasRef.current?.makeImageSnapshot();
     if (!snapshot) return;
 
     const b64 = snapshot.encodeToBase64?.() ?? snapshot.encodeToBase64(4, 100);
@@ -78,7 +72,7 @@ export default function HomeScreen() {
         i.origin === currentEditImage ? { ...i, uri: newUri } : i
       )
     );
-  }, [canvasRef, currentEditImage]);
+  }, [editCanvasRef, currentEditImage]);
 
   const handleOpenPress = useCallback(() => {
     bottomSheetRef.current?.expand();
@@ -116,6 +110,11 @@ export default function HomeScreen() {
         ]
       );
     }
+  }, []);
+
+  const handleCloseEditMode = useCallback(() => {
+    setOpenEditMode(false);
+    handleCaptureEditImage();
   }, []);
 
   return (
@@ -189,62 +188,19 @@ export default function HomeScreen() {
 
       <Drawing
         setOpenDrawing={setOpenDrawing}
-        canvasRef={canvasRef}
+        canvasRef={contentCanvasRef}
         isOpenDrawing={isOpenDrawing}
         handleCapture={handleCaptureContent}
       />
 
       {isOpenEditMode && (
-        <View className="absolute top-0 left-0 z-10 flex flex-col items-center w-full h-full pt-20 bg-black gap-y-20">
-          <Pressable
-            onPress={() => {
-              setOpenEditMode(false);
-              handleCaptureEditImage();
-            }}
-            className="absolute z-20 w-16 h-16 top-4 left-3"
-          >
-            <Ionicons name="close" size={30} color="#fff" />
-          </Pressable>
-
-          <Canvas
-            pointerEvents="none"
-            style={{
-              width: 350,
-              height: 350,
-              overflow: "hidden",
-            }}
-            ref={canvasRef}
-          >
-            <SkImage
-              image={editImage}
-              x={0}
-              y={0}
-              width={350}
-              height={350}
-              fit="cover"
-            />
-            <SkImage
-              image={frameImg}
-              x={0}
-              y={0}
-              width={350}
-              height={350}
-              fit="cover"
-            />
-          </Canvas>
-
-          <View className="flex flex-row items-center gap-x-3">
-            {Object.entries(FRAMES).map(([key, value]) => (
-              <Pressable
-                onPress={() => setFrameImage(value)}
-                key={key}
-                className="block w-20 h-20"
-              >
-                <Image source={value} className="w-full h-full object-fit" />
-              </Pressable>
-            ))}
-          </View>
-        </View>
+        <EditImage
+          canvasRef={editCanvasRef}
+          editImage={editImage}
+          frameImg={frameImg}
+          setFrameImage={setFrameImage}
+          handleCloseEditMode={handleCloseEditMode}
+        />
       )}
     </>
   );
