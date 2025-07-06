@@ -1,51 +1,59 @@
 import * as ImagePicker from "expo-image-picker";
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { Dimensions, Image, Pressable, Text, View } from "react-native";
-import React, { useCallback, useState } from "react";
+import { Pressable, Text, View } from "react-native";
+import React, { useCallback } from "react";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-web-swiper";
-import {
-  Canvas,
-  SkImage as SkImageType,
-  Image as SkImage,
-  useCanvasRef,
-  useImage,
-} from "@shopify/react-native-skia";
+import { Canvas, useImage, Image as SkImage } from "@shopify/react-native-skia";
 
-const FRAMES = {
-  frame1: require("../../../../assets/frame/frame1.png"),
-  frame2: require("../../../../assets/frame/frame2.png"),
-  frame3: require("../../../../assets/frame/frame3.png"),
+const SIZE = 350;
+
+const Slide = ({ uri }: { uri: string }) => {
+  if (!uri) return null;
+  const img = useImage(uri);
+  if (!img) return;
+
+  return (
+    <Canvas
+      style={{
+        width: SIZE,
+        height: SIZE,
+        alignSelf: "center",
+      }}
+    >
+      <SkImage image={img} x={0} y={0} width={SIZE} height={SIZE} fit="cover" />
+    </Canvas>
+  );
 };
 
 interface IUploadImagesProps {
-  imgs: string[];
-  setImgs: React.Dispatch<React.SetStateAction<string[]>>;
+  imgs: { origin: string; uri: string }[];
+  setImgs: React.Dispatch<
+    React.SetStateAction<{ origin: string; uri: string }[]>
+  >;
+  setOpenEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentEditImage: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
-  const canvasRef = useCanvasRef();
+export default function UploadImages({
+  imgs,
+  setImgs,
+  setOpenEditMode,
+  setCurrentEditImage,
+}: IUploadImagesProps) {
   const { showActionSheetWithOptions } = useActionSheet();
-  const [isOpenEditMode, setOpenEditMode] = useState<boolean>(false);
-  const [capturedImage, setCapturedImage] = useState<SkImageType>();
-
-  const [frameImage, setFrameImage] = useState<string>();
-  const frameImg = useImage(frameImage);
-
-  const [currentEditImage, setCurrentEditImage] = useState<string>();
-  const editImage = useImage(currentEditImage);
 
   const handleDeleted = useCallback(
-    (uri: string) => {
-      const newValue = imgs.filter((v) => v !== uri);
-      setImgs(newValue);
-    },
-    [imgs]
+    (origin: string) =>
+      setImgs((prev) => prev.filter((i) => i.origin !== origin)),
+    []
   );
 
   const handleResult = useCallback((res: ImagePicker.ImagePickerResult) => {
-    if (!res.canceled) setImgs(res.assets.map((v) => v.uri));
+    if (!res.canceled) {
+      setImgs(res.assets.map((a) => ({ origin: a.uri, uri: a.uri })));
+    }
   }, []);
 
   const pickFromLibrary = useCallback(async () => {
@@ -88,45 +96,39 @@ export default function UploadImages({ imgs, setImgs }: IUploadImagesProps) {
     );
   }, []);
 
-  const handleCapture = useCallback(() => {
-    const snapshot = canvasRef.current?.makeImageSnapshot();
-    if (snapshot) {
-      setCapturedImage(snapshot);
-    }
-  }, [canvasRef]);
-
   return (
     <>
-      <Pressable
-        onPress={onPress}
-        className="flex flex-row items-center justify-center w-full py-2 bg-gray-200 gap-x-2"
-      >
-        <EvilIcons name="camera" size={30} color="#4b5563" />
-        <Text className="text-[#4b5563]">사진 추가하기</Text>
-      </Pressable>
-      <View className="w-full h-[250px]">
+      {imgs.length === 0 && (
+        <Pressable
+          onPress={onPress}
+          className="flex flex-row items-center justify-center w-full py-2 bg-gray-200 gap-x-2"
+        >
+          <EvilIcons name="camera" size={30} color="#4b5563" />
+          <Text className="text-[#4b5563]">사진 추가하기</Text>
+        </Pressable>
+      )}
+      <View className="w-full h-[350px]">
         {imgs && imgs.length > 0 ? (
           <Swiper
-            key={imgs?.join("|")}
+            key={imgs.map((i) => i.uri).join("|")}
             loop
+            controlsEnabled={false}
             containerStyle={{ width: "100%", height: "100%" }}
           >
-            {imgs?.map((uri) => (
+            {imgs.map((img) => (
               <Pressable
+                key={img.origin}
                 onPress={() => {
                   setOpenEditMode(true);
-                  setCurrentEditImage(uri);
+                  setCurrentEditImage(img.origin);
                 }}
-                key={uri}
-                className="w-full h-full"
+                className="items-center justify-center flex-1"
               >
-                <Image
-                  source={{ uri }}
-                  className="object-contain w-full h-full"
-                />
+                <Slide uri={img.uri} />
+
                 <Pressable
-                  onPress={() => handleDeleted(uri)}
-                  className="right-2 top-3 border-2 rounded-full border-white bg-[#00000099] absolute"
+                  onPress={() => handleDeleted(img.origin)}
+                  className="absolute right-2 top-3 border-2 rounded-full border-white bg-[#00000099]"
                 >
                   <Ionicons name="close" size={20} color="#fff" />
                 </Pressable>

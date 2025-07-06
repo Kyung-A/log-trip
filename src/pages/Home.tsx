@@ -8,6 +8,7 @@ import {
   Text,
   TextInput,
   View,
+  Image,
 } from "react-native";
 import React, { useCallback, useRef, useState } from "react";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -19,11 +20,19 @@ import {
 import { ICountry } from "@/features/Diary/types";
 import {
   Canvas,
-  SkImage,
   useCanvasRef,
-  Image,
+  SkImage as SkImageType,
+  Image as SkImage,
   SkPath,
+  useImage,
 } from "@shopify/react-native-skia";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
+const FRAMES = {
+  frame1: require("../../assets/frame/frame1.png"),
+  frame2: require("../../assets/frame/frame2.png"),
+  frame3: require("../../assets/frame/frame3.png"),
+};
 
 export interface IColoredPath {
   path: SkPath;
@@ -34,20 +43,42 @@ export default function HomeScreen() {
   const canvasRef = useCanvasRef();
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const [imgs, setImgs] = useState<string[] | null>(null);
+  const [imgs, setImgs] = useState<{ origin: string; uri: string }[]>([]);
   const [resultSelectedCountries, setResultSelectedCountries] = useState<
     ICountry[]
   >([]);
   const [isDrawingMode, setDrawingMode] = useState<boolean>(false);
   const [isOpenDrawing, setOpenDrawing] = useState<boolean>(false);
-  const [capturedImage, setCapturedImage] = useState<SkImage | null>(null);
+  const [isOpenEditMode, setOpenEditMode] = useState<boolean>(false);
+  const [capturedDrawingImage, setCapturedDrawingImage] =
+    useState<SkImageType | null>(null);
+
+  const [frameImage, setFrameImage] = useState<string>();
+  const frameImg = useImage(frameImage);
+  const [currentEditImage, setCurrentEditImage] = useState<string>();
+  const editImage = useImage(currentEditImage);
 
   const handleCaptureContent = useCallback(() => {
     const snapshot = canvasRef.current?.makeImageSnapshot();
     if (snapshot) {
-      setCapturedImage(snapshot);
+      setCapturedDrawingImage(snapshot);
     }
   }, [canvasRef]);
+
+  const handleCaptureEditImage = useCallback(() => {
+    if (!currentEditImage) return;
+    const snapshot = canvasRef.current?.makeImageSnapshot();
+    if (!snapshot) return;
+
+    const b64 = snapshot.encodeToBase64?.() ?? snapshot.encodeToBase64(4, 100);
+    const newUri = `data:image/png;base64,${b64}`;
+
+    setImgs((prev) =>
+      prev.map((i) =>
+        i.origin === currentEditImage ? { ...i, uri: newUri } : i
+      )
+    );
+  }, [canvasRef, currentEditImage]);
 
   const handleOpenPress = useCallback(() => {
     bottomSheetRef.current?.expand();
@@ -78,7 +109,7 @@ export default function HomeScreen() {
             text: "예",
             onPress: () => {
               setDrawingMode(false);
-              setCapturedImage(null);
+              setCapturedDrawingImage(null);
             },
           },
           { text: "취소", onPress: () => {}, style: "cancel" },
@@ -90,11 +121,16 @@ export default function HomeScreen() {
   return (
     <>
       <ScrollView className="flex-1 bg-white">
-        <UploadImages imgs={imgs} setImgs={setImgs} />
+        <UploadImages
+          imgs={imgs}
+          setImgs={setImgs}
+          setOpenEditMode={setOpenEditMode}
+          setCurrentEditImage={setCurrentEditImage}
+        />
 
         <Pressable
           onPress={handleOpenPress}
-          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
+          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-t border-b border-gray-300"
         >
           <Text className="mr-4 text-xl">도시 선택</Text>
           <View className="flex flex-row flex-wrap flex-1 gap-2">
@@ -134,8 +170,8 @@ export default function HomeScreen() {
               height: Dimensions.get("window").height - 370,
             }}
           >
-            <Image
-              image={capturedImage}
+            <SkImage
+              image={capturedDrawingImage}
               x={0}
               y={0}
               width={Dimensions.get("window").width}
@@ -159,13 +195,13 @@ export default function HomeScreen() {
       />
 
       {isOpenEditMode && (
-        <View className="absolute top-0 left-0 z-10 flex flex-col items-center justify-between flex-1 w-full bg-black">
+        <View className="absolute top-0 left-0 z-10 flex flex-col items-center w-full h-full pt-20 bg-black gap-y-20">
           <Pressable
             onPress={() => {
               setOpenEditMode(false);
-              handleCapture();
+              handleCaptureEditImage();
             }}
-            className="w-16 h-16 "
+            className="absolute z-20 w-16 h-16 top-4 left-3"
           >
             <Ionicons name="close" size={30} color="#fff" />
           </Pressable>
@@ -200,10 +236,7 @@ export default function HomeScreen() {
           <View className="flex flex-row items-center gap-x-3">
             {Object.entries(FRAMES).map(([key, value]) => (
               <Pressable
-                onPress={() => {
-                  setFrameImage(value);
-                  console.log("22222", "이미지11");
-                }}
+                onPress={() => setFrameImage(value)}
                 key={key}
                 className="block w-20 h-20"
               >
