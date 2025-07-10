@@ -49,7 +49,7 @@ const MOCK_DATA = [
   },
 ];
 
-export default function DiaryScreen() {
+export default function DiaryScreen({ navigation }) {
   return (
     <>
       <ScrollView className="bg-[#eaeaea]">
@@ -172,7 +172,10 @@ export default function DiaryScreen() {
         )}
       </ScrollView>
 
-      <Pressable className="absolute flex flex-col items-center justify-center bg-black rounded-full shadow right-3 bottom-3 w-14 h-14">
+      <Pressable
+        onPress={() => navigation.navigate("DiaryCreate")}
+        className="absolute flex flex-col items-center justify-center bg-black rounded-full shadow right-3 bottom-3 w-14 h-14"
+      >
         <Fontisto name="plus-a" size={30} color="#fff" />
       </Pressable>
     </>
