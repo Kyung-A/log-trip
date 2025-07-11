@@ -32,10 +32,10 @@ export default function DrawingiContentPost({ data }) {
       <View className="flex-col px-4 my-3 gap-y-3">
         <View className="flex-row gap-x-4">
           {data.cities.map((v) => (
-            <View key={data.name} className="px-2 py-1 bg-gray-100 rounded-md">
-              <Text className="text-base">{data.name}</Text>
+            <View key={v.name} className="px-2 py-1 bg-gray-100 rounded-md">
+              <Text className="text-base">{v.name}</Text>
               <Text className="-mt-0.5 text-sm text-gray-600">
-                {data.countryName}
+                {v.countryName}
               </Text>
             </View>
           ))}
