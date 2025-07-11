@@ -15,15 +15,9 @@
     },
     "plugins": [
       [
-        "react-native-maps",
-        {
-          "iosGoogleMapsApiKey": "process.env.GOOGLE_MAPS_API_KEY"
-        }
-      ],
-      [
         "@rnmapbox/maps",
         {
-          "RNMapboxMapsDownloadToken": "sk.ey...YOUR_SECRET..."
+          "RNMapboxMapsDownloadToken": "process.env.MAPBOX_KEY"
         }
       ]
     ],

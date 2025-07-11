@@ -23,9 +23,9 @@ export default ({ config }) => ({
 
   plugins: [
     [
-      "react-native-maps",
+      "@rnmapbox/maps",
       {
-        iosGoogleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+        RNMapboxMapsDownloadToken: process.env.MAPBOX_KEY,
       },
     ],
   ],
