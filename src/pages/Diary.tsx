@@ -100,7 +100,7 @@ export default function DiaryScreen({ navigation }) {
       </ScrollView>
 
       <BottomSheet
-        index={1}
+        index={-1}
         snapPoints={SNAP_POINTS}
         ref={bottomSheetRef}
         onChange={handleSheetChanges}
