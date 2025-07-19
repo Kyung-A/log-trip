@@ -1,7 +1,7 @@
 export const COUNTRIES = [
   {
     name: "홋카이도",
-    code: "JP-001",
+    code: "JP-01",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -10,7 +10,7 @@ export const COUNTRIES = [
   },
   {
     name: "아오모리현",
-    code: "JP-002",
+    code: "JP-02",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -19,7 +19,7 @@ export const COUNTRIES = [
   },
   {
     name: "이와테현",
-    code: "JP-003",
+    code: "JP-03",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -28,7 +28,7 @@ export const COUNTRIES = [
   },
   {
     name: "미야기현",
-    code: "JP-004",
+    code: "JP-04",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -37,7 +37,7 @@ export const COUNTRIES = [
   },
   {
     name: "아키타현",
-    code: "JP-005",
+    code: "JP-05",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -46,7 +46,7 @@ export const COUNTRIES = [
   },
   {
     name: "야마가타현",
-    code: "JP-006",
+    code: "JP-06",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -55,7 +55,7 @@ export const COUNTRIES = [
   },
   {
     name: "후쿠시마현",
-    code: "JP-007",
+    code: "JP-07",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -64,7 +64,7 @@ export const COUNTRIES = [
   },
   {
     name: "이바라키현",
-    code: "JP-008",
+    code: "JP-08",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -73,7 +73,7 @@ export const COUNTRIES = [
   },
   {
     name: "토치기현",
-    code: "JP-009",
+    code: "JP-09",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -82,7 +82,7 @@ export const COUNTRIES = [
   },
   {
     name: "군마현",
-    code: "JP-010",
+    code: "JP-10",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -91,7 +91,7 @@ export const COUNTRIES = [
   },
   {
     name: "사이타마현",
-    code: "JP-011",
+    code: "JP-11",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -100,7 +100,7 @@ export const COUNTRIES = [
   },
   {
     name: "지바현",
-    code: "JP-012",
+    code: "JP-12",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -109,7 +109,7 @@ export const COUNTRIES = [
   },
   {
     name: "도쿄도",
-    code: "JP-013",
+    code: "JP-13",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -118,7 +118,7 @@ export const COUNTRIES = [
   },
   {
     name: "가나가와현",
-    code: "JP-014",
+    code: "JP-14",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -127,7 +127,7 @@ export const COUNTRIES = [
   },
   {
     name: "니가타현",
-    code: "JP-015",
+    code: "JP-15",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -136,7 +136,7 @@ export const COUNTRIES = [
   },
   {
     name: "토야마현",
-    code: "JP-016",
+    code: "JP-16",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -145,7 +145,7 @@ export const COUNTRIES = [
   },
   {
     name: "이시카와현",
-    code: "JP-017",
+    code: "JP-17",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -154,7 +154,7 @@ export const COUNTRIES = [
   },
   {
     name: "후쿠이현",
-    code: "JP-018",
+    code: "JP-18",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -163,7 +163,7 @@ export const COUNTRIES = [
   },
   {
     name: "야마나시현",
-    code: "JP-019",
+    code: "JP-19",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -172,7 +172,7 @@ export const COUNTRIES = [
   },
   {
     name: "나가노현",
-    code: "JP-020",
+    code: "JP-20",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -181,7 +181,7 @@ export const COUNTRIES = [
   },
   {
     name: "기후현",
-    code: "JP-021",
+    code: "JP-21",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -190,7 +190,7 @@ export const COUNTRIES = [
   },
   {
     name: "시즈오카현",
-    code: "JP-022",
+    code: "JP-22",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -199,7 +199,7 @@ export const COUNTRIES = [
   },
   {
     name: "아이치현",
-    code: "JP-023",
+    code: "JP-23",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -208,7 +208,7 @@ export const COUNTRIES = [
   },
   {
     name: "미에현",
-    code: "JP-024",
+    code: "JP-24",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -217,7 +217,7 @@ export const COUNTRIES = [
   },
   {
     name: "시가현",
-    code: "JP-025",
+    code: "JP-25",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -226,7 +226,7 @@ export const COUNTRIES = [
   },
   {
     name: "교토부",
-    code: "JP-026",
+    code: "JP-26",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -234,8 +234,8 @@ export const COUNTRIES = [
     apiURL: "https://www.geoboundaries.org/api/current/gbOpen/JPN/ADM1/",
   },
   {
-    name: "오사카부",
-    code: "JP-027",
+    name: "오사카",
+    code: "JP-27",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -244,7 +244,7 @@ export const COUNTRIES = [
   },
   {
     name: "효고현",
-    code: "JP-028",
+    code: "JP-28",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -253,7 +253,7 @@ export const COUNTRIES = [
   },
   {
     name: "나라현",
-    code: "JP-029",
+    code: "JP-29",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -262,7 +262,7 @@ export const COUNTRIES = [
   },
   {
     name: "와카야마현",
-    code: "JP-030",
+    code: "JP-30",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -271,7 +271,7 @@ export const COUNTRIES = [
   },
   {
     name: "돗토리현",
-    code: "JP-031",
+    code: "JP-31",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -280,7 +280,7 @@ export const COUNTRIES = [
   },
   {
     name: "시마네현",
-    code: "JP-032",
+    code: "JP-32",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -289,7 +289,7 @@ export const COUNTRIES = [
   },
   {
     name: "오카야마현",
-    code: "JP-033",
+    code: "JP-33",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -298,7 +298,7 @@ export const COUNTRIES = [
   },
   {
     name: "히로시마현",
-    code: "JP-034",
+    code: "JP-34",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -307,7 +307,7 @@ export const COUNTRIES = [
   },
   {
     name: "야마구치현",
-    code: "JP-035",
+    code: "JP-35",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -316,7 +316,7 @@ export const COUNTRIES = [
   },
   {
     name: "도쿠시마현",
-    code: "JP-036",
+    code: "JP-36",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -325,7 +325,7 @@ export const COUNTRIES = [
   },
   {
     name: "가가와현",
-    code: "JP-037",
+    code: "JP-37",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -334,7 +334,7 @@ export const COUNTRIES = [
   },
   {
     name: "에히메현",
-    code: "JP-038",
+    code: "JP-38",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -343,7 +343,7 @@ export const COUNTRIES = [
   },
   {
     name: "고치현",
-    code: "JP-039",
+    code: "JP-39",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -352,7 +352,7 @@ export const COUNTRIES = [
   },
   {
     name: "후쿠오카현",
-    code: "JP-040",
+    code: "JP-40",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -361,7 +361,7 @@ export const COUNTRIES = [
   },
   {
     name: "사가현",
-    code: "JP-041",
+    code: "JP-41",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -370,7 +370,7 @@ export const COUNTRIES = [
   },
   {
     name: "나가사키현",
-    code: "JP-042",
+    code: "JP-42",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -379,7 +379,7 @@ export const COUNTRIES = [
   },
   {
     name: "구마모토현",
-    code: "JP-043",
+    code: "JP-43",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -388,7 +388,7 @@ export const COUNTRIES = [
   },
   {
     name: "오이타현",
-    code: "JP-044",
+    code: "JP-44",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -397,7 +397,7 @@ export const COUNTRIES = [
   },
   {
     name: "미야자키현",
-    code: "JP-045",
+    code: "JP-45",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -406,7 +406,7 @@ export const COUNTRIES = [
   },
   {
     name: "가고시마현",
-    code: "JP-046",
+    code: "JP-46",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",
@@ -415,7 +415,7 @@ export const COUNTRIES = [
   },
   {
     name: "오키나와현",
-    code: "JP-047",
+    code: "JP-47",
     country: "JP",
     countryName: "일본",
     iso3: "JPN",

@@ -1,21 +1,10 @@
-import { View, Text, Image, Pressable } from "react-native";
-import Feather from "react-native-vector-icons/Feather";
+import { View, Text, Image } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Swiper from "react-native-web-swiper";
 
 export default function TextContentPost({ data }) {
   return (
-    <View key={data.id} className="w-full h-auto mb-2 bg-white">
-      <View className="flex-row items-center justify-between p-4">
-        <View className="flex-row items-center gap-x-2">
-          <View className="rounded-full w-14 h-14 bg-slate-200"></View>
-          <Text>{data.username}</Text>
-        </View>
-        <Pressable>
-          <Feather name="more-vertical" size={20} />
-        </Pressable>
-      </View>
-
+    <>
       <Swiper
         key="my"
         loop
@@ -56,6 +45,6 @@ export default function TextContentPost({ data }) {
 
         <Text>{data.content}</Text>
       </View>
-    </View>
+    </>
   );
 }

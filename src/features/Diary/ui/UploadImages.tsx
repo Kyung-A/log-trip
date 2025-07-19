@@ -4,6 +4,7 @@ import { Pressable, Text, View } from "react-native";
 import React, { useCallback } from "react";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import Swiper from "react-native-web-swiper";
 import { Canvas, useImage, Image as SkImage } from "@shopify/react-native-skia";
 
@@ -87,6 +88,7 @@ export default function UploadImages({
     showActionSheetWithOptions(
       {
         options,
+        cancelButtonIndex: 2,
       },
       (idx) => {
         if (idx === 0) takeWithCamera();
@@ -101,10 +103,10 @@ export default function UploadImages({
       {imgs.length === 0 && (
         <Pressable
           onPress={onPress}
-          className="flex flex-row items-center justify-center w-full py-2 bg-gray-200 gap-x-2"
+          className="flex flex-row items-center justify-center w-full py-2 bg-[#f2eeec] gap-x-2"
         >
-          <EvilIcons name="camera" size={30} color="#4b5563" />
-          <Text className="text-[#4b5563]">사진 추가하기</Text>
+          <FontAwesome5 name="image" size={20} color="#a38f86" />
+          <Text className="text-[#a38f86] font-semibold">사진 추가하기</Text>
         </Pressable>
       )}
       <View className="w-full h-[350px]">
@@ -112,8 +114,14 @@ export default function UploadImages({
           <Swiper
             key={imgs.map((i) => i.uri).join("|")}
             loop
-            controlsEnabled={false}
-            containerStyle={{ width: "100%", height: "100%" }}
+            containerStyle={{ width: "100%", height: "100%", zIndex: 20 }}
+            controlsProps={{
+              prevPos: false,
+              nextPos: false,
+              dotsTouchable: true,
+              dotsPos: "bottom",
+              dotActiveStyle: { backgroundColor: "#d5b2a7" },
+            }}
           >
             {imgs.map((img) => (
               <Pressable
@@ -136,8 +144,8 @@ export default function UploadImages({
             ))}
           </Swiper>
         ) : (
-          <View className="w-full h-full flex items-center justify-center flex-col bg-[#00000043]">
-            <Text className="text-lg">사진을 등록해 주세요!</Text>
+          <View className="flex-col items-center justify-center w-full h-full">
+            <FontAwesome5 name="images" size={120} color="#f2eeec" />
           </View>
         )}
       </View>

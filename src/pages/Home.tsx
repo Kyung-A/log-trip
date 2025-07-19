@@ -2,28 +2,24 @@ import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import MapboxGL from "@rnmapbox/maps";
 import axios from "axios";
+import { COUNTRIES } from "@/constants";
 
 MapboxGL.setAccessToken(process.env.MAPBOX_KEY);
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [geoJSON, setGeoJSON] = useState(null);
 
-  const fetchGeoJSON = async (targetCode: string) => {
-    // Step 1: 메타데이터 요청
-    const metaRes = await axios.get(
-      "https://www.geoboundaries.org/api/current/gbOpen/KOR/ADM1/"
-    );
+  const fetchGeoJSON = async (data) => {
+    const metaRes = await axios.get(data.apiURL);
 
-    const geoUrl = metaRes.data.simplifiedGeometryGeoJSON; // or gjDownloadURL
+    const geoUrl = metaRes.data.simplifiedGeometryGeoJSON;
     if (!geoUrl) throw new Error("GeoJSON URL 없음");
 
-    // Step 2: GeoJSON 가져오기
     const geoRes = await axios.get(geoUrl);
     const fullGeo = geoRes.data;
 
-    // Step 3: 원하는 지역만 필터링 (예: KR-11 = 서울)
     const filtered = fullGeo.features.filter(
-      (f) => f.properties.shapeISO === targetCode
+      (f) => f.properties.shapeISO === data.code
     );
 
     return {
@@ -34,8 +30,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     (async () => {
-      const result = await fetchGeoJSON("KR-11"); // 서울
-      console.log(result);
+      const result = await fetchGeoJSON(COUNTRIES[0]);
       setGeoJSON(result);
     })();
   }, []);
@@ -44,12 +39,14 @@ export default function HomeScreen() {
     <View style={{ flex: 1 }}>
       <MapboxGL.MapView
         styleURL={process.env.MAPBOX_STYLE_URL}
+        logoEnabled={false}
+        attributionEnabled={false}
         style={{ flex: 1 }}
       >
         <MapboxGL.Camera
           centerCoordinate={[126.978, 37.5665]}
           zoomLevel={5}
-          minZoomLevel={4}
+          minZoomLevel={3}
           maxZoomLevel={7}
         />
         {geoJSON && (

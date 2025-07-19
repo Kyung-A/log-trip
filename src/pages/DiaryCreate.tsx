@@ -9,7 +9,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import BottomSheet from "@gorhom/bottom-sheet";
 import {
   CountriesBottomSheet,
@@ -27,6 +27,8 @@ import {
   useImage,
 } from "@shopify/react-native-skia";
 import DatePicker from "react-native-date-picker";
+import { useNavigation } from "@react-navigation/native";
+import dayjs from "dayjs";
 
 export interface IColoredPath {
   path: SkPath;
@@ -34,6 +36,7 @@ export interface IColoredPath {
 }
 
 export default function DiaryCreateScreen() {
+  const navigation = useNavigation();
   const contentCanvasRef = useCanvasRef();
   const editCanvasRef = useCanvasRef();
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -116,12 +119,22 @@ export default function DiaryCreateScreen() {
     }
   }, []);
 
-  const handleCloseEditMode = () => {
+  const handleCloseEditMode = useCallback(() => {
     handleCaptureEditImage();
     setOpenEditMode(false);
     setFrameImage(null);
     setCurrentEditImage(null);
-  };
+  }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable className="pt-1.5" onPress={() => console.log("등록")}>
+          <Text className="text-lg text-blue-500 underline">등록</Text>
+        </Pressable>
+      ),
+    });
+  }, []);
 
   return (
     <>
@@ -151,11 +164,14 @@ export default function DiaryCreateScreen() {
           onPress={() => setOpenDateModal(true)}
           className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
         >
-          <Text className="mr-4 text-xl">{String(date) ?? "여행일"}</Text>
+          <Text className="mr-4 text-xl">
+            {dayjs(date).format("YYYY-MM-DD") ?? "여행일"}
+          </Text>
           <DatePicker
             modal
             open={openDateModal}
             date={date}
+            locale="ko"
             onConfirm={(date) => {
               setOpenDateModal(false);
               setDate(date);
