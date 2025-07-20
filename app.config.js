@@ -7,9 +7,6 @@ export default ({ config }) => ({
   version: "1.0.0",
   ios: {
     bundleIdentifier: "com.nek777.mytripapp",
-    config: {
-      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
-    },
     infoPlist: {
       NSCameraUsageDescription:
         "프로필 사진을 촬영하기 위해 카메라 접근이 필요합니다.",
@@ -26,6 +23,15 @@ export default ({ config }) => ({
       "@rnmapbox/maps",
       {
         RNMapboxMapsDownloadToken: process.env.MAPBOX_KEY,
+      },
+    ],
+    [
+      "expo-splash-screen",
+      {
+        backgroundColor: "#F2EEEC",
+        image: "./assets/images/logo.png",
+        imageWidth: 250,
+        resizeMode: "contain",
       },
     ],
   ],
