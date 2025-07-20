@@ -7,6 +7,7 @@ import { View } from "react-native";
 import DummyScreen from "@/pages/Dummy";
 import MyPageScreen from "@/pages/MyPage";
 import CompanionScreen from "@/pages/Companion";
+import LoginScreen from "@/pages/Login";
 
 const Tab = createBottomTabNavigator();
 
@@ -59,7 +60,7 @@ export default function TabBar() {
       })}
     >
       <Tab.Screen name="세계지도" component={HomeScreen} />
-      <Tab.Screen name="동행" component={CompanionScreen} />
+      <Tab.Screen name="동행" component={LoginScreen} />
       <Tab.Screen
         name="글쓰기"
         component={DummyScreen}

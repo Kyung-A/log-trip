@@ -10,10 +10,12 @@ import DiaryCreateScreen from "./pages/DiaryCreate";
 import ProfileUpdateScreen from "./pages/ProfileUpdate";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import { Text, TouchableOpacity, View } from "react-native";
+import * as WebBrowser from "expo-web-browser";
 
 import "./global.css";
 
 SplashScreen.preventAutoHideAsync();
+WebBrowser.maybeCompleteAuthSession();
 
 export default function App() {
   const Stack = createNativeStackNavigator();
