@@ -5,6 +5,7 @@ export default ({ config }) => ({
   name: "my-trip-app",
   slug: "my-trip-app",
   version: "1.0.0",
+  scheme: "com.nek777.mytripapp",
   ios: {
     bundleIdentifier: "com.nek777.mytripapp",
     infoPlist: {
@@ -17,7 +18,6 @@ export default ({ config }) => ({
   android: {
     package: "com.nek777.mytripapp",
   },
-
   plugins: [
     [
       "@rnmapbox/maps",

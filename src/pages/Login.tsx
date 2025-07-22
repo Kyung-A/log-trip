@@ -1,13 +1,18 @@
-import { Image, Linking, Pressable, Text, View } from "react-native";
+import { Image, Linking, Platform, Pressable, Text, View } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { useEffect } from "react";
 
 export default function LoginScreen() {
+  const redirectTo = Platform.select({
+    ios: process.env.KAKAO_CALLBACK_URL,
+    android: process.env.KAKAO_CALLBACK_URL,
+  });
+
   const signInWithKakao = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "kakao",
       options: {
-        redirectTo: process.env.EXPO_PUBLIC_KAKAO_CALLBACK_URL,
+        redirectTo,
       },
     });
 
@@ -21,18 +26,6 @@ export default function LoginScreen() {
       await Linking.openURL(data.url);
     }
   };
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      console.log(data);
-      if (data.session) {
-        console.log("로그인 성공!", data.session);
-      }
-    };
-
-    checkSession();
-  }, []);
 
   return (
     <View className="items-center justify-center flex-1 bg-white">

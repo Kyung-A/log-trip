@@ -10,7 +10,9 @@ import DiaryCreateScreen from "./pages/DiaryCreate";
 import ProfileUpdateScreen from "./pages/ProfileUpdate";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import { Text, TouchableOpacity, View } from "react-native";
+import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
+import { supabase } from "./lib/supabase";
 
 import "./global.css";
 
@@ -33,6 +35,47 @@ export default function App() {
       setIsReady(true);
     }
     prepare();
+  }, []);
+
+  useEffect(() => {
+    const handleDeepLink = async (event: { url: string }) => {
+      const url = event.url;
+      const hashIndex = url.indexOf("#");
+
+      if (hashIndex === -1) {
+        console.warn("URL에 해시(#) 없음:", url);
+        return;
+      }
+
+      const hash = url.slice(hashIndex + 1);
+      const params = new URLSearchParams(hash);
+
+      const accessToken = params.get("access_token");
+      const refreshToken = params.get("refresh_token");
+
+      if (accessToken && refreshToken) {
+        console.log("토큰 감지:", accessToken);
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+        if (error) {
+          console.error("세션 설정 실패:", error);
+        }
+      } else {
+        console.warn("해시에 토큰 없음:", hash);
+      }
+    };
+
+    const sub = Linking.addEventListener("url", handleDeepLink);
+
+    Linking.getInitialURL().then((url) => {
+      if (url) handleDeepLink({ url });
+    });
+
+    return () => {
+      sub.remove();
+    };
   }, []);
 
   if (!isReady) return null;
