@@ -1,8 +1,8 @@
-import { Image, Linking, Platform, Pressable, Text, View } from "react-native";
+import { Image, Platform, Pressable, Text, View } from "react-native";
 import { supabase } from "@/lib/supabase";
-import { useEffect } from "react";
+import * as WebBrowser from "expo-web-browser";
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   const redirectTo = Platform.select({
     ios: process.env.KAKAO_CALLBACK_URL,
     android: process.env.KAKAO_CALLBACK_URL,
@@ -17,13 +17,19 @@ export default function LoginScreen() {
     });
 
     if (error) {
-      console.error("OAuth error:", error.message);
+      console.error("❌ Kakao OAuth error:", error.message);
       return;
     }
 
     if (data?.url) {
-      console.log("🔗 브라우저 열기:", data.url);
-      await Linking.openURL(data.url);
+      const result = await WebBrowser.openAuthSessionAsync(
+        data.url,
+        process.env.KAKAO_CALLBACK_URL
+      );
+
+      if (result.type === "success") {
+        navigation.navigate("PhoneAuth");
+      }
     }
   };
 

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import axios from "axios";
+import { useCallback, useState } from "react";
 import {
   FlatList,
   Modal,
@@ -20,6 +21,19 @@ const OPTIONS = [
 export default function PhoneAuthScreen() {
   const [selected, setSelected] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
+
+  const handleSendSMS = useCallback(async () => {
+    const res = await axios.post(
+      process.env.SUPABASE_API_SEND_MAIL,
+      { phone: "" },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.SUPABASE_API_KEY}`,
+        },
+      }
+    );
+    console.log("Raw response:", res.data);
+  }, []);
 
   const onSelect = (option: string) => {
     setSelected(option);
@@ -68,7 +82,10 @@ export default function PhoneAuthScreen() {
               className="w-3/4 p-3 border border-gray-300 rounded"
               placeholder="'-'빼고 휴대폰 번호 입력"
             />
-            <Pressable className="justify-center px-4 bg-blue-200 rounded">
+            <Pressable
+              onPress={handleSendSMS}
+              className="justify-center px-4 bg-blue-200 rounded"
+            >
               <Text className="font-semibold text-center text-blue-500">
                 인증하기
               </Text>
