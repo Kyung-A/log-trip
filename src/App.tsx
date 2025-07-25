@@ -34,11 +34,15 @@ export default function App() {
 
   useEffect(() => {
     async function prepare() {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const { data: user, error } = await supabase.auth.getUser();
 
-      setInitialRoute(session ? "Home" : "Login");
+      if (user.user) {
+        setInitialRoute("Home");
+      } else {
+        console.error(error?.message);
+        setInitialRoute("Login");
+      }
+
       setIsReady(true);
     }
     prepare();

@@ -1,6 +1,7 @@
 import { Image, Platform, Pressable, Text, View } from "react-native";
 import { supabase } from "@/lib/supabase";
 import * as WebBrowser from "expo-web-browser";
+import { useCallback } from "react";
 
 export default function LoginScreen({ navigation }) {
   const redirectTo = Platform.select({
@@ -8,16 +9,34 @@ export default function LoginScreen({ navigation }) {
     android: process.env.KAKAO_CALLBACK_URL,
   });
 
-  const signInWithKakao = async () => {
+  const saveSession = useCallback(async (result, platform) => {
+    const rawUrl = result.url.replace("#", "?");
+
+    const parsedUrl = new URL(rawUrl);
+    const accessToken = parsedUrl.searchParams.get("access_token");
+    const refreshToken = parsedUrl.searchParams.get("refresh_token");
+
+    if (accessToken && refreshToken) {
+      await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+      navigation.navigate("PhoneAuth", {
+        platform: platform,
+      });
+    }
+  }, []);
+
+  const signInWithKakao = useCallback(async (platform) => {
     const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "kakao",
+      provider: platform,
       options: {
         redirectTo,
       },
     });
 
     if (error) {
-      console.error("❌ Kakao OAuth error:", error.message);
+      console.error("Kakao OAuth error:", error.message);
       return;
     }
 
@@ -27,11 +46,11 @@ export default function LoginScreen({ navigation }) {
         process.env.KAKAO_CALLBACK_URL
       );
 
-      if (result.type === "success") {
-        navigation.navigate("PhoneAuth");
+      if (result.type === "success" && result.url) {
+        await saveSession(result, platform);
       }
     }
-  };
+  }, []);
 
   return (
     <View className="items-center justify-center flex-1 bg-white">
@@ -43,14 +62,17 @@ export default function LoginScreen({ navigation }) {
       </View>
       <View className="mt-14">
         <Pressable
-          onPress={signInWithKakao}
+          onPress={() => signInWithKakao("kakao")}
           className="px-4 py-3 rounded-full w-60 border border-[#a38f86]"
         >
           <Text className="font-bold text-center text-[#a38f86]">
             카카오 로그인
           </Text>
         </Pressable>
-        <Pressable className="px-4 py-3 rounded-full w-60 border border-[#a38f86] mt-2">
+        <Pressable
+          onPress={() => signInWithKakao("naver")}
+          className="px-4 py-3 rounded-full w-60 border border-[#a38f86] mt-2"
+        >
           <Text className="font-bold text-center text-[#a38f86]">
             네이버 로그인
           </Text>

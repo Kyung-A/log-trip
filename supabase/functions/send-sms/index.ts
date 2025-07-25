@@ -1,22 +1,53 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js";
+
+const supabase = createClient(
+  Deno.env.get("SUPABASE_URL")!,
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+);
+
+const apiKey = Deno.env.get("COOLSMS_API_KEY")!;
+const apiSecret = Deno.env.get("COOLSMS_API_SECRET_KEY")!;
 
 serve(async (req) => {
   if (req.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
-  const apiKey = Deno.env.get("COOLSMS_API_KEY")!;
-  const apiSecret = Deno.env.get("COOLSMS_API_SECRET_KEY")!;
-  const fromPhoneNumber = Deno.env.get(" COOLSMS_FROM_PHONE")!;
+  const { phone } = await req.json();
 
+  if (!phone)
+    return new Response(JSON.stringify({ error: "전화번호는 필수입니다." }), {
+      status: 400,
+    });
+
+  return await sendCode(phone);
+});
+
+async function sendCode(phone: string) {
+  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  const expiresAt = new Date(Date.now() + 3 * 60 * 1000).toISOString();
+
+  try {
+    await supabase
+      .from("verification_codes")
+      .insert({ phone, code, expires_at: expiresAt });
+
+    return await sendMail(phone, code);
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+    });
+  }
+}
+
+async function sendMail(phone: string, code: string) {
   const timestamp = new Date().toISOString();
   const salt = generateSalt();
   const signature = await createSignature(apiSecret, timestamp, salt);
 
   try {
-    const { phone } = await req.json();
-
     const res = await fetch("https://api.solapi.com/messages/v4/send", {
       method: "POST",
       headers: {
@@ -26,8 +57,8 @@ serve(async (req) => {
       body: JSON.stringify({
         message: {
           to: phone,
-          from: fromPhoneNumber,
-          text: `[MyApp] 인증번호는 1234입니다.`,
+          from: "", // TODO
+          text: `[로그트립] 인증번호는 ${code}입니다.`,
         },
       }),
     });
@@ -38,7 +69,7 @@ serve(async (req) => {
   } catch (error) {
     return new Response(error, { status: 500 });
   }
-});
+}
 
 function generateSalt(length = 32): string {
   const bytes = crypto.getRandomValues(new Uint8Array(length));
