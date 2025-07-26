@@ -12,6 +12,7 @@ export interface IProfile {
   mobile_carrier: string;
   name: string;
   nickname: string;
+  email: string;
   phone: string;
   platform: string;
   about: string;

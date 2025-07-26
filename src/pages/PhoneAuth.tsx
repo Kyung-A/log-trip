@@ -51,6 +51,7 @@ export default function PhoneAuthScreen({ navigation }) {
 
     const { error, data } = await supabase.from("user_profiles").insert({
       id: userData.id,
+      email: userData.email,
       nickname: formData.name,
       name: formData.name,
       birthday: formData.birthday,
