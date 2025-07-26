@@ -1,3 +1,4 @@
+import { sendSMS, verifyCode } from "@/apis";
 import { supabase } from "@/lib/supabase";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
@@ -46,10 +47,10 @@ export default function PhoneAuthScreen({ navigation }) {
     const userData = await getAuthEmail();
     const formData = getValues();
 
-    const { platform } = route.params || {};
+    const { platform } = route.params as any;
     const isMale = formData.gender === "1" || formData.gender === "3";
 
-    const { error } = await supabase.from("user-profiles").insert({
+    const { error, data } = await supabase.from("user_profiles").insert({
       id: userData.id,
       name: formData.name,
       birthday: formData.birthday,
@@ -60,7 +61,7 @@ export default function PhoneAuthScreen({ navigation }) {
     });
 
     if (error) {
-      console.error("❌ Supabase insert error:", error.message);
+      console.error("❌ Supabase insert error:", error);
     } else {
       navigation.navigate("Home");
     }
@@ -72,17 +73,8 @@ export default function PhoneAuthScreen({ navigation }) {
       return;
     }
 
-    const { data } = await axios.post(
-      `${process.env.SUPABASE_API_ENDPOINT}/send-sms`,
-      { phone: formData.phone },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.SUPABASE_API_KEY}`,
-        },
-      }
-    );
-
-    if (data.statusCode === "2000") {
+    const result = await sendSMS(formData.phone);
+    if (result.statusCode === "2000") {
       setTimeLeft(180);
     }
   }, []);
@@ -90,21 +82,11 @@ export default function PhoneAuthScreen({ navigation }) {
   const handleVerifyCode = useCallback(async (code: string) => {
     const phone = getValues("phone");
 
-    try {
-      const response = await axios.post(
-        `${process.env.SUPABASE_API_ENDPOINT}/verify-code`,
-        { phone: phone, code: code },
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.SUPABASE_API_KEY}`,
-          },
-        }
-      );
+    const reislt = await verifyCode({ phone: phone, code: code });
 
-      if (response.status) {
-        return await createUser();
-      }
-    } catch (error) {
+    if (reislt.status === 200) {
+      return await createUser();
+    } else {
       setErrorVerifyCode(true);
     }
   }, []);
@@ -144,7 +126,7 @@ export default function PhoneAuthScreen({ navigation }) {
           name="name"
           render={({ field: { onChange, value } }) => (
             <View>
-              <Text className="font-semibold text-lg">이름</Text>
+              <Text className="text-lg font-semibold">이름</Text>
               <TextInput
                 className="px-3 text-lg py-4 leading-6 mt-1.5 border border-gray-300 rounded-md"
                 placeholder="휴대폰 명의자 입력"
@@ -157,7 +139,7 @@ export default function PhoneAuthScreen({ navigation }) {
         />
 
         <View>
-          <Text className="font-semibold text-lg">주민등록번호 앞 7자리</Text>
+          <Text className="text-lg font-semibold">주민등록번호 앞 7자리</Text>
           <View className="flex-row items-center mt-1.5">
             <Controller
               control={control}
@@ -165,7 +147,7 @@ export default function PhoneAuthScreen({ navigation }) {
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   secureTextEntry={true}
-                  className="w-1/2 px-3 text-lg py-4 leading-6 border border-gray-300 rounded-md"
+                  className="w-1/2 px-3 py-4 text-lg leading-6 border border-gray-300 rounded-md"
                   placeholder="●●●●●●"
                   maxLength={6}
                   onChangeText={onChange}
@@ -175,14 +157,14 @@ export default function PhoneAuthScreen({ navigation }) {
               )}
             />
 
-            <Text className="mx-3 text-gray-700 text-lg">-</Text>
+            <Text className="mx-3 text-lg text-gray-700">-</Text>
 
             <Controller
               control={control}
               name="gender"
               render={({ field: { onChange, value } }) => (
                 <TextInput
-                  className="px-4 text-lg py-4 leading-6 border border-gray-300 rounded-md"
+                  className="px-4 py-4 text-lg leading-6 border border-gray-300 rounded-md"
                   placeholder="●"
                   onChangeText={onChange}
                   value={value}
@@ -198,7 +180,7 @@ export default function PhoneAuthScreen({ navigation }) {
         </View>
 
         <View>
-          <Text className="font-semibold text-lg">휴대폰 번호</Text>
+          <Text className="text-lg font-semibold">휴대폰 번호</Text>
           <Pressable
             onPress={() => setVisible(true)}
             className="w-full px-3 text-lg py-4 leading-6 border border-gray-300 rounded-md mt-1.5"
@@ -209,13 +191,13 @@ export default function PhoneAuthScreen({ navigation }) {
             </Text>
           </Pressable>
 
-          <View className="mt-1.5 flex-row items-stretch justify-between">
+          <View className="mt-1.5 flex-row items-stretch justify-between gap-x-2">
             <Controller
               control={control}
               name="phone"
               render={({ field: { onChange, value } }) => (
                 <TextInput
-                  className="w-3/4 px-3 text-lg py-4 leading-6 border border-gray-300 rounded-md"
+                  className="px-3 py-4 text-lg leading-6 border border-gray-300 rounded-md flex-[2]"
                   placeholder="'-'빼고 휴대폰 번호 입력"
                   onChangeText={(e) => {
                     setError(null);
@@ -229,13 +211,13 @@ export default function PhoneAuthScreen({ navigation }) {
 
             <Pressable
               onPress={handleSubmit(handleSendSMS)}
-              className="justify-center bg-blue-200 rounded-md disabled:bg-gray-300"
+              className="justify-center flex-1 bg-blue-200 rounded-md disabled:bg-gray-300"
               disabled={
                 timeLeft > 0 || Object.values(watch()).some((v) => v === "")
               }
             >
               <Text
-                className={`font-bold text-lg px-5 text-center ${
+                className={`font-bold text-lg text-center ${
                   timeLeft > 0 || Object.values(watch()).some((v) => v === "")
                     ? "text-gray-400"
                     : "text-blue-500"
@@ -252,23 +234,23 @@ export default function PhoneAuthScreen({ navigation }) {
 
         {timeLeft > 0 && (
           <View>
-            <Text className="text-red-500 font-semibold mb-1">
+            <Text className="mb-1 font-semibold text-red-500">
               {String(minutes).padStart(2, "0")}:
               {String(seconds).padStart(2, "0")}
             </Text>
             <TextInput
-              className="px-3 text-lg py-4 leading-6 border border-gray-300 rounded-md"
+              className="px-3 py-4 text-lg leading-6 border border-gray-300 rounded-md"
               placeholder="인증번호 4자리 입력"
               onChangeText={(value) => {
+                setErrorVerifyCode(false);
                 if (value.length === 6) {
-                  console.log("1111");
                   handleVerifyCode(value);
                 }
               }}
               maxLength={6}
             />
             {errorVerifyCode && (
-              <Text className="text-red-500 font-semibold mb-1">
+              <Text className="mb-1 font-semibold text-red-500">
                 인증번호가 일치하지 않습니다
               </Text>
             )}

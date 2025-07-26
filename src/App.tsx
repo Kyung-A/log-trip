@@ -16,6 +16,7 @@ import { supabase } from "./lib/supabase";
 import LoginScreen from "./pages/Login";
 
 import "./global.css";
+import { getUser } from "./apis";
 
 SplashScreen.preventAutoHideAsync();
 WebBrowser.maybeCompleteAuthSession();
@@ -34,12 +35,10 @@ export default function App() {
 
   useEffect(() => {
     async function prepare() {
-      const { data: user, error } = await supabase.auth.getUser();
-
-      if (user.user) {
+      const user = await getUser();
+      if (user) {
         setInitialRoute("Home");
       } else {
-        console.error(error?.message);
         setInitialRoute("Login");
       }
 
@@ -93,7 +92,12 @@ export default function App() {
                       <Text className="text-lg font-semibold">본인인증</Text>
                     ),
                     headerLeft: () => (
-                      <TouchableOpacity onPress={() => navigation.goBack()}>
+                      <TouchableOpacity
+                        onPress={async () => {
+                          await supabase.auth.signOut();
+                          navigation.goBack();
+                        }}
+                      >
                         <FontAwesome6
                           name="arrow-left"
                           size={20}
