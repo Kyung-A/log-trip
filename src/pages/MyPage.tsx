@@ -1,19 +1,21 @@
 import { getUser, getUserProfile, logout } from "@/apis";
-import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-interface IProfile {
+export interface IProfile {
   birthday: string;
   created_at: string;
   gender: string;
   id: string;
   mobile_carrier: string;
   name: string;
+  nickname: string;
   phone: string;
   platform: string;
   about: string;
-  profile_images: string;
+  profile_image: string;
 }
 
 export default function MyPageScreen({ navigation }) {
@@ -30,15 +32,20 @@ export default function MyPageScreen({ navigation }) {
     setProfile(data);
   }, []);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   return (
     <View className="items-center flex-1 bg-white">
       <View className="w-32 h-32 mt-20 bg-[#d5b2a7] rounded-full">
-        {profile?.profile_images ? (
-          <Image source={{ uri: profile.profile_images }} />
+        {profile?.profile_image ? (
+          <Image
+            source={{ uri: profile.profile_image }}
+            className="object-cover w-full h-full rounded-full"
+          />
         ) : (
           <View className="items-center justify-center w-full h-full">
             <Ionicons name="person" size={60} color="#fff" />
@@ -68,7 +75,14 @@ export default function MyPageScreen({ navigation }) {
         </View>
       </View>
       <Pressable
-        onPress={() => navigation.navigate("ProfileUpdate")}
+        onPress={() =>
+          navigation.navigate("ProfileUpdate", {
+            id: profile.id,
+            profile_image: profile.profile_image,
+            nickname: profile.nickname,
+            about: profile.about,
+          })
+        }
         className="px-20 py-2 mt-14 border rounded-lg border-[#a38f86]"
       >
         <Text className="text-[#a38f86]">프로필 수정</Text>

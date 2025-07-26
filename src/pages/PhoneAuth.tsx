@@ -1,7 +1,6 @@
 import { sendSMS, verifyCode } from "@/apis";
 import { supabase } from "@/lib/supabase";
 import { useRoute } from "@react-navigation/native";
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -52,6 +51,7 @@ export default function PhoneAuthScreen({ navigation }) {
 
     const { error, data } = await supabase.from("user_profiles").insert({
       id: userData.id,
+      nickname: formData.name,
       name: formData.name,
       birthday: formData.birthday,
       gender: isMale ? "male" : "female",

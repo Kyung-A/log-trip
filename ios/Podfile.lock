@@ -39,7 +39,7 @@ PODS:
     - ExpoModulesCore
   - ExpoCrypto (14.1.5):
     - ExpoModulesCore
-  - ExpoFileSystem (18.1.10):
+  - ExpoFileSystem (18.1.11):
     - ExpoModulesCore
   - ExpoFont (13.3.1):
     - ExpoModulesCore
@@ -2426,7 +2426,7 @@ SPEC CHECKSUMS:
   Expo: 4e8bda07d30b024b1732f87843a5349a3ecc1316
   ExpoAsset: 3bc9adb7dbbf27ae82c18ca97eb988a3ae7e73b1
   ExpoCrypto: a9f1d75baeea6ef8b03c1660621585196c382e85
-  ExpoFileSystem: c36eb8155eb2381c83dda7dc210e3eec332368b6
+  ExpoFileSystem: 7f92f7be2f5c5ed40a7c9efc8fa30821181d9d63
   ExpoFont: abbb91a911eb961652c2b0a22eef801860425ed6
   ExpoImagePicker: 0963da31800c906e01c03e25d7c849f16ebf02a2
   ExpoKeepAwake: bf0811570c8da182bfb879169437d4de298376e7
