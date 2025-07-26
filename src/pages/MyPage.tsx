@@ -1,11 +1,54 @@
-import { Pressable, Text, View } from "react-native";
+import { getUser, getUserProfile, logout } from "@/apis";
+import { useCallback, useEffect, useState } from "react";
+import { Image, Pressable, Text, View } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+
+interface IProfile {
+  birthday: string;
+  created_at: string;
+  gender: string;
+  id: string;
+  mobile_carrier: string;
+  name: string;
+  phone: string;
+  platform: string;
+  about: string;
+  profile_images: string;
+}
 
 export default function MyPageScreen({ navigation }) {
+  const [profile, setProfile] = useState<IProfile>();
+
+  const handleLogout = useCallback(async () => {
+    await logout();
+    navigation.navigate("Login");
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    const user = await getUser();
+    const data = await getUserProfile(user.id);
+    setProfile(data);
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <View className="items-center flex-1 bg-white">
-      <View className="w-32 h-32 mt-20 bg-gray-200 rounded-full"></View>
-      <Text className="mt-4 text-xl font-semibold">홍길동</Text>
-      <Text className="mt-3">여행을 사랑하는 홍길동입니다</Text>
+      <View className="w-32 h-32 mt-20 bg-[#d5b2a7] rounded-full">
+        {profile?.profile_images ? (
+          <Image source={{ uri: profile.profile_images }} />
+        ) : (
+          <View className="items-center justify-center w-full h-full">
+            <Ionicons name="person" size={60} color="#fff" />
+          </View>
+        )}
+      </View>
+      <Text className="mt-4 text-xl font-semibold">{profile?.name}</Text>
+      <Text className="mt-3">
+        {profile?.about ?? "간단한 자기소개를 작성해 주세요!"}
+      </Text>
       <View className="flex-row items-center mt-6">
         <View className="items-center px-6">
           <Text className="text-sm text-gray-500">여행 일기</Text>
@@ -29,6 +72,9 @@ export default function MyPageScreen({ navigation }) {
         className="px-20 py-2 mt-14 border rounded-lg border-[#a38f86]"
       >
         <Text className="text-[#a38f86]">프로필 수정</Text>
+      </Pressable>
+      <Pressable onPress={handleLogout} className="mt-6">
+        <Text className="text-[#a38f86] underline">로그아웃</Text>
       </Pressable>
     </View>
   );

@@ -16,7 +16,7 @@ import { supabase } from "./lib/supabase";
 import LoginScreen from "./pages/Login";
 
 import "./global.css";
-import { getUser } from "./apis";
+import { getUser, logout } from "./apis";
 
 SplashScreen.preventAutoHideAsync();
 WebBrowser.maybeCompleteAuthSession();
@@ -94,7 +94,7 @@ export default function App() {
                     headerLeft: () => (
                       <TouchableOpacity
                         onPress={async () => {
-                          await supabase.auth.signOut();
+                          await logout();
                           navigation.goBack();
                         }}
                       >
