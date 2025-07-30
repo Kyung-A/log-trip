@@ -67,6 +67,11 @@
       <string>UIInterfaceOrientationLandscapeLeft</string>
       <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>naversearchapp</string>
+      <string>naversearchthirdlogin</string>
+    </array>
     <key>UIUserInterfaceStyle</key>
     <string>Light</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>

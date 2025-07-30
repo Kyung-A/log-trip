@@ -12,7 +12,6 @@ import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import { Text, TouchableOpacity, View } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import PhoneAuthScreen from "./pages/PhoneAuth";
-import { supabase } from "./lib/supabase";
 import LoginScreen from "./pages/Login";
 
 import "./global.css";

@@ -1,9 +1,10 @@
 import { Image, Platform, Pressable, Text, View } from "react-native";
 import { supabase } from "@/lib/supabase";
 import * as WebBrowser from "expo-web-browser";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { getUser, getUserProfile, signInSNS } from "@/apis";
 import { type Provider } from "@supabase/supabase-js";
+import NaverLogin from "@react-native-seoul/naver-login";
 
 export default function LoginScreen({ navigation }) {
   const checkIfUserExists = useCallback(async () => {
@@ -13,30 +14,27 @@ export default function LoginScreen({ navigation }) {
     return data ? true : false;
   }, []);
 
-  const saveSession = useCallback(async (result, platform) => {
-    const rawUrl = result.url.replace("#", "?");
-
-    const parsedUrl = new URL(rawUrl);
-    const accessToken = parsedUrl.searchParams.get("access_token");
-    const refreshToken = parsedUrl.searchParams.get("refresh_token");
-
-    if (accessToken && refreshToken) {
-      await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
-
-      const isUserExists = await checkIfUserExists();
-
-      if (isUserExists) {
-        navigation.navigate("Home");
-      } else {
-        navigation.navigate("PhoneAuth", {
-          platform: platform,
+  const saveSession = useCallback(
+    async (accessToken, refreshToken, platform: Provider | string) => {
+      if (accessToken && refreshToken) {
+        await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
         });
+
+        const isUserExists = await checkIfUserExists();
+
+        if (isUserExists) {
+          navigation.navigate("Home");
+        } else {
+          navigation.navigate("PhoneAuth", {
+            platform: platform,
+          });
+        }
       }
-    }
-  }, []);
+    },
+    []
+  );
 
   const signInWithKakao = useCallback(async (platform: Provider) => {
     const { data, error } = await signInSNS(platform);
@@ -49,13 +47,60 @@ export default function LoginScreen({ navigation }) {
     if (data?.url) {
       const result = await WebBrowser.openAuthSessionAsync(
         data.url,
-        process.env.KAKAO_CALLBACK_URL
+        process.env.AUTH_CALLBACK_URL
       );
 
       if (result.type === "success" && result.url) {
-        await saveSession(result, platform);
+        const rawUrl = result.url.replace("#", "?");
+
+        const parsedUrl = new URL(rawUrl);
+        const accessToken = parsedUrl.searchParams.get("access_token");
+        const refreshToken = parsedUrl.searchParams.get("refresh_token");
+
+        await saveSession(accessToken, refreshToken, platform);
       }
     }
+  }, []);
+
+  const signInWithNaver = useCallback(async () => {
+    const { failureResponse, successResponse } = await NaverLogin.login();
+    if (successResponse) {
+      const { accessToken, refreshToken } = successResponse;
+      // const profileResult = await NaverLogin.getProfile(
+      //   successResponse!.accessToken
+      // );
+
+      // 유저 테이블에 이메일이 있으면? => 로그인
+      // 없으면? => 히원가입
+      // 회원가입 후 => 폰 인증
+
+      // const { data, error } = await supabase.auth.signUp({
+      //   email: profileResult.response.email,
+      //   password: `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
+      //   options: {
+      //     data: {
+      //       name: profileResult.response.name,
+      //       email_verified: true,
+      //       email: profileResult.response.email,
+      //     },
+      //   },
+      // });
+
+      await saveSession(accessToken, refreshToken, "naver");
+      console.log(successResponse);
+    } else {
+      console.log(failureResponse);
+    }
+  }, []);
+
+  useEffect(() => {
+    NaverLogin.initialize({
+      appName: "로그트립",
+      consumerKey: process.env.NAVER_CLIENT_ID,
+      consumerSecret: process.env.NAVER_CLIENT_SECRET,
+      serviceUrlSchemeIOS: "com.nek777.mytripapp",
+      disableNaverAppAuthIOS: true,
+    });
   }, []);
 
   return (
@@ -76,7 +121,7 @@ export default function LoginScreen({ navigation }) {
           </Text>
         </Pressable>
         <Pressable
-          // onPress={() => signInWithKakao("naver")}
+          onPress={signInWithNaver}
           className="px-4 py-3 rounded-full w-60 border border-[#a38f86] mt-2"
         >
           <Text className="font-bold text-center text-[#a38f86]">

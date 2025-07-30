@@ -25,6 +25,7 @@ export default ({ config }) => ({
         RNMapboxMapsDownloadToken: process.env.MAPBOX_KEY,
       },
     ],
+    ["@react-native-seoul/naver-login", { urlScheme: "com.nek777.mytripapp" }],
     [
       "expo-splash-screen",
       {
