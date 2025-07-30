@@ -7,9 +7,8 @@ import { type Provider } from "@supabase/supabase-js";
 import NaverLogin from "@react-native-seoul/naver-login";
 
 export default function LoginScreen({ navigation }) {
-  const checkIfUserExists = useCallback(async () => {
-    const user = await getUser();
-    const data = await getUserProfile(user.id);
+  const checkIfUserExists = useCallback(async (id) => {
+    const data = await getUserProfile(id);
 
     return data ? true : false;
   }, []);
@@ -22,7 +21,8 @@ export default function LoginScreen({ navigation }) {
           refresh_token: refreshToken,
         });
 
-        const isUserExists = await checkIfUserExists();
+        const user = await getUser();
+        const isUserExists = await checkIfUserExists(user.id);
 
         if (isUserExists) {
           navigation.navigate("Home");
@@ -66,30 +66,47 @@ export default function LoginScreen({ navigation }) {
     const { failureResponse, successResponse } = await NaverLogin.login();
     if (successResponse) {
       const { accessToken, refreshToken } = successResponse;
-      // const profileResult = await NaverLogin.getProfile(
-      //   successResponse!.accessToken
-      // );
 
-      // 유저 테이블에 이메일이 있으면? => 로그인
-      // 없으면? => 히원가입
-      // 회원가입 후 => 폰 인증
+      const profileResult = await NaverLogin.getProfile(
+        successResponse!.accessToken
+      );
 
-      // const { data, error } = await supabase.auth.signUp({
-      //   email: profileResult.response.email,
-      //   password: `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
-      //   options: {
-      //     data: {
-      //       name: profileResult.response.name,
-      //       email_verified: true,
-      //       email: profileResult.response.email,
-      //     },
-      //   },
+      const { data: UserData } = await supabase.auth.signInWithPassword({
+        email: profileResult.response.email,
+        password: `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
+      });
+
+      if (UserData.user)
+        return await saveSession(accessToken, refreshToken, "naver");
+
+      const { error } = await supabase.auth.signUp({
+        email: profileResult.response.email,
+        password: `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
+        options: {
+          data: {
+            name: profileResult.response.name,
+            email_verified: true,
+            email: profileResult.response.email,
+          },
+        },
+      });
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      const { data, error: errors } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+      console.log(accessToken, refreshToken);
+
+      // navigation.navigate("PhoneAuth", {
+      //   platform: "naver",
       // });
-
-      await saveSession(accessToken, refreshToken, "naver");
-      console.log(successResponse);
     } else {
-      console.log(failureResponse);
+      console.error(failureResponse);
     }
   }, []);
 
