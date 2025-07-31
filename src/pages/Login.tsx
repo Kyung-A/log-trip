@@ -1,4 +1,4 @@
-import { Image, Platform, Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { supabase } from "@/lib/supabase";
 import * as WebBrowser from "expo-web-browser";
 import { useCallback, useEffect } from "react";
@@ -65,46 +65,49 @@ export default function LoginScreen({ navigation }) {
   const signInWithNaver = useCallback(async () => {
     const { failureResponse, successResponse } = await NaverLogin.login();
     if (successResponse) {
-      const { accessToken, refreshToken } = successResponse;
+      let userId = "";
 
       const profileResult = await NaverLogin.getProfile(
         successResponse!.accessToken
       );
 
-      const { data: UserData } = await supabase.auth.signInWithPassword({
+      const {
+        data: { user: loginUser },
+      } = await supabase.auth.signInWithPassword({
         email: profileResult.response.email,
         password: `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
       });
 
-      if (UserData.user)
-        return await saveSession(accessToken, refreshToken, "naver");
-
-      const { error } = await supabase.auth.signUp({
-        email: profileResult.response.email,
-        password: `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
-        options: {
-          data: {
-            name: profileResult.response.name,
-            email_verified: true,
-            email: profileResult.response.email,
+      if (!loginUser) {
+        const {
+          data: { user: signUpUser },
+          error,
+        } = await supabase.auth.signUp({
+          email: profileResult.response.email,
+          password: `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
+          options: {
+            data: {
+              name: profileResult.response.name,
+              email_verified: true,
+              email: profileResult.response.email,
+            },
           },
-        },
-      });
+        });
 
-      if (error) {
-        console.error(error);
-        return;
+        userId = signUpUser.id;
+      } else {
+        userId = loginUser.id;
       }
 
-      const { data, error: errors } = await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
-      console.log(accessToken, refreshToken);
+      const isUserExists = await checkIfUserExists(userId);
 
-      // navigation.navigate("PhoneAuth", {
-      //   platform: "naver",
-      // });
+      if (isUserExists) {
+        navigation.navigate("Home");
+      } else {
+        navigation.navigate("PhoneAuth", {
+          platform: "naver",
+        });
+      }
     } else {
       console.error(failureResponse);
     }

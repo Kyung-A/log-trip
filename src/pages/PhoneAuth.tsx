@@ -86,7 +86,6 @@ export default function PhoneAuthScreen({ navigation }) {
     const reislt = await verifyCode({ phone: phone, code: code });
 
     if (reislt.status === 200) {
-      console.log(reislt.status);
       return await createUser();
     } else {
       setErrorVerifyCode(true);
@@ -98,7 +97,6 @@ export default function PhoneAuthScreen({ navigation }) {
       data: { user },
     } = await supabase.auth.getUser();
     const response = await supabase.auth.getSession();
-    console.log(response);
 
     return user;
   }, []);
