@@ -15,7 +15,7 @@ import PhoneAuthScreen from "./pages/PhoneAuth";
 import LoginScreen from "./pages/Login";
 
 import "./global.css";
-import { getUser, logout } from "./apis";
+import { deleteUser, getUser, logout } from "./apis";
 
 SplashScreen.preventAutoHideAsync();
 WebBrowser.maybeCompleteAuthSession();
@@ -93,8 +93,13 @@ export default function App() {
                     headerLeft: () => (
                       <TouchableOpacity
                         onPress={async () => {
-                          await logout();
-                          navigation.goBack();
+                          const user = await getUser();
+                          if (user) {
+                            const response = await deleteUser(user.id);
+                            if (response.success) {
+                              navigation.goBack();
+                            }
+                          }
                         }}
                       >
                         <FontAwesome6
