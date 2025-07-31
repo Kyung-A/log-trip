@@ -7,6 +7,7 @@ export default ({ config }) => ({
   version: "1.0.0",
   scheme: "com.nek777.mytripapp",
   ios: {
+    usesAppleSignIn: true,
     bundleIdentifier: "com.nek777.mytripapp",
     infoPlist: {
       NSCameraUsageDescription:
@@ -19,6 +20,7 @@ export default ({ config }) => ({
     package: "com.nek777.mytripapp",
   },
   plugins: [
+    ["expo-apple-authentication"],
     [
       "@rnmapbox/maps",
       {
