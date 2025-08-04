@@ -15,7 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { getImageUrl, imageUpload } from "@/apis";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib";
 
 interface IProfile {
   id: string;

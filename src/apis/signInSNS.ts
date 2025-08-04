@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib";
 import { type Provider } from "@supabase/supabase-js";
 import { Platform } from "react-native";
 

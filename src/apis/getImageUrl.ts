@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib";
 
 export const getImageUrl = async (bucketName: string, path: string) => {
   try {
