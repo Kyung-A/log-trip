@@ -20,7 +20,7 @@ export default function LoginScreen() {
   }, []);
 
   return (
-    <View className="items-center justify-center flex-1 bg-white">
+    <View className="items-center justify-center flex-1 bg-[#f2eeec]">
       <View className="w-40 h-40">
         <Image
           source={require("../../assets/images/logo.png")}
@@ -30,17 +30,29 @@ export default function LoginScreen() {
       <View className="mt-14">
         <Pressable
           onPress={kakaoLogin}
-          className="h-12 justify-center rounded-full w-[240px] border border-[#a38f86]"
+          className="h-12 justify-center rounded-full w-[240px] border border-[#fee502] bg-[#fee502] flex-row items-center gap-x-2"
         >
-          <Text className="font-bold text-lg text-center text-[#a38f86]">
-            카카오 로그인
+          <View className="w-5 h-5">
+            <Image
+              source={require("../../assets/kakao-logo.png")}
+              className="w-full h-full"
+            />
+          </View>
+          <Text className="text-lg font-bold text-center text-[#181600]">
+            카카오로 로그인
           </Text>
         </Pressable>
         <Pressable
           onPress={naverLogin}
-          className="h-12 justify-center rounded-full w-[240px] border border-[#a38f86] mt-2"
+          className="h-12 justify-center rounded-full w-[240px] border border-[#00c659] bg-[#00c659] mt-2 flex-row items-center gap-x-2"
         >
-          <Text className="font-bold text-lg text-center text-[#a38f86]">
+          <View className="w-8 h-8">
+            <Image
+              source={require("../../assets/naver-logo.png")}
+              className="w-full h-full"
+            />
+          </View>
+          <Text className="text-lg font-bold text-center text-white">
             네이버 로그인
           </Text>
         </Pressable>
