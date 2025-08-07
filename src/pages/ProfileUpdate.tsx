@@ -114,7 +114,7 @@ export default function ProfileUpdateScreen({}) {
       };
 
       const response = await supabase
-        .from("user_profiles")
+        .from("users")
         .update(data)
         .eq("id", profile.id)
         .select();

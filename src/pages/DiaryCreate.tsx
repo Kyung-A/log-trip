@@ -9,7 +9,13 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import BottomSheet from "@gorhom/bottom-sheet";
 import {
   CountriesBottomSheet,
@@ -29,17 +35,37 @@ import {
 import DatePicker from "react-native-date-picker";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
+import * as FileSystem from "expo-file-system";
+import { getImageUrl, getUser, imageUpload, createDiary } from "@/apis";
+import { decode } from "base64-arraybuffer";
+import uuid from "react-native-uuid";
+import { IDiaryFormData } from "@/apis/createDiary";
+import { supabase } from "@/lib";
 
 export interface IColoredPath {
   path: SkPath;
   color: string;
 }
 
+const DEFAULT_FORM_VALUES = {
+  user_id: "",
+  title: null,
+  text_content: null,
+  drawing_content: null,
+  is_drawing: false,
+  travel_date: null,
+  diary_images: [],
+  diary_regions: [],
+};
+
 export default function DiaryCreateScreen() {
   const navigation = useNavigation();
   const contentCanvasRef = useCanvasRef();
   const editCanvasRef = useCanvasRef();
   const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const [formData, setFormData] = useState<IDiaryFormData>(DEFAULT_FORM_VALUES);
+  const [isShowTopBar, setShowTopBar] = useState<boolean>(true);
 
   const [imgs, setImgs] = useState<{ origin: string; uri: string }[]>([]);
   const [resultSelectedCountries, setResultSelectedCountries] = useState<
@@ -82,10 +108,11 @@ export default function DiaryCreateScreen() {
   }, [editCanvasRef, currentEditImage]);
 
   const handleOpenPress = useCallback(() => {
+    setShowTopBar(false);
     bottomSheetRef.current?.expand();
   }, []);
 
-  const handleChangeMode = useCallback((value) => {
+  const handleChangeMode = useCallback((value: boolean) => {
     if (value) {
       Alert.alert(
         "드로잉 모드로 전환 하시겠습니까?",
@@ -96,6 +123,7 @@ export default function DiaryCreateScreen() {
             onPress: () => {
               setDrawingMode(true);
               setOpenDrawing(true);
+              setShowTopBar(false);
             },
           },
           { text: "취소", onPress: () => {}, style: "cancel" },
@@ -111,30 +139,132 @@ export default function DiaryCreateScreen() {
             onPress: () => {
               setDrawingMode(false);
               setCapturedDrawingImage(null);
+              setShowTopBar(true);
             },
           },
           { text: "취소", onPress: () => {}, style: "cancel" },
         ]
       );
     }
+
+    handleChangeFormValues("is_drawing", value);
   }, []);
 
   const handleCloseEditMode = useCallback(() => {
-    handleCaptureEditImage();
     setOpenEditMode(false);
+    setShowTopBar(true);
     setFrameImage(null);
     setCurrentEditImage(null);
+  }, [setOpenEditMode, setFrameImage, setCurrentEditImage]);
+
+  const handleSaveEditMode = useCallback(() => {
+    handleCaptureEditImage();
+    setOpenEditMode(false);
+    setShowTopBar(true);
+    setFrameImage(null);
+    setCurrentEditImage(null);
+  }, [
+    handleCaptureEditImage,
+    setOpenEditMode,
+    setFrameImage,
+    setCurrentEditImage,
+  ]);
+
+  const handleChangeFormValues = useCallback((key: string, value: any) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
+  const uploadAndGetUrlImage = async (file: string) => {
+    if (!file) return null;
+
+    const path = `diary-images/${formData.user_id}/${uuid.v4()}.jpg`;
+    let base64 = "";
+
+    if (file.startsWith("file://")) {
+      base64 = await FileSystem.readAsStringAsync(file, {
+        encoding: "base64",
+      });
+    } else {
+      base64 = file.includes(",") ? file.split(",")[1] : file;
+    }
+
+    const buffer = decode(base64);
+
+    await imageUpload("log-trip-images", path, buffer);
+    const result = await getImageUrl("log-trip-images", path);
+
+    return result.publicUrl;
+  };
+
+  const getUserId = useCallback(async () => {
+    const { id } = await getUser();
+    setFormData((prev) => ({ ...prev, user_id: id }));
   }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable className="pt-1.5" onPress={() => console.log("등록")}>
+        <Pressable
+          className="pt-1.5"
+          onPress={async () => {
+            if (formData.is_drawing) {
+              if (
+                !formData.drawing_content ||
+                formData.diary_regions.length === 0 ||
+                !formData.travel_date
+              ) {
+                console.error("필수값 누락");
+                return;
+              }
+            } else {
+              if (
+                !formData.title ||
+                !formData.text_content ||
+                !formData.travel_date ||
+                formData.diary_regions.length === 0
+              ) {
+                console.error("필수값 누락");
+                return;
+              }
+            }
+
+            const diaryImagesUrls = await Promise.all(
+              imgs.map((v) => uploadAndGetUrlImage(v.uri))
+            );
+            let body = {
+              ...formData,
+              diary_images: diaryImagesUrls,
+            };
+
+            if (formData.is_drawing) {
+              const drawingContentBase64 =
+                capturedDrawingImage.encodeToBase64();
+              const drawingContentUrl =
+                await uploadAndGetUrlImage(drawingContentBase64);
+
+              body = { ...body, drawing_content: drawingContentUrl };
+            }
+
+            const result = await createDiary(body);
+            if (result) {
+              console.log("33333", result);
+              navigation.navigate("Diary");
+            }
+          }}
+        >
           <Text className="text-lg text-blue-500 underline">등록</Text>
         </Pressable>
       ),
     });
+  }, [formData, imgs, capturedDrawingImage]);
+
+  useEffect(() => {
+    getUserId();
   }, []);
+
+  useEffect(() => {
+    navigation.setOptions({ headerShown: isShowTopBar });
+  }, [navigation, isShowTopBar]);
 
   return (
     <>
@@ -142,6 +272,7 @@ export default function DiaryCreateScreen() {
         <UploadImages
           imgs={imgs}
           setImgs={setImgs}
+          setShowTopBar={setShowTopBar}
           setOpenEditMode={setOpenEditMode}
           setCurrentEditImage={setCurrentEditImage}
         />
@@ -153,7 +284,10 @@ export default function DiaryCreateScreen() {
           <Text className="mr-4 text-xl">도시 선택</Text>
           <View className="flex flex-row flex-wrap flex-1 gap-2">
             {resultSelectedCountries.map((v) => (
-              <Text className="p-2 rounded bg-[#ebebeb] font-semibold">
+              <Text
+                key={v.code}
+                className="p-2 rounded bg-[#ebebeb] font-semibold"
+              >
                 {v.name}
               </Text>
             ))}
@@ -169,12 +303,14 @@ export default function DiaryCreateScreen() {
           </Text>
           <DatePicker
             modal
+            mode="date"
             open={openDateModal}
             date={date}
-            locale="ko"
+            locale="ko-KR"
             onConfirm={(date) => {
               setOpenDateModal(false);
               setDate(date);
+              handleChangeFormValues("travel_date", date);
             }}
             onCancel={() => {
               setOpenDateModal(false);
@@ -186,7 +322,13 @@ export default function DiaryCreateScreen() {
           <Text className="mr-4 text-xl">드로잉 모드</Text>
           <View className="flex flex-row items-center gap-x-2">
             {isDrawingMode && (
-              <Button onPress={() => setOpenDrawing(true)} title="열기" />
+              <Button
+                onPress={() => {
+                  setOpenDrawing(true);
+                  setShowTopBar(false);
+                }}
+                title="열기"
+              />
             )}
             <Switch value={isDrawingMode} onValueChange={handleChangeMode} />
           </View>
@@ -197,17 +339,21 @@ export default function DiaryCreateScreen() {
             <TextInput
               className="text-xl font-semibold"
               placeholder="제목을 작성해주세요"
+              onChangeText={(value) => handleChangeFormValues("title", value)}
             />
             <TextInput
               className="mt-4 text-lg"
               placeholder="내용을 작성해주세요"
+              onChangeText={(value) =>
+                handleChangeFormValues("text_content", value)
+              }
             />
           </View>
         ) : (
           <Canvas
             style={{
               width: Dimensions.get("window").width,
-              height: Dimensions.get("window").height - 370,
+              height: Dimensions.get("window").height - 220,
             }}
           >
             <SkImage
@@ -215,7 +361,7 @@ export default function DiaryCreateScreen() {
               x={0}
               y={0}
               width={Dimensions.get("window").width}
-              height={Dimensions.get("window").height - 370}
+              height={Dimensions.get("window").height - 220}
             />
           </Canvas>
         )}
@@ -225,6 +371,8 @@ export default function DiaryCreateScreen() {
         bottomSheetRef={bottomSheetRef}
         resultSelectedCountries={resultSelectedCountries}
         setResultSelectedCountries={setResultSelectedCountries}
+        handleChangeFormValues={handleChangeFormValues}
+        setShowTopBar={setShowTopBar}
       />
 
       <Drawing
@@ -232,6 +380,7 @@ export default function DiaryCreateScreen() {
         canvasRef={contentCanvasRef}
         isOpenDrawing={isOpenDrawing}
         handleCapture={handleCaptureContent}
+        setShowTopBar={setShowTopBar}
       />
 
       {isOpenEditMode && (
@@ -241,6 +390,7 @@ export default function DiaryCreateScreen() {
           frameImg={frameImg}
           setFrameImage={setFrameImage}
           handleCloseEditMode={handleCloseEditMode}
+          handleSaveEditMode={handleSaveEditMode}
         />
       )}
     </>

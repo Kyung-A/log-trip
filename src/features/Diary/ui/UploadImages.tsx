@@ -2,7 +2,6 @@ import * as ImagePicker from "expo-image-picker";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Pressable, Text, View } from "react-native";
 import React, { useCallback } from "react";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import Swiper from "react-native-web-swiper";
@@ -33,6 +32,7 @@ interface IUploadImagesProps {
   setImgs: React.Dispatch<
     React.SetStateAction<{ origin: string; uri: string }[]>
   >;
+  setShowTopBar: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenEditMode: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentEditImage: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -40,6 +40,7 @@ interface IUploadImagesProps {
 export default function UploadImages({
   imgs,
   setImgs,
+  setShowTopBar,
   setOpenEditMode,
   setCurrentEditImage,
 }: IUploadImagesProps) {
@@ -129,6 +130,7 @@ export default function UploadImages({
                 onPress={() => {
                   setOpenEditMode(true);
                   setCurrentEditImage(img.origin);
+                  setShowTopBar(false);
                 }}
                 className="items-center justify-center flex-1"
               >

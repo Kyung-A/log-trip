@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, View, Image } from "react-native";
+import { Pressable, View, Image, Button } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Canvas, Image as SkImage } from "@shopify/react-native-skia";
 
@@ -15,15 +15,16 @@ export default function EditImage({
   frameImg,
   setFrameImage,
   handleCloseEditMode,
+  handleSaveEditMode,
 }) {
   return (
-    <View className="absolute top-0 left-0 z-10 flex flex-col items-center w-full h-full pt-20 bg-black gap-y-20">
-      <Pressable
-        onPress={handleCloseEditMode}
-        className="absolute z-20 w-16 h-16 top-4 left-3"
-      >
-        <Ionicons name="close" size={30} color="#fff" />
-      </Pressable>
+    <View className="absolute top-0 left-0 z-40 flex flex-col items-center w-full h-full pt-40 bg-black gap-y-20">
+      <View className="absolute z-50 flex-row justify-between w-full px-4 top-24">
+        <Pressable onPress={handleCloseEditMode} className="w-16 h-16">
+          <Ionicons name="close" size={30} color="#fff" />
+        </Pressable>
+        <Button title="완료" onPress={handleSaveEditMode} />
+      </View>
 
       <Canvas
         pointerEvents="none"

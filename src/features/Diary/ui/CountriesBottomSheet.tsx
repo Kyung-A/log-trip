@@ -16,12 +16,16 @@ interface ICountriesBottomSheetProps {
   bottomSheetRef: React.RefObject<BottomSheetMethods>;
   resultSelectedCountries: ICountry[];
   setResultSelectedCountries: React.Dispatch<React.SetStateAction<ICountry[]>>;
+  handleChangeFormValues: (key: string, value: any) => void;
+  setShowTopBar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function CountriesBottomSheet({
   bottomSheetRef,
   resultSelectedCountries,
   setResultSelectedCountries,
+  handleChangeFormValues,
+  setShowTopBar,
 }: ICountriesBottomSheetProps) {
   const [selectedCountries, setSelectedCountries] = useState<ICountry[]>([]);
   const [searchCountries, setSearchCountries] = useState<ICountry[]>(COUNTRIES);
@@ -62,11 +66,17 @@ export default function CountriesBottomSheet({
 
   const handleSelectedFinish = useCallback(() => {
     bottomSheetRef.current.close();
+    setShowTopBar(true);
     setResultSelectedCountries(selectedCountries);
+    handleChangeFormValues(
+      "diary_regions",
+      selectedCountries.map((v) => v.code)
+    );
   }, [selectedCountries]);
 
   const handleCloseBottomSheet = useCallback(() => {
     bottomSheetRef.current.close();
+    setShowTopBar(true);
     setSelectedCountries(resultSelectedCountries);
   }, [resultSelectedCountries]);
 
@@ -90,7 +100,7 @@ export default function CountriesBottomSheet({
         className="flex-1 bg-white"
       >
         <View className="sticky top-0 h-auto px-6 pb-4 bg-white border-b border-[#ebebeb]">
-          <View className="flex flex-row items-center justify-between w-full">
+          <View className="flex flex-row items-center justify-between w-full pt-12">
             <Pressable onPress={handleCloseBottomSheet}>
               <Ionicons name="close-outline" size={32} color="#000" />
             </Pressable>

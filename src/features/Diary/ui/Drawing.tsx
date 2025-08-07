@@ -28,6 +28,7 @@ interface IDrawingProps {
   canvasRef: React.RefObject<CanvasRef>;
   isOpenDrawing: boolean;
   handleCapture: () => void;
+  setShowTopBar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const COLORS = {
@@ -55,6 +56,7 @@ export default function Drawing({
   canvasRef,
   isOpenDrawing,
   handleCapture,
+  setShowTopBar,
 }: IDrawingProps) {
   const currentPath = useRef<SkPath>(Skia.Path.Make());
   const currentColor = useRef<string>(COLORS.black);
@@ -157,7 +159,7 @@ export default function Drawing({
       <Canvas
         style={{
           width: Dimensions.get("window").width,
-          height: Dimensions.get("window").height - 370,
+          height: Dimensions.get("window").height - 220,
         }}
         ref={canvasRef}
       >
@@ -166,7 +168,7 @@ export default function Drawing({
           x={0}
           y={0}
           width={Dimensions.get("window").width}
-          height={Dimensions.get("window").height - 370}
+          height={Dimensions.get("window").height - 220}
           fit="cover"
         />
         {paths.map((p, index) => (
@@ -197,6 +199,7 @@ export default function Drawing({
           <Pressable
             onPress={() => {
               setOpenDrawing(false);
+              setShowTopBar(true);
               handleCapture();
             }}
           >

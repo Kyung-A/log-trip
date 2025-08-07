@@ -7,3 +7,4 @@ export { logout } from "./logout";
 export { imageUpload } from "./imageUpload";
 export { getImageUrl } from "./getImageUrl";
 export { deleteUser } from "./deleteUser";
+export { createDiary } from "./createDiary";

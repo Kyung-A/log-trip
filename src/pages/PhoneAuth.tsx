@@ -49,7 +49,7 @@ export default function PhoneAuthScreen({ navigation }) {
     const { platform } = route.params as any;
     const isMale = formData.gender === "1" || formData.gender === "3";
 
-    const { error, data } = await supabase.from("user_profiles").insert({
+    const { error, data } = await supabase.from("users").insert({
       id: userData.id,
       email: userData.email,
       nickname: formData.name,
