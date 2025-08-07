@@ -1,4 +1,4 @@
-import { getUserProfile } from "@/apis";
+import { getUserProfile } from "@/entities/auth";
 
 export const checkIfUserExists = async (id: string) => {
   const data = await getUserProfile(id);

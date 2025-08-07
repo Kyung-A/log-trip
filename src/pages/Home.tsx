@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import MapboxGL from "@rnmapbox/maps";
 import axios from "axios";
-import { COUNTRIES } from "@/constants";
+import { COUNTRIES } from "@/shared";
 
 MapboxGL.setAccessToken(process.env.MAPBOX_KEY);
 

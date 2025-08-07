@@ -1,9 +1,10 @@
-import { getUser, signInSNS } from "@/apis";
-import { supabase } from "@/lib";
+import { supabase } from "@/shared";
 import { useNavigation } from "@react-navigation/native";
 import * as WebBrowser from "expo-web-browser";
 import { useCallback } from "react";
 import { checkIfUserExists } from "../lib";
+import { getUser } from "@/entities/auth";
+import { signInSNS } from "..";
 
 export const useKakaoLogin = () => {
   const navigation = useNavigation();

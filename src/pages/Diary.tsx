@@ -6,10 +6,11 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { deleteDiary, getDiaries, getUser } from "@/apis";
-import { IDiary } from "@/apis/createDiary";
 import Swiper from "react-native-web-swiper";
 import { useFocusEffect } from "@react-navigation/native";
+import { IDiary } from "@/entities/diary/types";
+import { deleteDiary, getDiaries } from "@/entities/diary";
+import { getUser } from "@/entities/auth";
 
 const SNAP_POINTS = ["15%"];
 

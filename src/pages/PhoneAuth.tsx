@@ -1,5 +1,5 @@
-import { sendSMS, verifyCode } from "@/apis";
-import { supabase } from "@/lib";
+import { sendSMS, verifyCode } from "@/features/auth";
+import { supabase } from "@/shared";
 import { useRoute } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";

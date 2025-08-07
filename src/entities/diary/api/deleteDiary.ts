@@ -1,6 +1,6 @@
-import { supabase } from "@/lib";
-import { IDiary } from "./createDiary";
-import { deleteS3Image } from "./deleteS3Image";
+import { supabase } from "@/shared";
+import { IDiary } from "../types";
+import { deleteS3Image } from "@/shared";
 
 const extractPathFromUrl = (url: string) => {
   const basePath = "log-trip-images/";

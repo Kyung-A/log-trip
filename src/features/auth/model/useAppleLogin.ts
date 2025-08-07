@@ -1,9 +1,9 @@
 import * as AppleAuthentication from "expo-apple-authentication";
-import { generateRawNonce, sha256Hex, supabase } from "@/lib";
 import { useCallback } from "react";
-import { getUser } from "@/apis";
 import { checkIfUserExists } from "../lib";
 import { useNavigation } from "@react-navigation/native";
+import { getUser } from "@/entities/auth";
+import { generateRawNonce, sha256Hex, supabase } from "@/shared";
 
 export const useAppleLogin = () => {
   const navigation = useNavigation();

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
-import { TabBar } from "./components";
 import { NavigationContainer } from "@react-navigation/native";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -13,7 +12,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import PhoneAuthScreen from "./pages/PhoneAuth";
 import LoginScreen from "./pages/Login";
-import { deleteUser, getUser } from "./apis";
+import { deleteUser, getUser } from "./entities/auth";
+import { TabBar } from "./shared";
 
 import "./global.css";
 

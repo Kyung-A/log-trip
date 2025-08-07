@@ -1,4 +1,4 @@
-import { supabase } from "@/lib";
+import { supabase } from "@/shared";
 import NaverLogin from "@react-native-seoul/naver-login";
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";

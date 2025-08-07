@@ -1,4 +1,4 @@
-import { IDiary } from "@/apis/createDiary";
+import { IDiary } from "@/entities/diary/types";
 import dayjs from "dayjs";
 import { View, Dimensions, Image, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";

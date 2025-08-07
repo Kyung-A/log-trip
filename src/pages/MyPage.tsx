@@ -1,4 +1,5 @@
-import { getUser, getUserProfile, logout } from "@/apis";
+import { getUser, getUserProfile } from "@/entities/auth";
+import { logout } from "@/features/auth";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";

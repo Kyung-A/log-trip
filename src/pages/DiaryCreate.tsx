@@ -36,10 +36,12 @@ import DatePicker from "react-native-date-picker";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import * as FileSystem from "expo-file-system";
-import { getImageUrl, getUser, imageUpload, createDiary } from "@/apis";
 import { decode } from "base64-arraybuffer";
 import uuid from "react-native-uuid";
-import { IDiary } from "@/apis/createDiary";
+import { getUser } from "@/entities/auth";
+import { createDiary } from "@/entities/diary";
+import { IDiary } from "@/entities/diary/types";
+import { imageUpload, getImageUrl } from "@/shared";
 
 export interface IColoredPath {
   path: SkPath;

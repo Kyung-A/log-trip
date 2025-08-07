@@ -1,4 +1,4 @@
-import { supabase } from "@/lib";
+import { supabase } from "@/shared";
 
 export const getUserProfile = async (id: string) => {
   const { data } = await supabase

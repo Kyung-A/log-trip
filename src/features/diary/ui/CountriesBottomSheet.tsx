@@ -1,14 +1,14 @@
 import { Button, Pressable, Text, TextInput, View } from "react-native";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { COUNTRIES } from "@/constants";
 import { ICountry } from "../types";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { COUNTRIES } from "@/shared";
 
 const SNAP_POINTS = ["100%"];
 

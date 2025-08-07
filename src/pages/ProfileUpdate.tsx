@@ -12,10 +12,10 @@ import { Image, Pressable, Text, TextInput, View } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Controller, useForm } from "react-hook-form";
-import { getImageUrl, imageUpload } from "@/apis";
+import { getImageUrl, imageUpload } from "@/shared/api";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system";
-import { supabase } from "@/lib";
+import { supabase } from "@/shared";
 
 interface IProfile {
   id: string;
