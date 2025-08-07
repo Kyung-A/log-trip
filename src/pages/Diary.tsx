@@ -1,5 +1,5 @@
 import { Pressable, View, Text, Image, FlatList } from "react-native";
-import { DrawingiContentPost, TextContentPost } from "@/features/list/ui";
+import { DrawingiContentPost, TextContentPost } from "@/features/diary/ui";
 import Feather from "react-native-vector-icons/Feather";
 import { useCallback, useRef, useState } from "react";
 import BottomSheet, {
