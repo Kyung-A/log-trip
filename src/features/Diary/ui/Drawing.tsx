@@ -169,7 +169,7 @@ export default function Drawing({
           y={0}
           width={Dimensions.get("window").width}
           height={Dimensions.get("window").height - 220}
-          fit="cover"
+          fit="fill"
         />
         {paths.map((p, index) => (
           <Path

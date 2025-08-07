@@ -39,8 +39,7 @@ import * as FileSystem from "expo-file-system";
 import { getImageUrl, getUser, imageUpload, createDiary } from "@/apis";
 import { decode } from "base64-arraybuffer";
 import uuid from "react-native-uuid";
-import { IDiaryFormData } from "@/apis/createDiary";
-import { supabase } from "@/lib";
+import { IDiary } from "@/apis/createDiary";
 
 export interface IColoredPath {
   path: SkPath;
@@ -64,7 +63,7 @@ export default function DiaryCreateScreen() {
   const editCanvasRef = useCanvasRef();
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const [formData, setFormData] = useState<IDiaryFormData>(DEFAULT_FORM_VALUES);
+  const [formData, setFormData] = useState<IDiary>(DEFAULT_FORM_VALUES);
   const [isShowTopBar, setShowTopBar] = useState<boolean>(true);
 
   const [imgs, setImgs] = useState<{ origin: string; uri: string }[]>([]);
@@ -201,57 +200,59 @@ export default function DiaryCreateScreen() {
     setFormData((prev) => ({ ...prev, user_id: id }));
   }, []);
 
+  const handleSubmit = async () => {
+    if (formData.is_drawing) {
+      if (
+        !capturedDrawingImage ||
+        formData.diary_regions.length === 0 ||
+        !formData.travel_date
+      ) {
+        console.error("필수값 누락");
+        return;
+      }
+    } else {
+      if (
+        !formData.title ||
+        !formData.text_content ||
+        !formData.travel_date ||
+        formData.diary_regions.length === 0
+      ) {
+        console.error("필수값 누락");
+        return;
+      }
+    }
+
+    let body = {
+      ...formData,
+    };
+
+    if (imgs && imgs.length > 0) {
+      const diaryImagesUrls = await Promise.all(
+        imgs.map((v) => uploadAndGetUrlImage(v.uri))
+      );
+      body = { ...body, diary_images: diaryImagesUrls };
+    }
+
+    if (formData.is_drawing) {
+      const drawingContentBase64 = capturedDrawingImage.encodeToBase64();
+      const drawingContentUrl =
+        await uploadAndGetUrlImage(drawingContentBase64);
+
+      body = { ...body, drawing_content: drawingContentUrl };
+    }
+
+    const result = await createDiary(body);
+    if (result) {
+      navigation.navigate("Home", {
+        screen: "내여행",
+      });
+    }
+  };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable
-          className="pt-1.5"
-          onPress={async () => {
-            if (formData.is_drawing) {
-              if (
-                !formData.drawing_content ||
-                formData.diary_regions.length === 0 ||
-                !formData.travel_date
-              ) {
-                console.error("필수값 누락");
-                return;
-              }
-            } else {
-              if (
-                !formData.title ||
-                !formData.text_content ||
-                !formData.travel_date ||
-                formData.diary_regions.length === 0
-              ) {
-                console.error("필수값 누락");
-                return;
-              }
-            }
-
-            const diaryImagesUrls = await Promise.all(
-              imgs.map((v) => uploadAndGetUrlImage(v.uri))
-            );
-            let body = {
-              ...formData,
-              diary_images: diaryImagesUrls,
-            };
-
-            if (formData.is_drawing) {
-              const drawingContentBase64 =
-                capturedDrawingImage.encodeToBase64();
-              const drawingContentUrl =
-                await uploadAndGetUrlImage(drawingContentBase64);
-
-              body = { ...body, drawing_content: drawingContentUrl };
-            }
-
-            const result = await createDiary(body);
-            if (result) {
-              console.log("33333", result);
-              navigation.navigate("Diary");
-            }
-          }}
-        >
+        <Pressable className="pt-1.5" onPress={handleSubmit}>
           <Text className="text-lg text-blue-500 underline">등록</Text>
         </Pressable>
       ),
@@ -342,8 +343,10 @@ export default function DiaryCreateScreen() {
               onChangeText={(value) => handleChangeFormValues("title", value)}
             />
             <TextInput
-              className="mt-4 text-lg"
+              className="pb-20 mt-4 text-lg"
               placeholder="내용을 작성해주세요"
+              multiline={true}
+              textAlignVertical="top"
               onChangeText={(value) =>
                 handleChangeFormValues("text_content", value)
               }

@@ -1,50 +1,44 @@
-import { View, Text, Image } from "react-native";
+import { IDiary } from "@/apis/createDiary";
+import { useMemo } from "react";
+import { View, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Swiper from "react-native-web-swiper";
+import { groupByCountry } from "../util";
+import dayjs from "dayjs";
 
-export default function TextContentPost({ data }) {
+export default function TextContentPost({ data }: { data: IDiary }) {
+  const groupedRegions = useMemo(
+    () => groupByCountry(data.diary_regions),
+    [data]
+  );
+
   return (
-    <>
-      <Swiper
-        key="my"
-        loop
-        controlsEnabled={false}
-        containerStyle={{
-          width: "100%",
-          height: 350,
-        }}
-      >
-        {data.images.map((img) => (
-          <Image
-            key={img}
-            source={{ uri: img }}
-            resizeMode="cover"
-            className="w-full h-full mx-auto"
-          />
-        ))}
-      </Swiper>
+    <View className="flex-col px-4 mb-3 gap-y-3">
+      <Text className="text-xl font-semibold">{data.title}</Text>
 
-      <View className="flex-col px-4 my-3 gap-y-3">
-        <Text className="text-xl font-semibold">{data.title}</Text>
-
-        <View className="flex-row gap-x-4">
-          {data.cities.map((v) => (
-            <View key={v.name} className="px-2 py-1 bg-gray-100 rounded-md">
-              <Text className="text-base">{v.name}</Text>
-              <Text className="-mt-0.5 text-sm text-gray-600">
-                {v.countryName}
+      <View className="flex-row gap-x-4">
+        {Object.entries(groupedRegions).map(
+          ([countryCode, { country_name, regions }]: any) => (
+            <View
+              key={countryCode}
+              className="px-2 py-1 bg-gray-100 rounded-md"
+            >
+              <Text className="text-base">{country_name}</Text>
+              <Text className="text-sm -mt-0.5 text-gray-600">
+                {regions.join(", ")}
               </Text>
             </View>
-          ))}
-        </View>
-
-        <View className="flex-row items-center gap-x-2">
-          <Ionicons name="calendar-outline" size={18} color="#4b5563" />
-          <Text className="text-base text-gray-600">{data.travelDate}</Text>
-        </View>
-
-        <Text>{data.content}</Text>
+          )
+        )}
       </View>
-    </>
+
+      <View className="flex-row items-center gap-x-2">
+        <Ionicons name="calendar-outline" size={18} color="#4b5563" />
+        <Text className="text-base text-gray-600">
+          {dayjs(data.travel_date).format("YYYY-MM-DD")}
+        </Text>
+      </View>
+
+      <Text className="py-4">{data.text_content}</Text>
+    </View>
   );
 }

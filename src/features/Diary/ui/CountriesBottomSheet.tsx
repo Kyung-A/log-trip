@@ -70,7 +70,12 @@ export default function CountriesBottomSheet({
     setResultSelectedCountries(selectedCountries);
     handleChangeFormValues(
       "diary_regions",
-      selectedCountries.map((v) => v.code)
+      selectedCountries.map((v) => ({
+        region_code: v.code,
+        region_name: v.name,
+        country_code: v.country,
+        country_name: v.countryName,
+      }))
     );
   }, [selectedCountries]);
 

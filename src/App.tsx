@@ -13,9 +13,9 @@ import { Text, TouchableOpacity, View } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import PhoneAuthScreen from "./pages/PhoneAuth";
 import LoginScreen from "./pages/Login";
+import { deleteUser, getUser } from "./apis";
 
 import "./global.css";
-import { deleteUser, getUser, logout } from "./apis";
 
 SplashScreen.preventAutoHideAsync();
 WebBrowser.maybeCompleteAuthSession();

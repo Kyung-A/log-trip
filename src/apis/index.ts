@@ -8,3 +8,4 @@ export { imageUpload } from "./imageUpload";
 export { getImageUrl } from "./getImageUrl";
 export { deleteUser } from "./deleteUser";
 export { createDiary } from "./createDiary";
+export { getDiaries } from "./getDiaries";

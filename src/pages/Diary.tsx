@@ -1,165 +1,122 @@
-import { Pressable, ScrollView, View, Text } from "react-native";
+import { Pressable, View, Text, Image, FlatList } from "react-native";
 import { DrawingiContentPost, TextContentPost } from "@/features/Diary/ui";
 import Feather from "react-native-vector-icons/Feather";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-
-const MOCK_DATA = [
-  {
-    id: 1,
-    username: "홍길동",
-    title: "",
-    content: "",
-    images: [
-      "https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68",
-      "https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68",
-      "https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68",
-    ],
-    drawingContent: "",
-    cities: [
-      {
-        name: "홋카이도",
-        code: "JP-01",
-        country: "JP",
-        countryName: "일본",
-        iso3: "JPN",
-        boundaryType: "ADM1",
-        apiURL: "https://www.geoboundaries.org/api/current/gbOpen/JPN/ADM1/",
-      },
-      {
-        name: "아오모리현",
-        code: "JP-02",
-        country: "JP",
-        countryName: "일본",
-        iso3: "JPN",
-        boundaryType: "ADM1",
-        apiURL: "https://www.geoboundaries.org/api/current/gbOpen/JPN/ADM1/",
-      },
-    ],
-    isDrawing: true,
-    createdAt: "2025-03-24 12:11:54",
-    travelDate: "2025-03-24 12:11:54",
-  },
-  {
-    id: 2,
-    username: "홍길동",
-    title: "",
-    content: "",
-    images: [],
-    drawingContent: "",
-    cities: [
-      {
-        name: "홋카이도",
-        code: "JP-01",
-        country: "JP",
-        countryName: "일본",
-        iso3: "JPN",
-        boundaryType: "ADM1",
-        apiURL: "https://www.geoboundaries.org/api/current/gbOpen/JPN/ADM1/",
-      },
-    ],
-    isDrawing: true,
-    createdAt: "2025-03-24 12:11:54",
-    travelDate: "2025-03-24 12:11:54",
-  },
-  {
-    id: 3,
-    username: "홍길동",
-    title: "일본 여행기",
-    content:
-      "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.\nIf you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet.\n\n It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.",
-    images: [
-      "https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68",
-    ],
-    drawingContent: "",
-    cities: [
-      {
-        name: "산둥성",
-        code: "CN-015",
-        country: "CN",
-        countryName: "중국",
-        iso3: "CHN",
-        boundaryType: "ADM1",
-        apiURL: "https://www.geoboundaries.org/api/current/gbOpen/CHN/ADM1/",
-      },
-      {
-        name: "허난성",
-        code: "CN-016",
-        country: "CN",
-        countryName: "중국",
-        iso3: "CHN",
-        boundaryType: "ADM1",
-        apiURL: "https://www.geoboundaries.org/api/current/gbOpen/CHN/ADM1/",
-      },
-      {
-        name: "후베이성",
-        code: "CN-017",
-        country: "CN",
-        countryName: "중국",
-        iso3: "CHN",
-        boundaryType: "ADM1",
-        apiURL: "https://www.geoboundaries.org/api/current/gbOpen/CHN/ADM1/",
-      },
-      {
-        name: "후난성",
-        code: "CN-018",
-        country: "CN",
-        countryName: "중국",
-        iso3: "CHN",
-        boundaryType: "ADM1",
-        apiURL: "https://www.geoboundaries.org/api/current/gbOpen/CHN/ADM1/",
-      },
-    ],
-    isDrawing: false,
-    createdAt: "2025-03-24 12:11:54",
-    travelDate: "2025-03-24 12:11:54",
-  },
-];
+import { getDiaries, getUser } from "@/apis";
+import { IDiary } from "@/apis/createDiary";
+import Swiper from "react-native-web-swiper";
+import { useFocusEffect } from "@react-navigation/native";
 
 const SNAP_POINTS = ["15%"];
 
 export default function DiaryScreen({ navigation }) {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
+  const [data, setData] = useState<IDiary[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState<string>();
+
   const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
+    if (index === -1) {
+      setSelectedPostId(null);
+    }
   }, []);
+
+  const fetchData = useCallback(async () => {
+    setRefreshing(true);
+
+    const user = await getUser();
+    const result = await getDiaries(user.id);
+    setData(result);
+
+    setRefreshing(false);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
+
+  console.log(selectedPostId);
 
   return (
     <>
-      <ScrollView className="bg-[#eaeaea]">
-        {MOCK_DATA.map((v) => (
-          <View key={v.id} className="w-full h-auto mb-2 bg-white">
+      <FlatList
+        data={data}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View key={item.id} className="w-full h-auto mb-2 bg-white">
             <View className="flex-row items-center justify-between p-4">
               <Pressable
                 onPress={() => navigation.navigate("마이페이지")}
                 className="flex-row items-center gap-x-2"
               >
-                <View className="rounded-full w-14 h-14 bg-slate-200"></View>
-                <Text>{v.username}</Text>
+                <View className="overflow-hidden rounded-full w-14 h-14">
+                  <Image
+                    source={{ uri: item.user_info.profile_image }}
+                    className="object-cover w-full h-full"
+                  />
+                </View>
+                <Text>{item.user_info.name}</Text>
               </Pressable>
-              <Pressable onPress={() => bottomSheetRef.current?.expand()}>
+              <Pressable
+                onPress={() => {
+                  bottomSheetRef.current?.expand();
+                  setSelectedPostId(item.id);
+                }}
+              >
                 <Feather name="more-vertical" size={20} />
               </Pressable>
             </View>
 
-            {v.isDrawing ? (
-              <DrawingiContentPost data={v} />
+            {item.diary_images && item.diary_images.length > 0 && (
+              <View className="mb-3">
+                <Swiper
+                  key="my"
+                  loop
+                  containerStyle={{
+                    width: "100%",
+                    height: 400,
+                  }}
+                  controlsProps={{
+                    prevPos: false,
+                    nextPos: false,
+                    dotsTouchable: true,
+                    dotsPos: "bottom",
+                    dotActiveStyle: { backgroundColor: "#d5b2a7" },
+                  }}
+                >
+                  {item.diary_images.map((img) => (
+                    <Image
+                      key={img.id}
+                      source={{ uri: img.url }}
+                      className="object-cover w-full h-full mx-auto"
+                    />
+                  ))}
+                </Swiper>
+              </View>
+            )}
+
+            {item.is_drawing ? (
+              <DrawingiContentPost data={item} />
             ) : (
-              <TextContentPost data={v} />
+              <TextContentPost data={item} />
             )}
           </View>
-        ))}
-      </ScrollView>
+        )}
+        refreshing={refreshing}
+        onRefresh={fetchData}
+      />
 
       <BottomSheet
         index={-1}
         snapPoints={SNAP_POINTS}
         ref={bottomSheetRef}
-        onChange={handleSheetChanges}
         enablePanDownToClose={true}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
@@ -168,6 +125,7 @@ export default function DiaryScreen({ navigation }) {
             appearsOnIndex={0}
           />
         )}
+        onChange={handleSheetChanges}
       >
         <BottomSheetView className="px-6">
           <Pressable
