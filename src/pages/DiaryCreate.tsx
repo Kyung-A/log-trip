@@ -22,8 +22,8 @@ import {
   Drawing,
   EditImage,
   UploadImages,
-} from "@/features/Diary/ui";
-import { ICountry } from "@/features/Diary/types";
+} from "@/features/list/ui";
+import { ICountry } from "@/features/list/types";
 import {
   Canvas,
   useCanvasRef,

@@ -28,6 +28,8 @@ export default function HomeScreen({ navigation }) {
     };
   };
 
+  console.log(geoJSON);
+
   useEffect(() => {
     (async () => {
       const result = await fetchGeoJSON(COUNTRIES[0]);

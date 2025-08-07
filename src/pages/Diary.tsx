@@ -1,5 +1,5 @@
 import { Pressable, View, Text, Image, FlatList } from "react-native";
-import { DrawingiContentPost, TextContentPost } from "@/features/Diary/ui";
+import { DrawingiContentPost, TextContentPost } from "@/features/list/ui";
 import Feather from "react-native-vector-icons/Feather";
 import { useCallback, useRef, useState } from "react";
 import BottomSheet, {
@@ -52,7 +52,7 @@ export default function DiaryScreen({ navigation }) {
 
   return (
     <>
-      {data.length > 0 ? (
+      {data?.length > 0 ? (
         <FlatList
           data={data}
           keyExtractor={(item, index) => index.toString()}
