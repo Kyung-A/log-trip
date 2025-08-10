@@ -74,6 +74,7 @@ export default function HomeScreen() {
   }
 
   const fetchData = useCallback(async () => {
+    setGeoJSON([]);
     const userId = await fetchUser();
     const userRegions = await fetchUserRegions(userId);
 
