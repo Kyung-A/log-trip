@@ -105,11 +105,18 @@ export default function HomeScreen() {
       return acc;
     }, []);
 
-    mappingDataAndColor.forEach(async (v) => {
-      const geoJson = await fetchGeoJSON(v);
+    const items = await Promise.allSettled(
+      mappingDataAndColor.map((v) => fetchGeoJSON(v))
+    );
 
-      setGeoJSON((prev) => [...prev, geoJson]);
-    });
+    const dedup = new Map();
+    for (const r of items) {
+      if (r.status === "fulfilled" && r.value.features.length > 0) {
+        dedup.set(r.value.id, r.value);
+      }
+    }
+
+    setGeoJSON(Array.from(dedup.values()));
   }, [COUNTRY_COLORS]);
 
   useFocusEffect(
