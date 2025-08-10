@@ -1,618 +1,618 @@
 export const COUNTRY_COLORS = [
   {
-    country: "AE",
+    country_code: "AE",
     color: "#E5B350",
   },
   {
-    country: "AF",
+    country_code: "AF",
     color: "#50E5C2",
   },
   {
-    country: "AO",
+    country_code: "AO",
     color: "#80E550",
   },
   {
-    country: "AQ",
+    country_code: "AQ",
     color: "#50B1E5",
   },
   {
-    country: "AR",
+    country_code: "AR",
     color: "#A9E550",
   },
   {
-    country: "AT",
+    country_code: "AT",
     color: "#50D4E5",
   },
   {
-    country: "AU",
+    country_code: "AU",
     color: "#E57350",
   },
   {
-    country: "AZ",
+    country_code: "AZ",
     color: "#5082E5",
   },
   {
-    country: "BA",
+    country_code: "BA",
     color: "#E5508A",
   },
   {
-    country: "BD",
+    country_code: "BD",
     color: "#50E57C",
   },
   {
-    country: "BE",
+    country_code: "BE",
     color: "#E55096",
   },
   {
-    country: "BF",
+    country_code: "BF",
     color: "#E5D050",
   },
   {
-    country: "BG",
+    country_code: "BG",
     color: "#50E55F",
   },
   {
-    country: "BI",
+    country_code: "BI",
     color: "#E5A750",
   },
   {
-    country: "BJ",
+    country_code: "BJ",
     color: "#E350E5",
   },
   {
-    country: "BO",
+    country_code: "BO",
     color: "#52E550",
   },
   {
-    country: "BR",
+    country_code: "BR",
     color: "#E55079",
   },
   {
-    country: "BT",
+    country_code: "BT",
     color: "#CC50E5",
   },
   {
-    country: "BW",
+    country_code: "BW",
     color: "#7AE550",
   },
   {
-    country: "BY",
+    country_code: "BY",
     color: "#E550AD",
   },
   {
-    country: "CA",
+    country_code: "CA",
     color: "#8050E5",
   },
   {
-    country: "CD",
+    country_code: "CD",
     color: "#C650E5",
   },
   {
-    country: "CF",
+    country_code: "CF",
     color: "#D7E550",
   },
   {
-    country: "CG",
+    country_code: "CG",
     color: "#505AE5",
   },
   {
-    country: "CI",
+    country_code: "CI",
     color: "#8CE550",
   },
   {
-    country: "CL",
+    country_code: "CL",
     color: "#509FE5",
   },
   {
-    country: "CM",
+    country_code: "CM",
     color: "#A350E5",
   },
   {
-    country: "CN",
+    country_code: "CN",
     color: "#5065E5",
   },
   {
-    country: "CO",
+    country_code: "CO",
     color: "#5850E5",
   },
   {
-    country: "CR",
+    country_code: "CR",
     color: "#9250E5",
   },
   {
-    country: "CU",
+    country_code: "CU",
     color: "#E55B50",
   },
   {
-    country: "CZ",
+    country_code: "CZ",
     color: "#E550A1",
   },
   {
-    country: "DE",
+    country_code: "DE",
     color: "#E5507E",
   },
   {
-    country: "DJ",
+    country_code: "DJ",
     color: "#E3E550",
   },
   {
-    country: "DK",
+    country_code: "DK",
     color: "#50E58E",
   },
   {
-    country: "DO",
+    country_code: "DO",
     color: "#B550E5",
   },
   {
-    country: "DZ",
+    country_code: "DZ",
     color: "#E55050",
   },
   {
-    country: "EC",
+    country_code: "EC",
     color: "#AF50E5",
   },
   {
-    country: "EE",
+    country_code: "EE",
     color: "#50E599",
   },
   {
-    country: "EG",
+    country_code: "EG",
     color: "#E550D0",
   },
   {
-    country: "EH",
+    country_code: "EH",
     color: "#E550C4",
   },
   {
-    country: "ER",
+    country_code: "ER",
     color: "#E5CA50",
   },
   {
-    country: "ES",
+    country_code: "ES",
     color: "#E59050",
   },
   {
-    country: "ET",
+    country_code: "ET",
     color: "#50E5D4",
   },
   {
-    country: "FI",
+    country_code: "FI",
     color: "#50E582",
   },
   {
-    country: "FJ",
+    country_code: "FJ",
     color: "#E55090",
   },
   {
-    country: "FR",
+    country_code: "FR",
     color: "#8C50E5",
   },
   {
-    country: "GA",
+    country_code: "GA",
     color: "#505FE5",
   },
   {
-    country: "GB",
+    country_code: "GB",
     color: "#5D50E5",
   },
   {
-    country: "GE",
+    country_code: "GE",
     color: "#C050E5",
   },
   {
-    country: "GH",
+    country_code: "GH",
     color: "#DD50E5",
   },
   {
-    country: "GL",
+    country_code: "GL",
     color: "#E550BE",
   },
   {
-    country: "GM",
+    country_code: "GM",
     color: "#50E5CE",
   },
   {
-    country: "GN",
+    country_code: "GN",
     color: "#E58A50",
   },
   {
-    country: "GQ",
+    country_code: "GQ",
     color: "#507CE5",
   },
   {
-    country: "GR",
+    country_code: "GR",
     color: "#50DFE5",
   },
   {
-    country: "GT",
+    country_code: "GT",
     color: "#50E5D9",
   },
   {
-    country: "GU",
+    country_code: "GU",
     color: "#50E588",
   },
   {
-    country: "GY",
+    country_code: "GY",
     color: "#9D50E5",
   },
   {
-    country: "HN",
+    country_code: "HN",
     color: "#E56750",
   },
   {
-    country: "HR",
+    country_code: "HR",
     color: "#C6E550",
   },
   {
-    country: "HU",
+    country_code: "HU",
     color: "#5088E5",
   },
   {
-    country: "ID",
+    country_code: "ID",
     color: "#50E5C8",
   },
   {
-    country: "IE",
+    country_code: "IE",
     color: "#9DE550",
   },
   {
-    country: "IL",
+    country_code: "IL",
     color: "#E5E150",
   },
   {
-    country: "IN",
+    country_code: "IN",
     color: "#7A50E5",
   },
   {
-    country: "IQ",
+    country_code: "IQ",
     color: "#E5DB50",
   },
   {
-    country: "IR",
+    country_code: "IR",
     color: "#50A5E5",
   },
   {
-    country: "IS",
+    country_code: "IS",
     color: "#50E5E5",
   },
   {
-    country: "IT",
+    country_code: "IT",
     color: "#50E56B",
   },
   {
-    country: "JM",
+    country_code: "JM",
     color: "#6FE550",
   },
   {
-    country: "JO",
+    country_code: "JO",
     color: "#9850E5",
   },
   {
-    country: "JP",
+    country_code: "JP",
     color: "#E59B50",
   },
   {
-    country: "KE",
+    country_code: "KE",
     color: "#E56150",
   },
   {
-    country: "KG",
+    country_code: "KG",
     color: "#E57950",
   },
   {
-    country: "KH",
+    country_code: "KH",
     color: "#E55650",
   },
   {
-    country: "KI",
+    country_code: "KI",
     color: "#5054E5",
   },
   {
-    country: "KR",
+    country_code: "KR",
     color: "#86E550",
   },
   {
-    country: "KZ",
+    country_code: "KZ",
     color: "#6F50E5",
   },
   {
-    country: "LA",
+    country_code: "LA",
     color: "#E550B3",
   },
   {
-    country: "LB",
+    country_code: "LB",
     color: "#E5C450",
   },
   {
-    country: "LK",
+    country_code: "LK",
     color: "#63E550",
   },
   {
-    country: "LR",
+    country_code: "LR",
     color: "#92E550",
   },
   {
-    country: "LS",
+    country_code: "LS",
     color: "#A3E550",
   },
   {
-    country: "LT",
+    country_code: "LT",
     color: "#5DE550",
   },
   {
-    country: "LV",
+    country_code: "LV",
     color: "#D750E5",
   },
   {
-    country: "LY",
+    country_code: "LY",
     color: "#50E5DF",
   },
   {
-    country: "MA",
+    country_code: "MA",
     color: "#7550E5",
   },
   {
-    country: "MD",
+    country_code: "MD",
     color: "#506BE5",
   },
   {
-    country: "MG",
+    country_code: "MG",
     color: "#50C2E5",
   },
   {
-    country: "ML",
+    country_code: "ML",
     color: "#50E571",
   },
   {
-    country: "MM",
+    country_code: "MM",
     color: "#50CEE5",
   },
   {
-    country: "MN",
+    country_code: "MN",
     color: "#BA50E5",
   },
   {
-    country: "MR",
+    country_code: "MR",
     color: "#58E550",
   },
   {
-    country: "MV",
+    country_code: "MV",
     color: "#50E565",
   },
   {
-    country: "MW",
+    country_code: "MW",
     color: "#E55061",
   },
   {
-    country: "MX",
+    country_code: "MX",
     color: "#E550D6",
   },
   {
-    country: "MY",
+    country_code: "MY",
     color: "#E55073",
   },
   {
-    country: "MZ",
+    country_code: "MZ",
     color: "#5099E5",
   },
   {
-    country: "NC",
+    country_code: "NC",
     color: "#D250E5",
   },
   {
-    country: "NE",
+    country_code: "NE",
     color: "#E58450",
   },
   {
-    country: "NG",
+    country_code: "NG",
     color: "#E55056",
   },
   {
-    country: "NI",
+    country_code: "NI",
     color: "#CCE550",
   },
   {
-    country: "NL",
+    country_code: "NL",
     color: "#8650E5",
   },
   {
-    country: "NO",
+    country_code: "NO",
     color: "#50E5BC",
   },
   {
-    country: "NP",
+    country_code: "NP",
     color: "#50E577",
   },
   {
-    country: "NZ",
+    country_code: "NZ",
     color: "#A950E5",
   },
   {
-    country: "OM",
+    country_code: "OM",
     color: "#50E554",
   },
   {
-    country: "PA",
+    country_code: "PA",
     color: "#E55084",
   },
   {
-    country: "PE",
+    country_code: "PE",
     color: "#E59650",
   },
   {
-    country: "PF",
+    country_code: "PF",
     color: "#50E5B7",
   },
   {
-    country: "PH",
+    country_code: "PH",
     color: "#6350E5",
   },
   {
-    country: "PK",
+    country_code: "PK",
     color: "#E5A150",
   },
   {
-    country: "PL",
+    country_code: "PL",
     color: "#AFE550",
   },
   {
-    country: "PR",
+    country_code: "PR",
     color: "#E550A7",
   },
   {
-    country: "PT",
+    country_code: "PT",
     color: "#E5AD50",
   },
   {
-    country: "PY",
+    country_code: "PY",
     color: "#E550CA",
   },
   {
-    country: "RO",
+    country_code: "RO",
     color: "#50D9E5",
   },
   {
-    country: "RS",
+    country_code: "RS",
     color: "#B5E550",
   },
   {
-    country: "RU",
+    country_code: "RU",
     color: "#E55067",
   },
   {
-    country: "RW",
+    country_code: "RW",
     color: "#E5506D",
   },
   {
-    country: "SA",
+    country_code: "SA",
     color: "#E5D650",
   },
   {
-    country: "SD",
+    country_code: "SD",
     color: "#5094E5",
   },
   {
-    country: "SG",
+    country_code: "SG",
     color: "#E56D50",
   },
   {
-    country: "SK",
+    country_code: "SK",
     color: "#E550E1",
   },
   {
-    country: "SL",
+    country_code: "SL",
     color: "#5071E5",
   },
   {
-    country: "SN",
+    country_code: "SN",
     color: "#5250E5",
   },
   {
-    country: "SO",
+    country_code: "SO",
     color: "#50C8E5",
   },
   {
-    country: "SR",
+    country_code: "SR",
     color: "#6950E5",
   },
   {
-    country: "SS",
+    country_code: "SS",
     color: "#50BCE5",
   },
   {
-    country: "SY",
+    country_code: "SY",
     color: "#D2E550",
   },
   {
-    country: "SZ",
+    country_code: "SZ",
     color: "#E5BE50",
   },
   {
-    country: "TD",
+    country_code: "TD",
     color: "#C0E550",
   },
   {
-    country: "TG",
+    country_code: "TG",
     color: "#50ABE5",
   },
   {
-    country: "TH",
+    country_code: "TH",
     color: "#50B7E5",
   },
   {
-    country: "TJ",
+    country_code: "TJ",
     color: "#E5505B",
   },
   {
-    country: "TM",
+    country_code: "TM",
     color: "#BAE550",
   },
   {
-    country: "TN",
+    country_code: "TN",
     color: "#E550DB",
   },
   {
-    country: "TO",
+    country_code: "TO",
     color: "#50E594",
   },
   {
-    country: "TR",
+    country_code: "TR",
     color: "#508EE5",
   },
   {
-    country: "TW",
+    country_code: "TW",
     color: "#E550B8",
   },
   {
-    country: "TZ",
+    country_code: "TZ",
     color: "#50E5AB",
   },
   {
-    country: "UA",
+    country_code: "UA",
     color: "#50E59F",
   },
   {
-    country: "UG",
+    country_code: "UG",
     color: "#50E55A",
   },
   {
-    country: "US",
+    country_code: "US",
     color: "#50E5A5",
   },
   {
-    country: "UY",
+    country_code: "UY",
     color: "#69E550",
   },
   {
-    country: "UZ",
+    country_code: "UZ",
     color: "#5077E5",
   },
   {
-    country: "VE",
+    country_code: "VE",
     color: "#98E550",
   },
   {
-    country: "VN",
+    country_code: "VN",
     color: "#DDE550",
   },
   {
-    country: "WS",
+    country_code: "WS",
     color: "#E5B850",
   },
   {
-    country: "YE",
+    country_code: "YE",
     color: "#75E550",
   },
   {
-    country: "ZA",
+    country_code: "ZA",
     color: "#E57E50",
   },
   {
-    country: "ZM",
+    country_code: "ZM",
     color: "#E5509B",
   },
   {
-    country: "ZW",
+    country_code: "ZW",
     color: "#50E5B1",
   },
 ];

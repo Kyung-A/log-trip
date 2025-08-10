@@ -1,3 +1,5 @@
+import { IRegion } from "@/shared/types";
+
 export interface IDiary {
   id?: string;
   user_info?: { name: string; email: string; profile_image: string };
@@ -8,21 +10,18 @@ export interface IDiary {
   is_drawing: boolean;
   travel_date: string | null;
   diary_images: string[] | { id: string; url: string }[] | null;
-  diary_regions: IRegionResponse[] | IRegionJson[] | null;
+  diary_regions: IRegion[] | null;
 }
 
-export interface IRegionResponse {
+export interface IDiaryRegions {
+  diary_id: string;
   region_code: string;
-  region_name: string;
+  created_at: string;
   country_code: string;
+  region_name: string;
   country_name: string;
-}
-
-export interface IRegionJson {
-  name: string;
-  code: string;
-  country: string;
-  countryName: string;
-  iso3: string;
-  apiURL: string;
+  shape_name: string | null;
+  diaries: {
+    user_id: string;
+  };
 }

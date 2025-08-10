@@ -23,7 +23,6 @@ import {
   EditImage,
   UploadImages,
 } from "@/features/diary/ui";
-import { ICountry } from "@/features/diary/types";
 import {
   Canvas,
   useCanvasRef,
@@ -42,6 +41,7 @@ import { getUser } from "@/entities/auth";
 import { createDiary } from "@/entities/diary";
 import { IDiary } from "@/entities/diary/types";
 import { imageUpload, getImageUrl } from "@/shared";
+import { IRegion } from "@/shared/types";
 
 export interface IColoredPath {
   path: SkPath;
@@ -70,7 +70,7 @@ export default function DiaryCreateScreen() {
 
   const [imgs, setImgs] = useState<{ origin: string; uri: string }[]>([]);
   const [resultSelectedCountries, setResultSelectedCountries] = useState<
-    ICountry[]
+    IRegion[]
   >([]);
   const [isDrawingMode, setDrawingMode] = useState<boolean>(false);
   const [isOpenDrawing, setOpenDrawing] = useState<boolean>(false);
@@ -288,10 +288,10 @@ export default function DiaryCreateScreen() {
           <View className="flex flex-row flex-wrap flex-1 gap-2">
             {resultSelectedCountries.map((v) => (
               <Text
-                key={v.code}
+                key={v.region_code}
                 className="p-2 rounded bg-[#ebebeb] font-semibold"
               >
-                {v.name}
+                {v.region_name}
               </Text>
             ))}
           </View>
@@ -313,6 +313,7 @@ export default function DiaryCreateScreen() {
             onConfirm={(date) => {
               setOpenDateModal(false);
               setDate(date);
+              console.log(date);
               handleChangeFormValues("travel_date", date);
             }}
             onCancel={() => {

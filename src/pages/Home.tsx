@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View } from "react-native";
 import MapboxGL from "@rnmapbox/maps";
 import axios from "axios";
-import { COUNTRY_COLORS, supabase } from "@/shared";
+import { COUNTRY_COLORS, getRegions } from "@/shared";
 import { getDiaryRegions } from "@/entities/diary";
 import { getUser } from "@/entities/auth";
-import { IRegionResponse } from "@/entities/diary/types";
 import { useFocusEffect } from "@react-navigation/native";
+import { IDiaryRegions } from "@/entities/diary/types";
 
 MapboxGL.setAccessToken(process.env.MAPBOX_KEY);
 
@@ -18,7 +18,7 @@ export default function HomeScreen() {
     return id;
   }, []);
 
-  const fetchRegions = useCallback(async (id: string) => {
+  const fetchUserRegions = useCallback(async (id: string) => {
     const result = await getDiaryRegions(id);
     return result;
   }, []);
@@ -34,32 +34,39 @@ export default function HomeScreen() {
 
     const filtered = fullGeo.features.filter(
       (f) =>
-        f.properties.shapeISO === data.code ||
+        f.properties.shapeISO === data.region_code ||
         f.properties.shapeName === data.shape_name
     );
 
     return {
-      id: data.code,
+      id: data.region_code,
       color: data.color,
       type: "FeatureCollection",
       features: filtered,
     };
   };
 
-  type BatchItem = { country: string; code?: string; shapeName?: string };
+  type BatchItem = {
+    country_code: string;
+    region_code?: string;
+    shape_name?: string;
+  };
 
   function buildOr(batch: BatchItem[], opts = { loose: true }) {
     const groups: string[] = [];
-    for (const { country, code, shapeName } of batch) {
-      if (code) groups.push(`and(country.eq.${country},code.eq.${code})`);
-      if (shapeName) {
-        const pat = opts.loose
-          ? shapeName.includes("%")
-            ? shapeName
-            : `%${shapeName}%`
-          : shapeName;
+    for (const { country_code, region_code, shape_name } of batch) {
+      if (region_code)
         groups.push(
-          `and(country.eq.${country},shape_name.${opts.loose ? "ilike" : "eq"}.${pat})`
+          `and(country_code.eq.${country_code},region_code.eq.${region_code})`
+        );
+      if (shape_name) {
+        const pat = opts.loose
+          ? shape_name.includes("%")
+            ? shape_name
+            : `%${shape_name}%`
+          : shape_name;
+        groups.push(
+          `and(country_code.eq.${country_code},shape_name.${opts.loose ? "ilike" : "eq"}.${pat})`
         );
       }
     }
@@ -68,31 +75,28 @@ export default function HomeScreen() {
 
   const fetchData = useCallback(async () => {
     const userId = await fetchUser();
-    const result = await fetchRegions(userId);
+    const userRegions = await fetchUserRegions(userId);
 
     const uniqueByCountry = Array.from(
       new Map(
-        result.map((item: IRegionResponse) => [item.region_code, item])
+        userRegions.map((item: IDiaryRegions) => [item.region_code, item])
       ).values()
-    ).map((v) => ({
-      code: v.region_code,
+    ).map((v: IDiaryRegions) => ({
+      region_code: v.region_code,
       shape_name: v.shape_name,
-      country: v.country_code,
+      country_code: v.country_code,
     }));
 
-    const orExp = buildOr(uniqueByCountry);
+    const filters = buildOr(uniqueByCountry);
+    const { data: rowRegions } = await getRegions(filters);
 
-    const { data } = await supabase.from("adm_regions").select("*").or(orExp);
-
-    // console.log(data);
-
-    const filtered = data.filter((c) =>
-      uniqueByCountry.some((reg: IRegionResponse) => c.code === reg.code)
+    const resultData = rowRegions.filter((c) =>
+      uniqueByCountry.some((reg) => c.region_code === reg.region_code)
     );
 
-    const filteredColors = filtered.reduce((acc, c) => {
+    const mappingDataAndColor = resultData.reduce((acc, c) => {
       const matched = COUNTRY_COLORS.find(
-        (color) => color.country === c.country
+        (color) => color.country_code === c.country_code
       );
       if (matched) {
         acc.push({ ...c, color: matched.color });
@@ -100,7 +104,7 @@ export default function HomeScreen() {
       return acc;
     }, []);
 
-    filteredColors.forEach(async (v) => {
+    mappingDataAndColor.forEach(async (v) => {
       const geoJson = await fetchGeoJSON(v);
 
       setGeoJSON((prev) => [...prev, geoJson]);

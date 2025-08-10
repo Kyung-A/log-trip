@@ -1,21 +1,21 @@
 import { Button, Pressable, Text, TextInput, View } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { ICountry } from "../types";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { COUNTRIES } from "@/shared";
+import { getRegions } from "@/shared";
+import { IRegion } from "@/shared/types";
 
 const SNAP_POINTS = ["100%"];
 
 interface ICountriesBottomSheetProps {
   bottomSheetRef: React.RefObject<BottomSheetMethods>;
-  resultSelectedCountries: ICountry[];
-  setResultSelectedCountries: React.Dispatch<React.SetStateAction<ICountry[]>>;
+  resultSelectedCountries: IRegion[];
+  setResultSelectedCountries: React.Dispatch<React.SetStateAction<IRegion[]>>;
   handleChangeFormValues: (key: string, value: any) => void;
   setShowTopBar: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -27,8 +27,9 @@ export default function CountriesBottomSheet({
   handleChangeFormValues,
   setShowTopBar,
 }: ICountriesBottomSheetProps) {
-  const [selectedCountries, setSelectedCountries] = useState<ICountry[]>([]);
-  const [searchCountries, setSearchCountries] = useState<ICountry[]>(COUNTRIES);
+  const [selectedCountries, setSelectedCountries] = useState<IRegion[]>([]);
+  const [searchCountries, setSearchCountries] = useState<IRegion[]>();
+  const allCountries = useRef<IRegion[]>(null);
 
   const handleSheetChanges = useCallback(
     (index: number) => {
@@ -39,17 +40,21 @@ export default function CountriesBottomSheet({
     [resultSelectedCountries]
   );
 
-  const handleSelectedCountry = useCallback((selectData: ICountry) => {
+  const handleSelectedCountry = useCallback((selectData: IRegion) => {
     setSelectedCountries((prev) => {
       const isSelected = prev.some(
         (data) =>
-          data.code === selectData.code && data.country === selectData.country
+          data.region_code === selectData.region_code &&
+          data.country_code === selectData.country_code
       );
 
       if (isSelected) {
         return prev.filter(
           (p) =>
-            !(p.code === selectData.code && p.country === selectData.country)
+            !(
+              p.region_code === selectData.region_code &&
+              p.country_code === selectData.country_code
+            )
         );
       } else {
         return [...prev, selectData];
@@ -58,8 +63,8 @@ export default function CountriesBottomSheet({
   }, []);
 
   const handleSearchCountry = useCallback((value) => {
-    const newList = COUNTRIES.filter(
-      (v) => v.name.includes(value) || v.countryName.includes(value)
+    const newList = allCountries.current.filter(
+      (v) => v.region_name.includes(value) || v.country_name.includes(value)
     );
     setSearchCountries(newList);
   }, []);
@@ -71,10 +76,11 @@ export default function CountriesBottomSheet({
     handleChangeFormValues(
       "diary_regions",
       selectedCountries.map((v) => ({
-        region_code: v.code,
-        region_name: v.name,
-        country_code: v.country,
-        country_name: v.countryName,
+        region_code: v.region_code,
+        region_name: v.region_name,
+        shape_name: v.shape_name,
+        country_code: v.country_code,
+        country_name: v.country_name,
       }))
     );
   }, [selectedCountries]);
@@ -84,6 +90,16 @@ export default function CountriesBottomSheet({
     setShowTopBar(true);
     setSelectedCountries(resultSelectedCountries);
   }, [resultSelectedCountries]);
+
+  const fetchRegions = useCallback(async () => {
+    const { data } = await getRegions();
+    setSearchCountries(data);
+    allCountries.current = data;
+  }, []);
+
+  useEffect(() => {
+    fetchRegions();
+  }, []);
 
   return (
     <BottomSheet
@@ -124,23 +140,25 @@ export default function CountriesBottomSheet({
           <View className="flex flex-row flex-wrap gap-2 mt-4">
             {selectedCountries.map((v, idx) => (
               <Text
-                key={`${v.code}-${v.country}-${idx}`}
+                key={`${v.region_code}-${v.country_code}-${idx}`}
                 className="p-2 rounded bg-[#ebebeb] font-semibold"
               >
-                {v.name}
+                {v.region_name}
               </Text>
             ))}
           </View>
         </View>
         <View className="flex flex-col min-h-screen px-6 py-2 gap-y-6">
-          {searchCountries.map((v, idx) => {
+          {searchCountries?.map((v, idx) => {
             const selected = selectedCountries.some(
-              (item) => item.code === v.code && item.country === v.country
+              (item) =>
+                item.region_code === v.region_code &&
+                item.country_code === v.country_code
             );
 
             return (
               <Pressable
-                key={`${v.code}-${v.country}-${v.name}-${idx}`}
+                key={`${v.region_code}-${v.country_code}-${v.region_name}-${idx}`}
                 onPress={() => handleSelectedCountry(v)}
                 className="flex flex-row items-center gap-x-2"
               >
@@ -150,9 +168,9 @@ export default function CountriesBottomSheet({
                   color={selected ? "#000" : "#ccc"}
                 />
                 <View>
-                  <Text className="text-xl">{v.name}</Text>
+                  <Text className="text-xl">{v.region_name}</Text>
                   <Text className="mt-0.5 text-base text-gray-600">
-                    {v.countryName}
+                    {v.country_name}
                   </Text>
                 </View>
               </Pressable>
