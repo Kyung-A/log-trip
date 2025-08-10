@@ -8,18 +8,21 @@ export interface IDiary {
   is_drawing: boolean;
   travel_date: string | null;
   diary_images: string[] | { id: string; url: string }[] | null;
-  diary_regions:
-    | {
-        code: string;
-        name: string;
-        country: string;
-        countryName: string;
-      }[]
-    | {
-        region_code: string;
-        region_name: string;
-        country_code: string;
-        country_name: string;
-      }[]
-    | null;
+  diary_regions: IRegionResponse[] | IRegionJson[] | null;
+}
+
+export interface IRegionResponse {
+  region_code: string;
+  region_name: string;
+  country_code: string;
+  country_name: string;
+}
+
+export interface IRegionJson {
+  name: string;
+  code: string;
+  country: string;
+  countryName: string;
+  iso3: string;
+  apiURL: string;
 }

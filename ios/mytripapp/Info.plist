@@ -30,6 +30,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>com.nek777.mytripapp</string>
+          <string>com.nek777.mytripapp</string>
         </array>
       </dict>
       <dict>
