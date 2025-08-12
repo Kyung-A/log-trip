@@ -46,7 +46,7 @@ function ComposeTabButton() {
         <TouchableOpacity
           onPress={() => {
             setVisible(false);
-            navigation.navigate("DiaryCreate");
+            navigation.navigate("CompanionCreate");
           }}
           className="mt-2"
         >

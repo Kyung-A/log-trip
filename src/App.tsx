@@ -16,6 +16,7 @@ import { deleteUser, getUser } from "./entities/auth";
 import { TabBar } from "./shared";
 
 import "./global.css";
+import CompanionCreateScreen from "./pages/CompanionCreate";
 
 SplashScreen.preventAutoHideAsync();
 WebBrowser.maybeCompleteAuthSession();
@@ -71,6 +72,24 @@ export default function App() {
                   options={({ navigation }) => ({
                     headerTitle: () => (
                       <Text className="text-lg font-semibold">일기 작성</Text>
+                    ),
+                    headerLeft: () => (
+                      <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <FontAwesome6
+                          name="arrow-left"
+                          size={20}
+                          color="#646464"
+                        />
+                      </TouchableOpacity>
+                    ),
+                  })}
+                />
+                <Stack.Screen
+                  name="CompanionCreate"
+                  component={CompanionCreateScreen}
+                  options={({ navigation }) => ({
+                    headerTitle: () => (
+                      <Text className="text-lg font-semibold">동행 구하기</Text>
                     ),
                     headerLeft: () => (
                       <TouchableOpacity onPress={() => navigation.goBack()}>

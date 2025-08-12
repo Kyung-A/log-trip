@@ -313,7 +313,6 @@ export default function DiaryCreateScreen() {
             onConfirm={(date) => {
               setOpenDateModal(false);
               setDate(date);
-              console.log(date);
               handleChangeFormValues("travel_date", date);
             }}
             onCancel={() => {
