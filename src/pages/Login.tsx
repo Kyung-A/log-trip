@@ -44,7 +44,7 @@ export default function LoginScreen() {
         </Pressable>
         <Pressable
           onPress={naverLogin}
-          className="h-12 justify-center rounded-full w-[240px] border border-[#00c659] bg-[#00c659] mt-2 flex-row items-center gap-x-2"
+          className="h-12 justify-center rounded-full w-[240px] border border-[#00c659] bg-[#00c659] mt-2 flex-row items-center gap-x-1"
         >
           <View className="w-8 h-8">
             <Image
@@ -53,7 +53,7 @@ export default function LoginScreen() {
             />
           </View>
           <Text className="text-lg font-bold text-center text-white">
-            네이버 로그인
+            네이버로 로그인
           </Text>
         </Pressable>
         <AppleAuthentication.AppleAuthenticationButton

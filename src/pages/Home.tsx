@@ -139,8 +139,8 @@ export default function HomeScreen() {
             zoomLevel: 3,
           }}
           centerCoordinate={[126.978, 37.5665]}
-          minZoomLevel={2.5}
-          maxZoomLevel={6.5}
+          minZoomLevel={1}
+          maxZoomLevel={7}
         />
         {geoJSON.length > 0 &&
           geoJSON.map((v, idx) => (
