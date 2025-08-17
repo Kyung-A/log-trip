@@ -83,7 +83,7 @@ export default function DiaryCreateScreen() {
   const [currentEditImage, setCurrentEditImage] = useState<string>();
   const editImage = useImage(currentEditImage);
 
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState<Date | null>(null);
   const [openDateModal, setOpenDateModal] = useState(false);
 
   const handleCaptureContent = useCallback(() => {
@@ -302,13 +302,13 @@ export default function DiaryCreateScreen() {
           className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
         >
           <Text className="mr-4 text-xl">
-            {dayjs(date).format("YYYY-MM-DD") ?? "여행일"}
+            {date ? dayjs(date).format("YYYY-MM-DD") : "여행일"}
           </Text>
           <DatePicker
             modal
             mode="date"
             open={openDateModal}
-            date={date}
+            date={date || new Date()}
             locale="ko-KR"
             onConfirm={(date) => {
               setOpenDateModal(false);

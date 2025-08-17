@@ -33,7 +33,8 @@ export default function CountriesBottomSheet({
 
   const handleSheetChanges = useCallback(
     (index: number) => {
-      if (index == -1) {
+      if (index === -1) {
+        setShowTopBar(true);
         setSelectedCountries(resultSelectedCountries);
       }
     },

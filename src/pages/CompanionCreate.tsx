@@ -6,7 +6,10 @@ import React, {
   useRef,
   useState,
 } from "react";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import { CountriesBottomSheet } from "@/features/diary/ui";
 import DatePicker from "react-native-date-picker";
 import { useNavigation } from "@react-navigation/native";
@@ -15,9 +18,12 @@ import { IRegion } from "@/shared/types";
 import dayjs from "dayjs";
 import { PickerIOS } from "@react-native-picker/picker";
 
+const SNAP_POINTS = ["30%"];
+
 export default function CompanionCreateScreen() {
   const navigation = useNavigation();
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const citiesBottomSheet = useRef<BottomSheet>(null);
+  const numberBottomSheet = useRef<BottomSheet>(null);
 
   const [formData, setFormData] = useState([]);
   const [isShowTopBar, setShowTopBar] = useState<boolean>(true);
@@ -27,12 +33,16 @@ export default function CompanionCreateScreen() {
     IRegion[]
   >([]);
 
-  const [date, setDate] = useState(new Date());
-  const [openDateModal, setOpenDateModal] = useState(false);
+  const [date, setDate] = useState<Date | null>(null);
+  const [openDateModal, setOpenDateModal] = useState<boolean>(false);
 
-  const handleOpenPress = useCallback(() => {
+  const handleOpenNumberBottomSheet = useCallback(() => {
+    numberBottomSheet.current?.expand();
+  }, []);
+
+  const handleOpenCitiesBottomSheet = useCallback(() => {
     setShowTopBar(false);
-    bottomSheetRef.current?.expand();
+    citiesBottomSheet.current?.expand();
   }, []);
 
   const handleChangeFormValues = useCallback((key: string, value: any) => {
@@ -68,7 +78,7 @@ export default function CompanionCreateScreen() {
     <>
       <ScrollView className="flex-1 bg-white">
         <Pressable
-          onPress={handleOpenPress}
+          onPress={handleOpenCitiesBottomSheet}
           className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
         >
           <Text className="mr-4 text-xl">도시 선택</Text>
@@ -84,40 +94,63 @@ export default function CompanionCreateScreen() {
           </View>
         </Pressable>
 
-        <Pressable className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300">
+        <Pressable
+          onPress={handleOpenNumberBottomSheet}
+          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
+        >
           <Text className="mr-4 text-xl">동행 수</Text>
-          <PickerIOS
-            selectedValue={selectedLanguage}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedLanguage(itemValue)
-            }
-          >
-            <PickerIOS.Item label="1" value="1" />
-            <PickerIOS.Item label="2" value="2" />
-          </PickerIOS>
+          <Text className="text-xl">10</Text>
         </Pressable>
 
         <Pressable
           onPress={() => setOpenDateModal(true)}
           className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
         >
-          <Text className="mr-4 text-xl">
-            {dayjs(date).format("YYYY-MM-DD") ?? "여행일"}
-          </Text>
+          <Text className="mr-4 text-xl">모집 마감일</Text>
+          {date && (
+            <Text className="text-xl">
+              {dayjs(date).format("YYYY-MM-DD hh:mm")}
+            </Text>
+          )}
           <DatePicker
             modal
-            mode="date"
+            mode="datetime"
             open={openDateModal}
-            date={date}
+            date={date || new Date()}
             locale="ko-KR"
             onConfirm={(date) => {
               setOpenDateModal(false);
               setDate(date);
-              handleChangeFormValues("travel_date", date);
             }}
             onCancel={() => {
               setOpenDateModal(false);
             }}
+          />
+        </Pressable>
+
+        <Pressable
+          // onPress={() => setOpenDateModal(true)}
+          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
+        >
+          <Text className="mr-4 text-xl">모집 마감일</Text>
+          {date && (
+            <Text className="text-xl">
+              {dayjs(date).format("YYYY-MM-DD hh:mm")}
+            </Text>
+          )}
+          <DatePicker
+            modal
+            mode="datetime"
+            // open={openDateModal}
+            date={date || new Date()}
+            locale="ko-KR"
+            // onConfirm={(date) => {
+            //   setOpenDateModal(false);
+            //   setDate(date);
+            // }}
+            // onCancel={() => {
+            //   setOpenDateModal(false);
+            // }}
           />
         </Pressable>
 
@@ -140,12 +173,40 @@ export default function CompanionCreateScreen() {
       </ScrollView>
 
       <CountriesBottomSheet
-        bottomSheetRef={bottomSheetRef}
+        bottomSheetRef={citiesBottomSheet}
         resultSelectedCountries={resultSelectedCountries}
         setResultSelectedCountries={setResultSelectedCountries}
         handleChangeFormValues={handleChangeFormValues}
         setShowTopBar={setShowTopBar}
       />
+
+      <BottomSheet
+        index={-1}
+        snapPoints={SNAP_POINTS}
+        ref={numberBottomSheet}
+        onChange={(e) => console.log(e)}
+        enablePanDownToClose={true}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            disappearsOnIndex={-1}
+            appearsOnIndex={0}
+          />
+        )}
+      >
+        <BottomSheetView>
+          <PickerIOS
+            selectedValue={selectedLanguage}
+            onValueChange={(itemValue, itemIndex) =>
+              setSelectedLanguage(itemValue)
+            }
+          >
+            {Array.from({ length: 50 }, (_, i) => (
+              <PickerIOS.Item key={i + 1} label={String(i + 1)} value={i + 1} />
+            ))}
+          </PickerIOS>
+        </BottomSheetView>
+      </BottomSheet>
     </>
   );
 }
