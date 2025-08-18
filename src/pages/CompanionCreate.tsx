@@ -11,12 +11,12 @@ import BottomSheet, {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { CountriesBottomSheet } from "@/features/diary/ui";
-import DatePicker from "react-native-date-picker";
 import { useNavigation } from "@react-navigation/native";
 import { getUser } from "@/entities/auth";
 import { IRegion } from "@/shared/types";
 import dayjs from "dayjs";
 import { PickerIOS } from "@react-native-picker/picker";
+import { DateField } from "@/shared";
 
 const SNAP_POINTS = ["30%"];
 
@@ -34,7 +34,6 @@ export default function CompanionCreateScreen() {
   >([]);
 
   const [date, setDate] = useState<Date | null>(null);
-  const [openDateModal, setOpenDateModal] = useState<boolean>(false);
 
   const handleOpenNumberBottomSheet = useCallback(() => {
     numberBottomSheet.current?.expand();
@@ -102,57 +101,28 @@ export default function CompanionCreateScreen() {
           <Text className="text-xl">10</Text>
         </Pressable>
 
-        <Pressable
-          onPress={() => setOpenDateModal(true)}
-          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
-        >
-          <Text className="mr-4 text-xl">모집 마감일</Text>
-          {date && (
-            <Text className="text-xl">
-              {dayjs(date).format("YYYY-MM-DD hh:mm")}
-            </Text>
-          )}
-          <DatePicker
-            modal
-            mode="datetime"
-            open={openDateModal}
-            date={date || new Date()}
-            locale="ko-KR"
-            onConfirm={(date) => {
-              setOpenDateModal(false);
-              setDate(date);
-            }}
-            onCancel={() => {
-              setOpenDateModal(false);
-            }}
-          />
-        </Pressable>
+        <DateField
+          defaultLabel="모집 마감일"
+          valueLabel={date && dayjs(date).format("YYYY-MM-DD hh:mm")}
+          onConfirm={(date) => setDate(date)}
+          date={date}
+          title="모집 마감일"
+        />
 
-        <Pressable
-          // onPress={() => setOpenDateModal(true)}
-          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
-        >
-          <Text className="mr-4 text-xl">모집 마감일</Text>
-          {date && (
-            <Text className="text-xl">
-              {dayjs(date).format("YYYY-MM-DD hh:mm")}
-            </Text>
-          )}
-          <DatePicker
-            modal
-            mode="datetime"
-            // open={openDateModal}
-            date={date || new Date()}
-            locale="ko-KR"
-            // onConfirm={(date) => {
-            //   setOpenDateModal(false);
-            //   setDate(date);
-            // }}
-            // onCancel={() => {
-            //   setOpenDateModal(false);
-            // }}
-          />
-        </Pressable>
+        <DateField
+          defaultLabel="동행 시작"
+          valueLabel={date && dayjs(date).format("YYYY-MM-DD hh:mm")}
+          onConfirm={(date) => setDate(date)}
+          date={date}
+          title="동행 시작"
+        />
+        <DateField
+          defaultLabel="동행 종료"
+          valueLabel={date && dayjs(date).format("YYYY-MM-DD hh:mm")}
+          onConfirm={(date) => setDate(date)}
+          date={date}
+          title="동행 종료"
+        />
 
         <View className="p-4">
           <TextInput
