@@ -1,27 +1,35 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
 import MapboxGL from "@rnmapbox/maps";
 import axios from "axios";
 import { COUNTRY_COLORS } from "@/shared";
-import { getDiaryRegions, IDiaryRegions } from "@/entities/diary";
-import { getUser } from "@/entities/auth";
+import { IDiaryRegions, useFetchDiaryRegions } from "@/entities/diary";
+import { useFetchUserId } from "@/entities/auth";
 import { useFocusEffect } from "@react-navigation/native";
-import { getRegions } from "@/entities/region";
+import { buildOr, useFetchRegions } from "@/entities/region";
 
 MapboxGL.setAccessToken(process.env.MAPBOX_KEY);
 
 export default function HomeScreen() {
   const [geoJSON, setGeoJSON] = useState([]);
 
-  const fetchUser = useCallback(async () => {
-    const { id } = await getUser();
-    return id;
-  }, []);
-
-  const fetchUserRegions = useCallback(async (id: string) => {
-    const result = await getDiaryRegions(id);
-    return result;
-  }, []);
+  const { data: userId } = useFetchUserId();
+  const { data: diaryRegions } = useFetchDiaryRegions(userId);
+  const uniqueByCountry = useMemo(
+    () =>
+      Array.from(
+        new Map(
+          diaryRegions.map((item: IDiaryRegions) => [item.region_code, item]),
+        ).values(),
+      ).map((v: IDiaryRegions) => ({
+        region_code: v.region_code,
+        shape_name: v.shape_name,
+        country_code: v.country_code,
+      })),
+    [diaryRegions],
+  );
+  const filters = useMemo(() => buildOr(uniqueByCountry), [uniqueByCountry]);
+  const { data: rowRegions } = useFetchRegions(filters);
 
   const fetchGeoJSON = async (data) => {
     const metaRes = await axios.get(data.api_url);
@@ -35,7 +43,7 @@ export default function HomeScreen() {
     const filtered = fullGeo.features.filter(
       (f) =>
         f.properties.shapeISO === data.region_code ||
-        f.properties.shapeName === data.shape_name
+        f.properties.shapeName === data.shape_name,
     );
 
     return {
@@ -46,58 +54,16 @@ export default function HomeScreen() {
     };
   };
 
-  type BatchItem = {
-    country_code: string;
-    region_code?: string;
-    shape_name?: string;
-  };
-
-  function buildOr(batch: BatchItem[], opts = { loose: true }) {
-    const groups: string[] = [];
-    for (const { country_code, region_code, shape_name } of batch) {
-      if (region_code)
-        groups.push(
-          `and(country_code.eq.${country_code},region_code.eq.${region_code})`
-        );
-      if (shape_name) {
-        const pat = opts.loose
-          ? shape_name.includes("%")
-            ? shape_name
-            : `%${shape_name}%`
-          : shape_name;
-        groups.push(
-          `and(country_code.eq.${country_code},shape_name.${opts.loose ? "ilike" : "eq"}.${pat})`
-        );
-      }
-    }
-    return groups.join(",");
-  }
-
   const fetchData = useCallback(async () => {
     setGeoJSON([]);
-    const userId = await fetchUser();
-    const userRegions = await fetchUserRegions(userId);
-
-    const uniqueByCountry = Array.from(
-      new Map(
-        userRegions.map((item: IDiaryRegions) => [item.region_code, item])
-      ).values()
-    ).map((v: IDiaryRegions) => ({
-      region_code: v.region_code,
-      shape_name: v.shape_name,
-      country_code: v.country_code,
-    }));
-
-    const filters = buildOr(uniqueByCountry);
-    const { data: rowRegions } = await getRegions(filters);
 
     const resultData = rowRegions.filter((c) =>
-      uniqueByCountry.some((reg) => c.region_code === reg.region_code)
+      uniqueByCountry.some((reg) => c.region_code === reg.region_code),
     );
 
     const mappingDataAndColor = resultData.reduce((acc, c) => {
       const matched = COUNTRY_COLORS.find(
-        (color) => color.country_code === c.country_code
+        (color) => color.country_code === c.country_code,
       );
       if (matched) {
         acc.push({ ...c, color: matched.color });
@@ -106,7 +72,7 @@ export default function HomeScreen() {
     }, []);
 
     const items = await Promise.allSettled(
-      mappingDataAndColor.map((v) => fetchGeoJSON(v))
+      mappingDataAndColor.map((v) => fetchGeoJSON(v)),
     );
 
     const dedup = new Map();
@@ -117,12 +83,12 @@ export default function HomeScreen() {
     }
 
     setGeoJSON(Array.from(dedup.values()));
-  }, [COUNTRY_COLORS]);
+  }, [COUNTRY_COLORS, rowRegions, uniqueByCountry]);
 
   useFocusEffect(
     useCallback(() => {
       fetchData();
-    }, [])
+    }, []),
   );
 
   return (
