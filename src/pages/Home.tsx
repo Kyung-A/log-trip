@@ -1,18 +1,14 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { View } from "react-native";
 import MapboxGL from "@rnmapbox/maps";
-import axios from "axios";
-import { COUNTRY_COLORS } from "@/shared";
 import { IDiaryRegions, useFetchDiaryRegions } from "@/entities/diary";
 import { useFetchUserId } from "@/entities/auth";
-import { useFocusEffect } from "@react-navigation/native";
 import { buildOr, useFetchRegions } from "@/entities/region";
+import { useFetchRegionsGeoJSON } from "@/features/geojson";
 
 MapboxGL.setAccessToken(process.env.MAPBOX_KEY);
 
 export default function HomeScreen() {
-  const [geoJSON, setGeoJSON] = useState([]);
-
   const { data: userId } = useFetchUserId();
   const { data: diaryRegions } = useFetchDiaryRegions(userId);
   const uniqueByCountry = useMemo(
@@ -30,66 +26,7 @@ export default function HomeScreen() {
   );
   const filters = useMemo(() => buildOr(uniqueByCountry), [uniqueByCountry]);
   const { data: rowRegions } = useFetchRegions(filters);
-
-  const fetchGeoJSON = async (data) => {
-    const metaRes = await axios.get(data.api_url);
-
-    const geoUrl = metaRes.data.simplifiedGeometryGeoJSON;
-    if (!geoUrl) throw new Error("GeoJSON URL 없음");
-
-    const geoRes = await axios.get(geoUrl);
-    const fullGeo = geoRes.data;
-
-    const filtered = fullGeo.features.filter(
-      (f) =>
-        f.properties.shapeISO === data.region_code ||
-        f.properties.shapeName === data.shape_name,
-    );
-
-    return {
-      id: data.region_code,
-      color: data.color,
-      type: "FeatureCollection",
-      features: filtered,
-    };
-  };
-
-  const fetchData = useCallback(async () => {
-    setGeoJSON([]);
-
-    const resultData = rowRegions.filter((c) =>
-      uniqueByCountry.some((reg) => c.region_code === reg.region_code),
-    );
-
-    const mappingDataAndColor = resultData.reduce((acc, c) => {
-      const matched = COUNTRY_COLORS.find(
-        (color) => color.country_code === c.country_code,
-      );
-      if (matched) {
-        acc.push({ ...c, color: matched.color });
-      }
-      return acc;
-    }, []);
-
-    const items = await Promise.allSettled(
-      mappingDataAndColor.map((v) => fetchGeoJSON(v)),
-    );
-
-    const dedup = new Map();
-    for (const r of items) {
-      if (r.status === "fulfilled" && r.value.features.length > 0) {
-        dedup.set(r.value.id, r.value);
-      }
-    }
-
-    setGeoJSON(Array.from(dedup.values()));
-  }, [COUNTRY_COLORS, rowRegions, uniqueByCountry]);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchData();
-    }, []),
-  );
+  const { geoJson } = useFetchRegionsGeoJSON(rowRegions, uniqueByCountry);
 
   return (
     <View style={{ flex: 1 }}>
@@ -108,8 +45,8 @@ export default function HomeScreen() {
           minZoomLevel={1}
           maxZoomLevel={7}
         />
-        {geoJSON.length > 0 &&
-          geoJSON.map((v, idx) => (
+        {geoJson.length > 0 &&
+          geoJson.map((v, idx) => (
             <MapboxGL.ShapeSource
               key={`region-${v.id}-${idx}`}
               id={`region-${v.id}-${idx}`}
