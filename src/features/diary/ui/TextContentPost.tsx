@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { View, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import dayjs from "dayjs";
-import { IDiary } from "@/entities/diary/types";
 import { groupByCountry } from "../lib";
+import { IDiary } from "@/entities/diary";
 
 export default function TextContentPost({ data }: { data: IDiary }) {
   const groupedRegions = useMemo(

@@ -13,16 +13,9 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
-  useRef,
   useState,
 } from "react";
-import BottomSheet from "@gorhom/bottom-sheet";
-import {
-  CountriesBottomSheet,
-  Drawing,
-  EditImage,
-  UploadImages,
-} from "@/features/diary/ui";
+import { Drawing, EditImage, UploadImages } from "@/features/diary/ui";
 import {
   Canvas,
   useCanvasRef,
@@ -31,17 +24,18 @@ import {
   SkPath,
   useImage,
 } from "@shopify/react-native-skia";
-import DatePicker from "react-native-date-picker";
-import { useNavigation } from "@react-navigation/native";
+import { NavigatorScreenParams, useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import * as FileSystem from "expo-file-system";
 import { decode } from "base64-arraybuffer";
 import uuid from "react-native-uuid";
 import { getUser } from "@/entities/auth";
 import { createDiary } from "@/entities/diary";
-import { IDiary } from "@/entities/diary/types";
-import { imageUpload, getImageUrl } from "@/shared";
-import { IRegion } from "@/shared/types";
+import { IDiary } from "@/entities/diary/model/types";
+import { imageUpload, getImageUrl, DateField } from "@/shared";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { IRegion, useFetchRegions } from "@/entities/region";
+import { CitySelectField } from "@/features/select-region";
 
 export interface IColoredPath {
   path: SkPath;
@@ -60,18 +54,19 @@ const DEFAULT_FORM_VALUES = {
 };
 
 export default function DiaryCreateScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<
+    NativeStackNavigationProp<{
+      Home: NavigatorScreenParams<{ 내여행: undefined }>;
+    }>
+  >();
   const contentCanvasRef = useCanvasRef();
   const editCanvasRef = useCanvasRef();
-  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const [formData, setFormData] = useState<IDiary>(DEFAULT_FORM_VALUES);
+  const [cities, setCities] = useState<IRegion[]>([]);
   const [isShowTopBar, setShowTopBar] = useState<boolean>(true);
 
   const [imgs, setImgs] = useState<{ origin: string; uri: string }[]>([]);
-  const [resultSelectedCountries, setResultSelectedCountries] = useState<
-    IRegion[]
-  >([]);
   const [isDrawingMode, setDrawingMode] = useState<boolean>(false);
   const [isOpenDrawing, setOpenDrawing] = useState<boolean>(false);
   const [isOpenEditMode, setOpenEditMode] = useState<boolean>(false);
@@ -84,7 +79,8 @@ export default function DiaryCreateScreen() {
   const editImage = useImage(currentEditImage);
 
   const [date, setDate] = useState<Date | null>(null);
-  const [openDateModal, setOpenDateModal] = useState(false);
+
+  const { data: regions } = useFetchRegions();
 
   const handleCaptureContent = useCallback(() => {
     const snapshot = contentCanvasRef.current?.makeImageSnapshot();
@@ -107,11 +103,6 @@ export default function DiaryCreateScreen() {
       )
     );
   }, [editCanvasRef, currentEditImage]);
-
-  const handleOpenPress = useCallback(() => {
-    setShowTopBar(false);
-    bottomSheetRef.current?.expand();
-  }, []);
 
   const handleChangeMode = useCallback((value: boolean) => {
     if (value) {
@@ -203,10 +194,18 @@ export default function DiaryCreateScreen() {
   }, []);
 
   const handleSubmit = async () => {
+    const diary_regions = cities?.map((v) => ({
+      region_code: v.region_code,
+      region_name: v.region_name,
+      shape_name: v.shape_name,
+      country_code: v.country_code,
+      country_name: v.country_name,
+    }));
+
     if (formData.is_drawing) {
       if (
         !capturedDrawingImage ||
-        formData.diary_regions.length === 0 ||
+        diary_regions.length === 0 ||
         !formData.travel_date
       ) {
         console.error("필수값 누락");
@@ -217,7 +216,7 @@ export default function DiaryCreateScreen() {
         !formData.title ||
         !formData.text_content ||
         !formData.travel_date ||
-        formData.diary_regions.length === 0
+        diary_regions.length === 0
       ) {
         console.error("필수값 누락");
         return;
@@ -226,6 +225,7 @@ export default function DiaryCreateScreen() {
 
     let body = {
       ...formData,
+      diary_regions,
     };
 
     if (imgs && imgs.length > 0) {
@@ -280,46 +280,23 @@ export default function DiaryCreateScreen() {
           setCurrentEditImage={setCurrentEditImage}
         />
 
-        <Pressable
-          onPress={handleOpenPress}
-          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-t border-b border-gray-300"
-        >
-          <Text className="mr-4 text-xl">도시 선택</Text>
-          <View className="flex flex-row flex-wrap flex-1 gap-2">
-            {resultSelectedCountries.map((v) => (
-              <Text
-                key={v.region_code}
-                className="p-2 rounded bg-[#ebebeb] font-semibold"
-              >
-                {v.region_name}
-              </Text>
-            ))}
-          </View>
-        </Pressable>
+        <CitySelectField
+          label="도시 선택"
+          value={cities}
+          onConfirm={setCities}
+          options={regions}
+        />
 
-        <Pressable
-          onPress={() => setOpenDateModal(true)}
-          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
-        >
-          <Text className="mr-4 text-xl">
-            {date ? dayjs(date).format("YYYY-MM-DD") : "여행일"}
-          </Text>
-          <DatePicker
-            modal
-            mode="date"
-            open={openDateModal}
-            date={date || new Date()}
-            locale="ko-KR"
-            onConfirm={(date) => {
-              setOpenDateModal(false);
-              setDate(date);
-              handleChangeFormValues("travel_date", date);
-            }}
-            onCancel={() => {
-              setOpenDateModal(false);
-            }}
-          />
-        </Pressable>
+        <DateField
+          defaultLabel="여행일"
+          valueLabel={date && dayjs(date).format("YYYY-MM-DD")}
+          onConfirm={(date) => {
+            setDate(date);
+            handleChangeFormValues("travel_date", date);
+          }}
+          date={date}
+          title="여행일"
+        />
 
         <Pressable className="flex flex-row flex-wrap items-center justify-between w-full p-4 border-b border-gray-300">
           <Text className="mr-4 text-xl">드로잉 모드</Text>
@@ -371,14 +348,6 @@ export default function DiaryCreateScreen() {
           </Canvas>
         )}
       </ScrollView>
-
-      <CountriesBottomSheet
-        bottomSheetRef={bottomSheetRef}
-        resultSelectedCountries={resultSelectedCountries}
-        setResultSelectedCountries={setResultSelectedCountries}
-        handleChangeFormValues={handleChangeFormValues}
-        setShowTopBar={setShowTopBar}
-      />
 
       <Drawing
         setOpenDrawing={setOpenDrawing}

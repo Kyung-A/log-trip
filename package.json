@@ -12,6 +12,7 @@
     "@expo/react-native-action-sheet": "^4.1.1",
     "@gorhom/bottom-sheet": "^5.1.6",
     "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-native-picker/picker": "2.11.1",
     "@react-native-seoul/naver-login": "^4.1.3",
     "@react-navigation/bottom-tabs": "^7.3.17",
     "@react-navigation/native": "^7.1.13",
@@ -19,6 +20,7 @@
     "@rnmapbox/maps": "^10.1.39",
     "@shopify/react-native-skia": "^2.0.7",
     "@supabase/supabase-js": "^2.52.0",
+    "@tanstack/react-query": "^5.85.5",
     "axios": "^1.10.0",
     "base64-arraybuffer": "^1.0.2",
     "dayjs": "^1.11.13",
@@ -45,8 +47,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-uuid": "^2.0.3",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-web-swiper": "^2.2.4",
-    "@react-native-picker/picker": "2.11.1"
+    "react-native-web-swiper": "^2.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -1,5 +1,5 @@
 import { supabase } from "@/shared";
-import { IDiary } from "../types";
+import { IDiary } from "..";
 
 export const createDiary = async (data: IDiary) => {
   const { diary_images, diary_regions, ...post } = data;

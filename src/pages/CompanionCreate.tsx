@@ -10,38 +10,29 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { CountriesBottomSheet } from "@/features/diary/ui";
 import { useNavigation } from "@react-navigation/native";
 import { getUser } from "@/entities/auth";
-import { IRegion } from "@/shared/types";
 import dayjs from "dayjs";
 import { PickerIOS } from "@react-native-picker/picker";
 import { DateField } from "@/shared";
+import { IRegion, useFetchRegions } from "@/entities/region";
+import { CitySelectField } from "@/features/select-region";
 
 const SNAP_POINTS = ["30%"];
 
 export default function CompanionCreateScreen() {
   const navigation = useNavigation();
-  const citiesBottomSheet = useRef<BottomSheet>(null);
   const numberBottomSheet = useRef<BottomSheet>(null);
 
   const [formData, setFormData] = useState([]);
-  const [isShowTopBar, setShowTopBar] = useState<boolean>(true);
-
   const [selectedLanguage, setSelectedLanguage] = useState();
-  const [resultSelectedCountries, setResultSelectedCountries] = useState<
-    IRegion[]
-  >([]);
-
+  const [cities, setCities] = useState<IRegion[]>([]);
   const [date, setDate] = useState<Date | null>(null);
+
+  const { data: regions } = useFetchRegions();
 
   const handleOpenNumberBottomSheet = useCallback(() => {
     numberBottomSheet.current?.expand();
-  }, []);
-
-  const handleOpenCitiesBottomSheet = useCallback(() => {
-    setShowTopBar(false);
-    citiesBottomSheet.current?.expand();
   }, []);
 
   const handleChangeFormValues = useCallback((key: string, value: any) => {
@@ -69,29 +60,15 @@ export default function CompanionCreateScreen() {
     getUserId();
   }, []);
 
-  useEffect(() => {
-    navigation.setOptions({ headerShown: isShowTopBar });
-  }, [navigation, isShowTopBar]);
-
   return (
     <>
       <ScrollView className="flex-1 bg-white">
-        <Pressable
-          onPress={handleOpenCitiesBottomSheet}
-          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
-        >
-          <Text className="mr-4 text-xl">도시 선택</Text>
-          <View className="flex flex-row flex-wrap flex-1 gap-2">
-            {resultSelectedCountries.map((v) => (
-              <Text
-                key={v.region_code}
-                className="p-2 rounded bg-[#ebebeb] font-semibold"
-              >
-                {v.region_name}
-              </Text>
-            ))}
-          </View>
-        </Pressable>
+        <CitySelectField
+          label="도시 선택"
+          value={cities}
+          onConfirm={setCities}
+          options={regions}
+        />
 
         <Pressable
           onPress={handleOpenNumberBottomSheet}
@@ -108,7 +85,6 @@ export default function CompanionCreateScreen() {
           date={date}
           title="모집 마감일"
         />
-
         <DateField
           defaultLabel="동행 시작"
           valueLabel={date && dayjs(date).format("YYYY-MM-DD hh:mm")}
@@ -141,14 +117,6 @@ export default function CompanionCreateScreen() {
           />
         </View>
       </ScrollView>
-
-      <CountriesBottomSheet
-        bottomSheetRef={citiesBottomSheet}
-        resultSelectedCountries={resultSelectedCountries}
-        setResultSelectedCountries={setResultSelectedCountries}
-        handleChangeFormValues={handleChangeFormValues}
-        setShowTopBar={setShowTopBar}
-      />
 
       <BottomSheet
         index={-1}

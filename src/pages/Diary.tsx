@@ -8,7 +8,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import Swiper from "react-native-web-swiper";
 import { useFocusEffect } from "@react-navigation/native";
-import { IDiary } from "@/entities/diary/types";
+import { IDiary } from "@/entities/diary";
 import { deleteDiary, getDiaries } from "@/entities/diary";
 import { getUser } from "@/entities/auth";
 

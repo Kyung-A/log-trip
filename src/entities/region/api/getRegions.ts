@@ -1,4 +1,4 @@
-import { supabase } from "../lib";
+import { supabase } from "@/shared";
 
 export const getRegions = async (filters?: string) => {
   try {
@@ -8,7 +8,9 @@ export const getRegions = async (filters?: string) => {
       q = q.or(filters);
     }
 
-    return q;
+    const { data } = await q;
+
+    return data;
   } catch (error) {
     console.error(error);
     return error;

@@ -14,12 +14,14 @@ import PhoneAuthScreen from "./pages/PhoneAuth";
 import LoginScreen from "./pages/Login";
 import { deleteUser, getUser } from "./entities/auth";
 import { TabBar } from "./shared";
+import CompanionCreateScreen from "./pages/CompanionCreate";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./global.css";
-import CompanionCreateScreen from "./pages/CompanionCreate";
 
 SplashScreen.preventAutoHideAsync();
 WebBrowser.maybeCompleteAuthSession();
+const queryClient = new QueryClient();
 
 export default function App() {
   const [initialRoute, setInitialRoute] = useState("Login");
@@ -50,109 +52,115 @@ export default function App() {
   if (!isReady) return null;
 
   return (
-    <ActionSheetProvider>
-      <GestureHandlerRootView className="flex-1">
-        <BottomSheetModalProvider>
-          <NavigationContainer>
-            <View className="flex-1" onLayout={onLayoutRootView}>
-              <Stack.Navigator id={undefined} initialRouteName={initialRoute}>
-                <Stack.Screen
-                  name="Home"
-                  component={TabBar}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="Login"
-                  component={LoginScreen}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="DiaryCreate"
-                  component={DiaryCreateScreen}
-                  options={({ navigation }) => ({
-                    headerTitle: () => (
-                      <Text className="text-lg font-semibold">일기 작성</Text>
-                    ),
-                    headerLeft: () => (
-                      <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <FontAwesome6
-                          name="arrow-left"
-                          size={20}
-                          color="#646464"
-                        />
-                      </TouchableOpacity>
-                    ),
-                  })}
-                />
-                <Stack.Screen
-                  name="CompanionCreate"
-                  component={CompanionCreateScreen}
-                  options={({ navigation }) => ({
-                    headerTitle: () => (
-                      <Text className="text-lg font-semibold">동행 구하기</Text>
-                    ),
-                    headerLeft: () => (
-                      <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <FontAwesome6
-                          name="arrow-left"
-                          size={20}
-                          color="#646464"
-                        />
-                      </TouchableOpacity>
-                    ),
-                  })}
-                />
-                <Stack.Screen
-                  name="PhoneAuth"
-                  component={PhoneAuthScreen}
-                  options={({ navigation }) => ({
-                    headerTitle: () => (
-                      <Text className="text-lg font-semibold">본인인증</Text>
-                    ),
-                    headerLeft: () => (
-                      <TouchableOpacity
-                        onPress={async () => {
-                          const user = await getUser();
-                          if (user) {
-                            const response = await deleteUser(user.id);
-                            if (response.success) {
-                              navigation.goBack();
+    <QueryClientProvider client={queryClient}>
+      <ActionSheetProvider>
+        <GestureHandlerRootView className="flex-1">
+          <BottomSheetModalProvider>
+            <NavigationContainer>
+              <View className="flex-1" onLayout={onLayoutRootView}>
+                <Stack.Navigator id={undefined} initialRouteName={initialRoute}>
+                  <Stack.Screen
+                    name="Home"
+                    component={TabBar}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="Login"
+                    component={LoginScreen}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="DiaryCreate"
+                    component={DiaryCreateScreen}
+                    options={({ navigation }) => ({
+                      headerTitle: () => (
+                        <Text className="text-lg font-semibold">일기 작성</Text>
+                      ),
+                      headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                          <FontAwesome6
+                            name="arrow-left"
+                            size={20}
+                            color="#646464"
+                          />
+                        </TouchableOpacity>
+                      ),
+                    })}
+                  />
+                  <Stack.Screen
+                    name="CompanionCreate"
+                    component={CompanionCreateScreen}
+                    options={({ navigation }) => ({
+                      headerTitle: () => (
+                        <Text className="text-lg font-semibold">
+                          동행 구하기
+                        </Text>
+                      ),
+                      headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                          <FontAwesome6
+                            name="arrow-left"
+                            size={20}
+                            color="#646464"
+                          />
+                        </TouchableOpacity>
+                      ),
+                    })}
+                  />
+                  <Stack.Screen
+                    name="PhoneAuth"
+                    component={PhoneAuthScreen}
+                    options={({ navigation }) => ({
+                      headerTitle: () => (
+                        <Text className="text-lg font-semibold">본인인증</Text>
+                      ),
+                      headerLeft: () => (
+                        <TouchableOpacity
+                          onPress={async () => {
+                            const user = await getUser();
+                            if (user) {
+                              const response = await deleteUser(user.id);
+                              if (response.success) {
+                                navigation.goBack();
+                              }
                             }
-                          }
-                        }}
-                      >
-                        <FontAwesome6
-                          name="arrow-left"
-                          size={20}
-                          color="#646464"
-                        />
-                      </TouchableOpacity>
-                    ),
-                  })}
-                />
-                <Stack.Screen
-                  name="ProfileUpdate"
-                  component={ProfileUpdateScreen}
-                  options={({ navigation }) => ({
-                    headerTitle: () => (
-                      <Text className="text-lg font-semibold">프로필 수정</Text>
-                    ),
-                    headerLeft: () => (
-                      <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <FontAwesome6
-                          name="arrow-left"
-                          size={20}
-                          color="#646464"
-                        />
-                      </TouchableOpacity>
-                    ),
-                  })}
-                />
-              </Stack.Navigator>
-            </View>
-          </NavigationContainer>
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
-    </ActionSheetProvider>
+                          }}
+                        >
+                          <FontAwesome6
+                            name="arrow-left"
+                            size={20}
+                            color="#646464"
+                          />
+                        </TouchableOpacity>
+                      ),
+                    })}
+                  />
+                  <Stack.Screen
+                    name="ProfileUpdate"
+                    component={ProfileUpdateScreen}
+                    options={({ navigation }) => ({
+                      headerTitle: () => (
+                        <Text className="text-lg font-semibold">
+                          프로필 수정
+                        </Text>
+                      ),
+                      headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                          <FontAwesome6
+                            name="arrow-left"
+                            size={20}
+                            color="#646464"
+                          />
+                        </TouchableOpacity>
+                      ),
+                    })}
+                  />
+                </Stack.Navigator>
+              </View>
+            </NavigationContainer>
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+      </ActionSheetProvider>
+    </QueryClientProvider>
   );
 }

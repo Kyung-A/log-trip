@@ -1,5 +1,3 @@
-import { IRegion } from "@/shared/types";
-
 export interface IDiary {
   id?: string;
   user_info?: { name: string; email: string; profile_image: string };
@@ -10,7 +8,15 @@ export interface IDiary {
   is_drawing: boolean;
   travel_date: string | null;
   diary_images: string[] | { id: string; url: string }[] | null;
-  diary_regions: IRegion[] | null;
+  diary_regions:
+    | {
+        region_code: string;
+        region_name: string;
+        shape_name: string | null;
+        country_code: string;
+        country_name: string;
+      }[]
+    | null;
 }
 
 export interface IDiaryRegions {

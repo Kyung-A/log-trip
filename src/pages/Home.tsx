@@ -2,11 +2,11 @@ import React, { useCallback, useState } from "react";
 import { View } from "react-native";
 import MapboxGL from "@rnmapbox/maps";
 import axios from "axios";
-import { COUNTRY_COLORS, getRegions } from "@/shared";
-import { getDiaryRegions } from "@/entities/diary";
+import { COUNTRY_COLORS } from "@/shared";
+import { getDiaryRegions, IDiaryRegions } from "@/entities/diary";
 import { getUser } from "@/entities/auth";
 import { useFocusEffect } from "@react-navigation/native";
-import { IDiaryRegions } from "@/entities/diary/types";
+import { getRegions } from "@/entities/region";
 
 MapboxGL.setAccessToken(process.env.MAPBOX_KEY);
 
