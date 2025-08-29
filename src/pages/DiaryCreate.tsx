@@ -8,14 +8,9 @@ import {
   Text,
   TextInput,
   View,
-} from "react-native";
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from "react";
-import { Drawing, EditImage, UploadImages } from "@/features/diary/ui";
+} from 'react-native';
+import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
+import {Drawing, EditImage, UploadImages} from '@/features/diary/ui';
 import {
   Canvas,
   useCanvasRef,
@@ -23,19 +18,19 @@ import {
   Image as SkImage,
   SkPath,
   useImage,
-} from "@shopify/react-native-skia";
-import { NavigatorScreenParams, useNavigation } from "@react-navigation/native";
-import dayjs from "dayjs";
-import * as FileSystem from "expo-file-system";
-import { decode } from "base64-arraybuffer";
-import uuid from "react-native-uuid";
-import { getUser } from "@/entities/auth";
-import { createDiary } from "@/entities/diary";
-import { IDiary } from "@/entities/diary/model/types";
-import { imageUpload, getImageUrl, DateField } from "@/shared";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { IRegion, useFetchRegions } from "@/entities/region";
-import { CitySelectField } from "@/features/select-region";
+} from '@shopify/react-native-skia';
+import {NavigatorScreenParams, useNavigation} from '@react-navigation/native';
+import dayjs from 'dayjs';
+import * as FileSystem from 'expo-file-system';
+import {decode} from 'base64-arraybuffer';
+import uuid from 'react-native-uuid';
+import {getUser} from '@/entities/auth';
+import {IDiary} from '@/entities/diary/model/types';
+import {imageUpload, getImageUrl, DateField} from '@/shared';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {IRegion, useFetchRegions} from '@/entities/region';
+import {CitySelectField} from '@/features/select-region';
+import {useMutationCreateDiary} from '@/entities/diary';
 
 export interface IColoredPath {
   path: SkPath;
@@ -43,7 +38,7 @@ export interface IColoredPath {
 }
 
 const DEFAULT_FORM_VALUES = {
-  user_id: "",
+  user_id: '',
   title: null,
   text_content: null,
   drawing_content: null,
@@ -56,7 +51,7 @@ const DEFAULT_FORM_VALUES = {
 export default function DiaryCreateScreen() {
   const navigation = useNavigation<
     NativeStackNavigationProp<{
-      Home: NavigatorScreenParams<{ 내여행: undefined }>;
+      Home: NavigatorScreenParams<{내여행: undefined}>;
     }>
   >();
   const contentCanvasRef = useCanvasRef();
@@ -66,7 +61,7 @@ export default function DiaryCreateScreen() {
   const [cities, setCities] = useState<IRegion[]>([]);
   const [isShowTopBar, setShowTopBar] = useState<boolean>(true);
 
-  const [imgs, setImgs] = useState<{ origin: string; uri: string }[]>([]);
+  const [imgs, setImgs] = useState<{origin: string; uri: string}[]>([]);
   const [isDrawingMode, setDrawingMode] = useState<boolean>(false);
   const [isOpenDrawing, setOpenDrawing] = useState<boolean>(false);
   const [isOpenEditMode, setOpenEditMode] = useState<boolean>(false);
@@ -80,7 +75,8 @@ export default function DiaryCreateScreen() {
 
   const [date, setDate] = useState<Date | null>(null);
 
-  const { data: regions } = useFetchRegions();
+  const {data: regions} = useFetchRegions();
+  const {mutateAsync} = useMutationCreateDiary();
 
   const handleCaptureContent = useCallback(() => {
     const snapshot = contentCanvasRef.current?.makeImageSnapshot();
@@ -97,49 +93,47 @@ export default function DiaryCreateScreen() {
     const b64 = snapshot.encodeToBase64?.() ?? snapshot.encodeToBase64(3, 100);
     const newUri = `data:image/png;base64,${b64}`;
 
-    setImgs((prev) =>
-      prev.map((i) =>
-        i.origin === currentEditImage ? { ...i, uri: newUri } : i
-      )
+    setImgs(prev =>
+      prev.map(i => (i.origin === currentEditImage ? {...i, uri: newUri} : i)),
     );
   }, [editCanvasRef, currentEditImage]);
 
   const handleChangeMode = useCallback((value: boolean) => {
     if (value) {
       Alert.alert(
-        "드로잉 모드로 전환 하시겠습니까?",
-        "드로잉 모드 전환시 작성한 텍스트는 사라집니다.",
+        '드로잉 모드로 전환 하시겠습니까?',
+        '드로잉 모드 전환시 작성한 텍스트는 사라집니다.',
         [
           {
-            text: "예",
+            text: '예',
             onPress: () => {
               setDrawingMode(true);
               setOpenDrawing(true);
               setShowTopBar(false);
             },
           },
-          { text: "취소", onPress: () => {}, style: "cancel" },
-        ]
+          {text: '취소', onPress: () => {}, style: 'cancel'},
+        ],
       );
     } else {
       Alert.alert(
-        "텍스트 모드로 전환 하시겠습니까?",
-        "텍스트 모드 전환시 작성한 그림은 사라집니다.",
+        '텍스트 모드로 전환 하시겠습니까?',
+        '텍스트 모드 전환시 작성한 그림은 사라집니다.',
         [
           {
-            text: "예",
+            text: '예',
             onPress: () => {
               setDrawingMode(false);
               setCapturedDrawingImage(null);
               setShowTopBar(true);
             },
           },
-          { text: "취소", onPress: () => {}, style: "cancel" },
-        ]
+          {text: '취소', onPress: () => {}, style: 'cancel'},
+        ],
       );
     }
 
-    handleChangeFormValues("is_drawing", value);
+    handleChangeFormValues('is_drawing', value);
   }, []);
 
   const handleCloseEditMode = useCallback(() => {
@@ -163,38 +157,38 @@ export default function DiaryCreateScreen() {
   ]);
 
   const handleChangeFormValues = useCallback((key: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData(prev => ({...prev, [key]: value}));
   }, []);
 
   const uploadAndGetUrlImage = async (file: string) => {
     if (!file) return null;
 
     const path = `diary-images/${formData.user_id}/${uuid.v4()}.jpg`;
-    let base64 = "";
+    let base64 = '';
 
-    if (file.startsWith("file://")) {
+    if (file.startsWith('file://')) {
       base64 = await FileSystem.readAsStringAsync(file, {
-        encoding: "base64",
+        encoding: 'base64',
       });
     } else {
-      base64 = file.includes(",") ? file.split(",")[1] : file;
+      base64 = file.includes(',') ? file.split(',')[1] : file;
     }
 
     const buffer = decode(base64);
 
-    await imageUpload("log-trip-images", path, buffer);
-    const result = await getImageUrl("log-trip-images", path);
+    await imageUpload('log-trip-images', path, buffer);
+    const result = await getImageUrl('log-trip-images', path);
 
     return result.publicUrl;
   };
 
   const getUserId = useCallback(async () => {
-    const { id } = await getUser();
-    setFormData((prev) => ({ ...prev, user_id: id }));
+    const {id} = await getUser();
+    setFormData(prev => ({...prev, user_id: id}));
   }, []);
 
   const handleSubmit = async () => {
-    const diary_regions = cities?.map((v) => ({
+    const diary_regions = cities?.map(v => ({
       region_code: v.region_code,
       region_name: v.region_name,
       shape_name: v.shape_name,
@@ -208,7 +202,7 @@ export default function DiaryCreateScreen() {
         diary_regions.length === 0 ||
         !formData.travel_date
       ) {
-        console.error("필수값 누락");
+        console.error('필수값 누락');
         return;
       }
     } else {
@@ -218,7 +212,7 @@ export default function DiaryCreateScreen() {
         !formData.travel_date ||
         diary_regions.length === 0
       ) {
-        console.error("필수값 누락");
+        console.error('필수값 누락');
         return;
       }
     }
@@ -230,9 +224,9 @@ export default function DiaryCreateScreen() {
 
     if (imgs && imgs.length > 0) {
       const diaryImagesUrls = await Promise.all(
-        imgs.map((v) => uploadAndGetUrlImage(v.uri))
+        imgs.map(v => uploadAndGetUrlImage(v.uri)),
       );
-      body = { ...body, diary_images: diaryImagesUrls };
+      body = {...body, diary_images: diaryImagesUrls};
     }
 
     if (formData.is_drawing) {
@@ -240,13 +234,13 @@ export default function DiaryCreateScreen() {
       const drawingContentUrl =
         await uploadAndGetUrlImage(drawingContentBase64);
 
-      body = { ...body, drawing_content: drawingContentUrl };
+      body = {...body, drawing_content: drawingContentUrl};
     }
 
-    const result = await createDiary(body);
+    const result = await mutateAsync(body);
     if (result) {
-      navigation.navigate("Home", {
-        screen: "내여행",
+      navigation.navigate('Home', {
+        screen: '내여행',
       });
     }
   };
@@ -266,7 +260,7 @@ export default function DiaryCreateScreen() {
   }, []);
 
   useEffect(() => {
-    navigation.setOptions({ headerShown: isShowTopBar });
+    navigation.setOptions({headerShown: isShowTopBar});
   }, [navigation, isShowTopBar]);
 
   return (
@@ -289,10 +283,10 @@ export default function DiaryCreateScreen() {
 
         <DateField
           defaultLabel="여행일"
-          valueLabel={date && dayjs(date).format("YYYY-MM-DD")}
-          onConfirm={(date) => {
+          valueLabel={date && dayjs(date).format('YYYY-MM-DD')}
+          onConfirm={date => {
             setDate(date);
-            handleChangeFormValues("travel_date", date);
+            handleChangeFormValues('travel_date', date);
           }}
           date={date}
           title="여행일"
@@ -319,31 +313,31 @@ export default function DiaryCreateScreen() {
             <TextInput
               className="text-xl font-semibold"
               placeholder="제목을 작성해주세요"
-              onChangeText={(value) => handleChangeFormValues("title", value)}
+              onChangeText={value => handleChangeFormValues('title', value)}
             />
             <TextInput
               className="pb-20 mt-4 text-lg"
               placeholder="내용을 작성해주세요"
               multiline={true}
               textAlignVertical="top"
-              onChangeText={(value) =>
-                handleChangeFormValues("text_content", value)
+              onChangeText={value =>
+                handleChangeFormValues('text_content', value)
               }
             />
           </View>
         ) : (
           <Canvas
             style={{
-              width: Dimensions.get("window").width,
-              height: Dimensions.get("window").height - 220,
+              width: Dimensions.get('window').width,
+              height: Dimensions.get('window').height - 220,
             }}
           >
             <SkImage
               image={capturedDrawingImage}
               x={0}
               y={0}
-              width={Dimensions.get("window").width}
-              height={Dimensions.get("window").height - 220}
+              width={Dimensions.get('window').width}
+              height={Dimensions.get('window').height - 220}
             />
           </Canvas>
         )}

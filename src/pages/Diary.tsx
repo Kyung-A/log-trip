@@ -7,19 +7,23 @@ import BottomSheet, {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import Swiper from "react-native-web-swiper";
-import { useFocusEffect } from "@react-navigation/native";
-import { IDiary } from "@/entities/diary";
-import { deleteDiary, getDiaries } from "@/entities/diary";
-import { getUser } from "@/entities/auth";
+import {
+  IDiary,
+  useFetchDiaries,
+  useMutationDeleteDiary,
+} from "@/entities/diary";
+import { useFetchUserId } from "@/entities/auth";
 
 const SNAP_POINTS = ["15%"];
 
 export default function DiaryScreen({ navigation }) {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const [data, setData] = useState<IDiary[]>();
-  const [refreshing, setRefreshing] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<IDiary>();
+
+  const { data: userId } = useFetchUserId();
+  const { data } = useFetchDiaries(userId);
+  const { mutateAsync } = useMutationDeleteDiary();
 
   const handleSheetChanges = useCallback((index: number) => {
     if (index === -1) {
@@ -28,28 +32,11 @@ export default function DiaryScreen({ navigation }) {
   }, []);
 
   const handleDeleteDiary = useCallback(async () => {
-    const { status } = await deleteDiary(selectedPostId);
+    const { status } = await mutateAsync(selectedPostId);
     if (status === 204) {
-      fetchData();
       bottomSheetRef.current?.close();
     }
   }, [selectedPostId]);
-
-  const fetchData = useCallback(async () => {
-    setRefreshing(true);
-
-    const user = await getUser();
-    const result = await getDiaries(user.id);
-    setData(result);
-
-    setRefreshing(false);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchData();
-    }, [])
-  );
 
   return (
     <>
@@ -117,8 +104,6 @@ export default function DiaryScreen({ navigation }) {
               )}
             </View>
           )}
-          refreshing={refreshing}
-          onRefresh={fetchData}
         />
       ) : (
         <View className="items-center justify-center flex-1 gap-6">

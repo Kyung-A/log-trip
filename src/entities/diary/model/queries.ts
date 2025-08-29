@@ -1,18 +1,42 @@
-import { useQuery } from "@tanstack/react-query";
-import { getDiaryRegions } from "../api";
-import { IDiaryRegions } from ".";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import { getDiaries, getDiaryRegions } from "../api";
+import { IDiary, IDiaryRegions } from ".";
+import { diaryKeys, diaryRegionKeys } from "./queryKeys";
 
-export const useFetchDiaryRegions = (id: string | null | undefined) => {
-  const enabled = typeof id === "string" && id.length > 0;
+const diaryQueries = {
+  list: (userId: string) =>
+    queryOptions<IDiary[]>({
+      queryKey: diaryKeys.list(userId),
+      queryFn: () => getDiaries(userId),
+      staleTime: Infinity,
+    }),
 
-  return useQuery<IDiaryRegions[], Error>({
-    queryKey: ["diaryRegions", id],
-    queryFn: () => getDiaryRegions(id),
-    staleTime: Infinity,
+  regions: (userId: string) =>
+    queryOptions<IDiaryRegions[]>({
+      queryKey: diaryRegionKeys.byUser(userId),
+      queryFn: () => getDiaryRegions(userId),
+      staleTime: Infinity,
+    }),
+};
+
+export const useFetchDiaries = (userId: string | null | undefined) => {
+  return useQuery({
+    ...diaryQueries.list(userId),
+    enabled: !!userId,
+    placeholderData: (prev) => prev,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
-    enabled,
+  });
+};
+
+export const useFetchDiaryRegions = (userId: string | null | undefined) => {
+  return useQuery({
+    ...diaryQueries.regions(userId),
     placeholderData: (prev) => prev,
+    enabled: !!userId,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
   });
 };

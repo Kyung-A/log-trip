@@ -11,11 +11,12 @@ MapboxGL.setAccessToken(process.env.MAPBOX_KEY);
 export default function HomeScreen() {
   const { data: userId } = useFetchUserId();
   const { data: diaryRegions } = useFetchDiaryRegions(userId);
+
   const uniqueByCountry = useMemo(
     () =>
       Array.from(
         new Map(
-          diaryRegions.map((item: IDiaryRegions) => [item.region_code, item]),
+          diaryRegions?.map((item: IDiaryRegions) => [item.region_code, item]),
         ).values(),
       ).map((v: IDiaryRegions) => ({
         region_code: v.region_code,

@@ -5,7 +5,7 @@ export const useFetchUserId = () => {
   return useQuery({
     queryKey: ["userId"],
     queryFn: getUser,
-    select: (user) => user.id ?? null,
+    select: (user) => user?.id ?? null,
     staleTime: Infinity,
     gcTime: Infinity,
     refetchOnWindowFocus: false,

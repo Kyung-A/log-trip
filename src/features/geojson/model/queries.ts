@@ -25,15 +25,15 @@ const regionGeoQueryOptions = (params: IOptionsParams) => {
 };
 
 export const useFetchRegionsGeoJSON = (
-  rowRegions: IRegion[],
-  uniqueByCountry: Country[],
+  rowRegions: IRegion[] = [],
+  uniqueByCountry: Country[] = [],
 ) => {
   const coloredParams = useMemo(() => {
-    const allowed = rowRegions.filter((c) =>
+    const allowed = rowRegions?.filter((c) =>
       uniqueByCountry.some((reg) => c.region_code === reg.region_code),
     );
 
-    return allowed.reduce((acc, c) => {
+    return allowed?.reduce((acc, c) => {
       const matched = COUNTRY_COLORS.find(
         (color) => color.country_code === c.country_code,
       );
@@ -45,7 +45,7 @@ export const useFetchRegionsGeoJSON = (
   }, [rowRegions, uniqueByCountry]);
 
   const result = useQueries({
-    queries: coloredParams.map((p) => regionGeoQueryOptions(p)),
+    queries: coloredParams?.map((p) => regionGeoQueryOptions(p)),
   });
 
   const geoJson = useMemo(() => {
