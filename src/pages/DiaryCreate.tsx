@@ -9,8 +9,13 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
-import {Drawing, EditImage, UploadImages} from '@/features/diary/ui';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
+import { Drawing, EditImage, UploadImages } from '@/features/diary/ui';
 import {
   Canvas,
   useCanvasRef,
@@ -19,18 +24,18 @@ import {
   SkPath,
   useImage,
 } from '@shopify/react-native-skia';
-import {NavigatorScreenParams, useNavigation} from '@react-navigation/native';
+import { NavigatorScreenParams, useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import * as FileSystem from 'expo-file-system';
-import {decode} from 'base64-arraybuffer';
+import { decode } from 'base64-arraybuffer';
 import uuid from 'react-native-uuid';
-import {getUser} from '@/entities/auth';
-import {IDiary} from '@/entities/diary/model/types';
-import {imageUpload, getImageUrl, DateField} from '@/shared';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {IRegion, useFetchRegions} from '@/entities/region';
-import {CitySelectField} from '@/features/select-region';
-import {useMutationCreateDiary} from '@/entities/diary';
+import { getUser } from '@/entities/auth';
+import { IDiary } from '@/entities/diary/model/types';
+import { imageUpload, getImageUrl, DateField } from '@/shared';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { IRegion, useFetchRegions } from '@/entities/region';
+import { CitySelectField } from '@/features/select-region';
+import { useMutationCreateDiary } from '@/entities/diary';
 
 export interface IColoredPath {
   path: SkPath;
@@ -51,7 +56,7 @@ const DEFAULT_FORM_VALUES = {
 export default function DiaryCreateScreen() {
   const navigation = useNavigation<
     NativeStackNavigationProp<{
-      Home: NavigatorScreenParams<{내여행: undefined}>;
+      Home: NavigatorScreenParams<{ 내여행: undefined }>;
     }>
   >();
   const contentCanvasRef = useCanvasRef();
@@ -61,7 +66,7 @@ export default function DiaryCreateScreen() {
   const [cities, setCities] = useState<IRegion[]>([]);
   const [isShowTopBar, setShowTopBar] = useState<boolean>(true);
 
-  const [imgs, setImgs] = useState<{origin: string; uri: string}[]>([]);
+  const [imgs, setImgs] = useState<{ origin: string; uri: string }[]>([]);
   const [isDrawingMode, setDrawingMode] = useState<boolean>(false);
   const [isOpenDrawing, setOpenDrawing] = useState<boolean>(false);
   const [isOpenEditMode, setOpenEditMode] = useState<boolean>(false);
@@ -75,8 +80,8 @@ export default function DiaryCreateScreen() {
 
   const [date, setDate] = useState<Date | null>(null);
 
-  const {data: regions} = useFetchRegions();
-  const {mutateAsync} = useMutationCreateDiary();
+  const { data: regions } = useFetchRegions();
+  const { mutateAsync } = useMutationCreateDiary();
 
   const handleCaptureContent = useCallback(() => {
     const snapshot = contentCanvasRef.current?.makeImageSnapshot();
@@ -94,7 +99,9 @@ export default function DiaryCreateScreen() {
     const newUri = `data:image/png;base64,${b64}`;
 
     setImgs(prev =>
-      prev.map(i => (i.origin === currentEditImage ? {...i, uri: newUri} : i)),
+      prev.map(i =>
+        i.origin === currentEditImage ? { ...i, uri: newUri } : i,
+      ),
     );
   }, [editCanvasRef, currentEditImage]);
 
@@ -112,7 +119,7 @@ export default function DiaryCreateScreen() {
               setShowTopBar(false);
             },
           },
-          {text: '취소', onPress: () => {}, style: 'cancel'},
+          { text: '취소', onPress: () => {}, style: 'cancel' },
         ],
       );
     } else {
@@ -128,7 +135,7 @@ export default function DiaryCreateScreen() {
               setShowTopBar(true);
             },
           },
-          {text: '취소', onPress: () => {}, style: 'cancel'},
+          { text: '취소', onPress: () => {}, style: 'cancel' },
         ],
       );
     }
@@ -157,7 +164,7 @@ export default function DiaryCreateScreen() {
   ]);
 
   const handleChangeFormValues = useCallback((key: string, value: any) => {
-    setFormData(prev => ({...prev, [key]: value}));
+    setFormData(prev => ({ ...prev, [key]: value }));
   }, []);
 
   const uploadAndGetUrlImage = async (file: string) => {
@@ -183,8 +190,8 @@ export default function DiaryCreateScreen() {
   };
 
   const getUserId = useCallback(async () => {
-    const {id} = await getUser();
-    setFormData(prev => ({...prev, user_id: id}));
+    const { id } = await getUser();
+    setFormData(prev => ({ ...prev, user_id: id }));
   }, []);
 
   const handleSubmit = async () => {
@@ -226,7 +233,7 @@ export default function DiaryCreateScreen() {
       const diaryImagesUrls = await Promise.all(
         imgs.map(v => uploadAndGetUrlImage(v.uri)),
       );
-      body = {...body, diary_images: diaryImagesUrls};
+      body = { ...body, diary_images: diaryImagesUrls };
     }
 
     if (formData.is_drawing) {
@@ -234,7 +241,7 @@ export default function DiaryCreateScreen() {
       const drawingContentUrl =
         await uploadAndGetUrlImage(drawingContentBase64);
 
-      body = {...body, drawing_content: drawingContentUrl};
+      body = { ...body, drawing_content: drawingContentUrl };
     }
 
     const result = await mutateAsync(body);
@@ -260,7 +267,7 @@ export default function DiaryCreateScreen() {
   }, []);
 
   useEffect(() => {
-    navigation.setOptions({headerShown: isShowTopBar});
+    navigation.setOptions({ headerShown: isShowTopBar });
   }, [navigation, isShowTopBar]);
 
   return (
@@ -292,9 +299,9 @@ export default function DiaryCreateScreen() {
           title="여행일"
         />
 
-        <Pressable className="flex flex-row flex-wrap items-center justify-between w-full p-4 border-b border-gray-300">
-          <Text className="mr-4 text-xl">드로잉 모드</Text>
-          <View className="flex flex-row items-center gap-x-2">
+        <Pressable className="flex-row flex-wrap items-center justify-between w-full px-4 py-2 border-b border-gray-300">
+          <Text className="mr-4 text-lg">드로잉 모드</Text>
+          <View className="flex-row items-center gap-x-2">
             {isDrawingMode && (
               <Button
                 onPress={() => {
