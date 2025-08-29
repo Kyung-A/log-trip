@@ -1,19 +1,19 @@
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, Text, TextInput, View } from 'react-native';
 import React, {
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
-} from "react";
+} from 'react';
 import {
   BottomSheetBackdrop,
   BottomSheetFlatList,
   BottomSheetModal,
-} from "@gorhom/bottom-sheet";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { IRegion } from "@/entities/region";
+} from '@gorhom/bottom-sheet';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { IRegion } from '@/entities/region';
 
 interface ICitySelectFieldProps {
   label: string;
@@ -22,12 +22,12 @@ interface ICitySelectFieldProps {
   onConfirm: React.Dispatch<React.SetStateAction<IRegion[]>>;
 }
 
-const SNAP_POINTS = ["100%"];
+const SNAP_POINTS = ['100%'];
 
 export const CitySelectField = React.memo(
   ({ label, value, options, onConfirm }: ICitySelectFieldProps) => {
     const bottomSheetRef = useRef<BottomSheetModal>(null);
-    const [search, setSearch] = useState<string>("");
+    const [search, setSearch] = useState<string>('');
     const [draft, setDraft] = useState<IRegion[]>([]);
 
     const handleOpen = useCallback(() => {
@@ -39,11 +39,11 @@ export const CitySelectField = React.memo(
     }, []);
 
     const handleToggle = useCallback((item: IRegion) => {
-      setDraft((prev) => {
-        const isSelected = prev?.some((data) => data.id === item.id);
+      setDraft(prev => {
+        const isSelected = prev?.some(data => data.id === item.id);
 
         if (isSelected) {
-          return prev?.filter((p) => !(p.id === item.id));
+          return prev?.filter(p => !(p.id === item.id));
         } else {
           return [...prev, item];
         }
@@ -57,7 +57,7 @@ export const CitySelectField = React.memo(
 
     const filteredList = useMemo(() => {
       return options?.filter(
-        (v) => v.region_name.includes(search) || v.country_name.includes(search)
+        v => v.region_name.includes(search) || v.country_name.includes(search),
       );
     }, [options, search]);
 
@@ -69,11 +69,11 @@ export const CitySelectField = React.memo(
       <>
         <Pressable
           onPress={handleOpen}
-          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-t border-b border-gray-300"
+          className="flex-row flex-wrap items-start justify-between w-full px-4 py-3 border-t border-b border-gray-300"
         >
-          <Text className="mr-4 text-xl">{label}</Text>
-          <View className="flex flex-row flex-wrap flex-1 gap-2">
-            {value?.map((v) => (
+          <Text className="mr-4 text-lg pt-0.5">{label}</Text>
+          <View className="flex-row flex-wrap flex-1 gap-2">
+            {value?.map(v => (
               <Text
                 key={v.region_code}
                 className="p-2 rounded bg-[#ebebeb] font-semibold"
@@ -90,7 +90,7 @@ export const CitySelectField = React.memo(
           index={0}
           enablePanDownToClose={true}
           enableDynamicSizing={false}
-          backdropComponent={(props) => (
+          backdropComponent={props => (
             <BottomSheetBackdrop
               {...props}
               disappearsOnIndex={-1}
@@ -102,7 +102,7 @@ export const CitySelectField = React.memo(
             data={filteredList}
             ListHeaderComponent={
               <View className="px-6 pb-4 bg-white border-b border-[#ebebeb]">
-                <View className="flex flex-row items-center justify-between w-full pt-12">
+                <View className="flex-row items-center justify-between w-full pt-12">
                   <Pressable onPress={handleClose}>
                     <Ionicons name="close-outline" size={32} color="#000" />
                   </Pressable>
@@ -114,7 +114,7 @@ export const CitySelectField = React.memo(
                   </Pressable>
                 </View>
 
-                <View className="flex flex-row items-center px-3 py-4 mt-6 rounded-lg bg-[#ebebeb]">
+                <View className="flex-row items-center px-3 py-4 mt-6 rounded-lg bg-[#ebebeb]">
                   <Ionicons name="search-outline" size={24} />
                   <TextInput
                     className="ml-3 text-lg"
@@ -123,8 +123,8 @@ export const CitySelectField = React.memo(
                   />
                 </View>
 
-                <View className="flex flex-row flex-wrap gap-2 mt-4">
-                  {draft?.map((v) => (
+                <View className="flex-row flex-wrap gap-2 mt-4">
+                  {draft?.map(v => (
                     <Text
                       key={v.region_name}
                       className="p-2 rounded bg-[#ebebeb] font-semibold"
@@ -137,19 +137,19 @@ export const CitySelectField = React.memo(
             }
             stickyHeaderIndices={[0]}
             renderItem={({ item }) => {
-              const selected = draft?.some((v) => item.id === v.id);
+              const selected = draft?.some(v => item.id === v.id);
 
               return (
                 <Pressable
                   onPress={() => handleToggle(item)}
-                  className="flex flex-row items-center px-6 py-3 border-b border-gray-100 gap-x-2"
+                  className="flex-row items-center px-6 py-3 border-b border-gray-100 gap-x-2"
                 >
                   <MaterialCommunityIcons
                     name={
-                      selected ? "checkbox-marked" : "checkbox-blank-outline"
+                      selected ? 'checkbox-marked' : 'checkbox-blank-outline'
                     }
                     size={28}
-                    color={selected ? "#000" : "#ccc"}
+                    color={selected ? '#000' : '#ccc'}
                   />
                   <View>
                     <Text className="text-xl">{item.region_name}</Text>
@@ -172,5 +172,5 @@ export const CitySelectField = React.memo(
         </BottomSheetModal>
       </>
     );
-  }
+  },
 );

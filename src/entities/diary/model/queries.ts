@@ -1,7 +1,7 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { getDiaries, getDiaryRegions } from "../api";
-import { IDiary, IDiaryRegions } from ".";
-import { diaryKeys, diaryRegionKeys } from "./queryKeys";
+import { queryOptions, useQuery } from '@tanstack/react-query';
+import { getDiaries, getDiaryRegions } from '../api';
+import { IDiary, IDiaryRegions } from '.';
+import { diaryKeys, diaryRegionKeys } from './queryKeys';
 
 const diaryQueries = {
   list: (userId: string) =>
@@ -23,7 +23,7 @@ export const useFetchDiaries = (userId: string | null | undefined) => {
   return useQuery({
     ...diaryQueries.list(userId),
     enabled: !!userId,
-    placeholderData: (prev) => prev,
+    placeholderData: prev => prev,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
@@ -33,7 +33,7 @@ export const useFetchDiaries = (userId: string | null | undefined) => {
 export const useFetchDiaryRegions = (userId: string | null | undefined) => {
   return useQuery({
     ...diaryQueries.regions(userId),
-    placeholderData: (prev) => prev,
+    placeholderData: prev => prev,
     enabled: !!userId,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,

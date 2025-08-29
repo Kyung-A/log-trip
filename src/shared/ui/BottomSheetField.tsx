@@ -1,38 +1,40 @@
-import BottomSheet, {
+import {
   BottomSheetBackdrop,
+  BottomSheetModal,
   BottomSheetProps,
-} from "@gorhom/bottom-sheet";
-import React, { useRef } from "react";
-import { TouchableOpacity, Text } from "react-native";
+} from '@gorhom/bottom-sheet';
+import React, { useRef } from 'react';
+import { TouchableOpacity, Text } from 'react-native';
 
 interface IBottomSheetField extends BottomSheetProps {
   children: React.ReactNode;
   label: string;
   value: string;
-  handleChange: () => void;
+  handleChange?: () => void;
 }
 
 export const BottomSheetField = React.memo(
   ({ children, handleChange, label, value, ...props }: IBottomSheetField) => {
-    const bottomSheetRef = useRef<BottomSheet>(null);
+    const bottomSheetRef = useRef<BottomSheetModal>(null);
 
     return (
       <>
         <TouchableOpacity
-          onPress={() => bottomSheetRef.current?.expand()}
-          className="flex flex-row flex-wrap items-start justify-between w-full p-4 border-b border-gray-300"
+          onPress={() => bottomSheetRef.current?.present()}
+          className="flex-row flex-wrap justify-between w-full px-4 py-3 border-b border-gray-300"
         >
-          <Text className="mr-4 text-xl">{label}</Text>
-          {value && <Text className="text-xl">{value}</Text>}
+          <Text className="mr-4 text-lg">{label}</Text>
+          {value && <Text className="text-lg text-gray-500">{value}</Text>}
         </TouchableOpacity>
 
-        <BottomSheet
-          index={-1}
-          snapPoints={props.snapPoints}
+        <BottomSheetModal
+          index={0}
           ref={bottomSheetRef}
+          snapPoints={props.snapPoints}
           onChange={props.onChange}
           enablePanDownToClose={true}
-          backdropComponent={(props) => (
+          enableDynamicSizing={false}
+          backdropComponent={props => (
             <BottomSheetBackdrop
               {...props}
               disappearsOnIndex={-1}
@@ -41,8 +43,8 @@ export const BottomSheetField = React.memo(
           )}
         >
           {children}
-        </BottomSheet>
+        </BottomSheetModal>
       </>
     );
-  }
+  },
 );

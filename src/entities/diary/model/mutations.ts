@@ -3,9 +3,9 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import {createDiary, deleteDiary} from '../api';
-import {diaryKeys, diaryRegionKeys} from './queryKeys';
-import {IDiary} from '.';
+import { createDiary, deleteDiary } from '../api';
+import { diaryKeys, diaryRegionKeys } from './queryKeys';
+import { IDiary } from '.';
 
 const diaryMutatins = {
   create: () =>
@@ -25,7 +25,7 @@ export const useMutationCreateDiary = () => {
   return useMutation({
     ...diaryMutatins.create(),
     onSuccess: (_, data) => {
-      qc.invalidateQueries({queryKey: diaryKeys.list(data.user_id)});
+      qc.invalidateQueries({ queryKey: diaryKeys.list(data.user_id) });
       qc.invalidateQueries({
         queryKey: diaryRegionKeys.byUser(data.user_id),
         exact: true,
@@ -40,7 +40,7 @@ export const useMutationDeleteDiary = () => {
   return useMutation({
     ...diaryMutatins.remove(),
     onSuccess: (_, data) => {
-      qc.invalidateQueries({queryKey: diaryKeys.list(data.user_id)});
+      qc.invalidateQueries({ queryKey: diaryKeys.list(data.user_id) });
       qc.invalidateQueries({
         queryKey: diaryRegionKeys.byUser(data.user_id),
         exact: true,
