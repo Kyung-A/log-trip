@@ -49,7 +49,7 @@ export default function TextContentPost({ data }: { data: IDiary }) {
         </Text>
       </View>
 
-      <Text className="py-4">{data.text_content}</Text>
+      <Text className="py-4 whitespace-pre-wrap">{data.text_content}</Text>
     </View>
   );
 }

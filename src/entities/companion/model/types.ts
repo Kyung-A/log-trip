@@ -15,6 +15,7 @@ export interface ICompanion {
     nickname: string;
     profile_image: string;
     gender: string;
+    about?: string;
   };
   companion_regions: {
     id: string;

@@ -16,7 +16,8 @@ import { deleteUser, getUser } from './entities/auth';
 import { TabBar } from './shared';
 import CompanionCreateScreen from './pages/CompanionCreate';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+import Toast, { ErrorToast } from 'react-native-toast-message';
+import CompanionDetailScreen from './pages/CompanionDetail';
 
 import './global.css';
 
@@ -116,6 +117,22 @@ export default function App() {
                           동행 구하기
                         </Text>
                       ),
+                      headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                          <FontAwesome6
+                            name="arrow-left"
+                            size={20}
+                            color="#646464"
+                          />
+                        </TouchableOpacity>
+                      ),
+                    })}
+                  />
+                  <Stack.Screen
+                    name="CompanionDetail"
+                    component={CompanionDetailScreen}
+                    options={({ navigation }) => ({
+                      headerTitle: '',
                       headerLeft: () => (
                         <TouchableOpacity onPress={() => navigation.goBack()}>
                           <FontAwesome6
