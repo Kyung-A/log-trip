@@ -6,15 +6,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { BottomSheetView } from '@gorhom/bottom-sheet';
-import { useNavigation } from '@react-navigation/native';
-import { getUser } from '@/entities/auth';
+import { NavigatorScreenParams, useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { PickerIOS } from '@react-native-picker/picker';
 import { BottomSheetField, DateField } from '@/shared';
@@ -22,36 +16,81 @@ import { IRegion, useFetchRegions } from '@/entities/region';
 import { CitySelectField } from '@/features/select-region';
 import { Controller, useForm } from 'react-hook-form';
 import { useActionSheet } from '@expo/react-native-action-sheet';
+import { useFetchUserId } from '@/entities/auth';
+import { ICompanionRequest, useCreateCompanion } from '@/entities/companion';
+import Toast from 'react-native-toast-message';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const SNAP_POINTS = ['30%'];
 
 export default function CompanionCreateScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<
+    NativeStackNavigationProp<{
+      Home: NavigatorScreenParams<{ 내여행: undefined }>;
+    }>
+  >();
   const { showActionSheetWithOptions } = useActionSheet();
 
-  const [formData, setFormData] = useState([]);
   const [cities, setCities] = useState<IRegion[]>([]);
 
   const { data: regions } = useFetchRegions();
+  const { data: userId } = useFetchUserId();
+  const { mutateAsync } = useCreateCompanion();
 
-  const { control, watch } = useForm();
+  const { control, watch, handleSubmit } = useForm({
+    mode: 'onSubmit',
+  });
 
-  const getUserId = useCallback(async () => {
-    const { id } = await getUser();
-    setFormData(prev => ({ ...prev, user_id: id }));
-  }, []);
+  const handleCreateCompanion = handleSubmit(
+    async (formData: ICompanionRequest) => {
+      if (cities.length === 0) {
+        Toast.show({
+          type: 'error',
+          text1: '도시 선택은 필수입니다.',
+        });
 
-  const handleSubmit = async () => {};
+        return;
+      }
+
+      const body = {
+        ...formData,
+        user_id: userId,
+        companion_regions: cities.map(v => ({
+          region_code: v.region_code,
+          region_name: v.region_name,
+          shape_name: v.shape_name,
+          country_code: v.country_code,
+          country_name: v.country_name,
+        })),
+      };
+
+      const resp = await mutateAsync(body);
+      console.log(resp);
+
+      if (resp.status === 201) {
+        // navigation.navigate('Home', {
+        //   screen: '내여행',
+        // });
+      }
+    },
+    error => {
+      Toast.show({
+        type: 'error',
+        text1: Object.values(error)[0].message as string,
+      });
+      console.error(Object.values(error)[0].message);
+    },
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable className="pt-1.5" onPress={handleSubmit}>
+        <Pressable className="pt-1.5" onPress={handleCreateCompanion}>
           <Text className="text-lg text-blue-500 underline">등록</Text>
         </Pressable>
       ),
     });
-  }, [formData]);
+  }, [handleSubmit, handleCreateCompanion]);
 
   const handleOpenActionSheet = useCallback(onChange => {
     const options = ['무관', '남자', '여자'];
@@ -68,10 +107,6 @@ export default function CompanionCreateScreen() {
     );
   }, []);
 
-  useEffect(() => {
-    getUserId();
-  }, []);
-
   return (
     <>
       <ScrollView className="flex-1 bg-white">
@@ -84,7 +119,10 @@ export default function CompanionCreateScreen() {
 
         <Controller
           control={control}
-          name="companion"
+          name="companion_count"
+          rules={{
+            required: '동행수는 필수입니다.',
+          }}
           render={({ field: { onChange, value } }) => (
             <BottomSheetField
               label="동행수"
@@ -96,7 +134,7 @@ export default function CompanionCreateScreen() {
                   selectedValue={value}
                   onValueChange={itemValue => onChange(itemValue)}
                 >
-                  {Array.from({ length: 50 }, (_, i) => (
+                  {Array.from({ length: 6 }, (_, i) => (
                     <PickerIOS.Item
                       key={i + 1}
                       label={String(i + 1)}
@@ -112,6 +150,9 @@ export default function CompanionCreateScreen() {
         <Controller
           control={control}
           name="gender_preference"
+          rules={{
+            required: '성별은 필수입니다.',
+          }}
           render={({ field: { onChange, value } }) => (
             <TouchableOpacity
               onPress={() => handleOpenActionSheet(onChange)}
@@ -119,7 +160,8 @@ export default function CompanionCreateScreen() {
             >
               <Text className="mr-4 text-lg">성별</Text>
               <Text className="text-lg text-gray-500">
-                {value === 'R' ? '무관' : value === 'M' ? '남자' : '여자'}
+                {value &&
+                  (value === 'R' ? '무관' : value === 'M' ? '남자' : '여자')}
               </Text>
             </TouchableOpacity>
           )}
@@ -128,6 +170,9 @@ export default function CompanionCreateScreen() {
         <Controller
           control={control}
           name="deadline_at"
+          rules={{
+            required: '모집 마감일은 필수입니다.',
+          }}
           render={({ field: { onChange, value } }) => (
             <DateField
               defaultLabel="모집 마감일"
@@ -135,6 +180,7 @@ export default function CompanionCreateScreen() {
               onConfirm={date => onChange(date)}
               date={value}
               title="모집 마감일"
+              minimumDate={new Date()}
             />
           )}
         />
@@ -142,6 +188,9 @@ export default function CompanionCreateScreen() {
         <Controller
           control={control}
           name="start_date"
+          rules={{
+            required: '동행 시작일은 필수입니다.',
+          }}
           render={({ field: { onChange, value } }) => (
             <DateField
               defaultLabel="동행 시작"
@@ -149,6 +198,7 @@ export default function CompanionCreateScreen() {
               onConfirm={date => onChange(date)}
               date={value}
               title="동행 시작"
+              minimumDate={new Date()}
             />
           )}
         />
@@ -156,6 +206,9 @@ export default function CompanionCreateScreen() {
         <Controller
           control={control}
           name="end_date"
+          rules={{
+            required: '동행 종료일은 필수입니다.',
+          }}
           render={({ field: { onChange, value } }) => (
             <DateField
               defaultLabel="동행 종료"
@@ -163,6 +216,7 @@ export default function CompanionCreateScreen() {
               onConfirm={date => onChange(date)}
               date={value}
               title="동행 종료"
+              minimumDate={watch('start_date')}
             />
           )}
         />
@@ -186,6 +240,9 @@ export default function CompanionCreateScreen() {
           <Controller
             control={control}
             name="title"
+            rules={{
+              required: '제목은 필수입니다.',
+            }}
             render={({ field: { onChange } }) => (
               <TextInput
                 className="text-xl font-semibold"
@@ -198,6 +255,9 @@ export default function CompanionCreateScreen() {
           <Controller
             control={control}
             name="content"
+            rules={{
+              required: '내용은 필수입니다.',
+            }}
             render={({ field: { onChange } }) => (
               <TextInput
                 className="pb-20 mt-4 text-lg"

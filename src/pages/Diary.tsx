@@ -3,11 +3,7 @@ import { DrawingiContentPost, TextContentPost } from '@/features/diary/ui';
 import Feather from 'react-native-vector-icons/Feather';
 import { useCallback } from 'react';
 import Swiper from 'react-native-web-swiper';
-import {
-  IDiary,
-  useFetchDiaries,
-  useMutationDeleteDiary,
-} from '@/entities/diary';
+import { IDiary, useFetchDiaries, useDeleteDiary } from '@/entities/diary';
 import { useFetchUserId } from '@/entities/auth';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 
@@ -16,7 +12,7 @@ export default function DiaryScreen({ navigation }) {
 
   const { data: userId } = useFetchUserId();
   const { data } = useFetchDiaries(userId);
-  const { mutateAsync } = useMutationDeleteDiary();
+  const { mutateAsync } = useDeleteDiary();
 
   const handleDeleteDiary = useCallback(async (item: IDiary) => {
     await mutateAsync(item);

@@ -19,7 +19,7 @@ const diaryMutatins = {
     }),
 };
 
-export const useMutationCreateDiary = () => {
+export const useCreateDiary = () => {
   const qc = useQueryClient();
 
   return useMutation({
@@ -34,7 +34,7 @@ export const useMutationCreateDiary = () => {
   });
 };
 
-export const useMutationDeleteDiary = () => {
+export const useDeleteDiary = () => {
   const qc = useQueryClient();
 
   return useMutation({

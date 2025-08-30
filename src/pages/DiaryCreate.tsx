@@ -29,13 +29,13 @@ import dayjs from 'dayjs';
 import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
 import uuid from 'react-native-uuid';
-import { getUser } from '@/entities/auth';
+import { getUser, useFetchUserId } from '@/entities/auth';
 import { IDiary } from '@/entities/diary/model/types';
 import { imageUpload, getImageUrl, DateField } from '@/shared';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IRegion, useFetchRegions } from '@/entities/region';
 import { CitySelectField } from '@/features/select-region';
-import { useMutationCreateDiary } from '@/entities/diary';
+import { useCreateDiary } from '@/entities/diary';
 
 export interface IColoredPath {
   path: SkPath;
@@ -80,8 +80,9 @@ export default function DiaryCreateScreen() {
 
   const [date, setDate] = useState<Date | null>(null);
 
+  const { data: userId } = useFetchUserId();
   const { data: regions } = useFetchRegions();
-  const { mutateAsync } = useMutationCreateDiary();
+  const { mutateAsync } = useCreateDiary();
 
   const handleCaptureContent = useCallback(() => {
     const snapshot = contentCanvasRef.current?.makeImageSnapshot();
@@ -189,11 +190,6 @@ export default function DiaryCreateScreen() {
     return result.publicUrl;
   };
 
-  const getUserId = useCallback(async () => {
-    const { id } = await getUser();
-    setFormData(prev => ({ ...prev, user_id: id }));
-  }, []);
-
   const handleSubmit = async () => {
     const diary_regions = cities?.map(v => ({
       region_code: v.region_code,
@@ -226,6 +222,7 @@ export default function DiaryCreateScreen() {
 
     let body = {
       ...formData,
+      user_id: userId,
       diary_regions,
     };
 
@@ -260,11 +257,7 @@ export default function DiaryCreateScreen() {
         </Pressable>
       ),
     });
-  }, [formData, imgs, capturedDrawingImage]);
-
-  useEffect(() => {
-    getUserId();
-  }, []);
+  }, [formData, imgs, capturedDrawingImage, userId]);
 
   useEffect(() => {
     navigation.setOptions({ headerShown: isShowTopBar });

@@ -1,30 +1,50 @@
-import React, { useCallback, useEffect, useState } from "react";
-import * as SplashScreen from "expo-splash-screen";
-import { NavigationContainer } from "@react-navigation/native";
-import { ActionSheetProvider } from "@expo/react-native-action-sheet";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import DiaryCreateScreen from "./pages/DiaryCreate";
-import ProfileUpdateScreen from "./pages/ProfileUpdate";
-import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
-import { Text, TouchableOpacity, View } from "react-native";
-import * as WebBrowser from "expo-web-browser";
-import PhoneAuthScreen from "./pages/PhoneAuth";
-import LoginScreen from "./pages/Login";
-import { deleteUser, getUser } from "./entities/auth";
-import { TabBar } from "./shared";
-import CompanionCreateScreen from "./pages/CompanionCreate";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React, { useCallback, useEffect, useState } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
+import { NavigationContainer } from '@react-navigation/native';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import DiaryCreateScreen from './pages/DiaryCreate';
+import ProfileUpdateScreen from './pages/ProfileUpdate';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import { Text, TouchableOpacity, View } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+import PhoneAuthScreen from './pages/PhoneAuth';
+import LoginScreen from './pages/Login';
+import { deleteUser, getUser } from './entities/auth';
+import { TabBar } from './shared';
+import CompanionCreateScreen from './pages/CompanionCreate';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 
-import "./global.css";
+import './global.css';
 
 SplashScreen.preventAutoHideAsync();
 WebBrowser.maybeCompleteAuthSession();
 const queryClient = new QueryClient();
 
+const toastConfig = {
+  error: props => (
+    <ErrorToast
+      {...props}
+      contentContainerStyle={{ paddingHorizontal: 12, height: 40 }}
+      style={{
+        height: 40,
+        backgroundColor: '#e35959',
+        borderLeftWidth: 0,
+      }}
+      text1Style={{
+        color: '#fff',
+        fontSize: 13,
+        fontWeight: 500,
+      }}
+    />
+  ),
+};
+
 export default function App() {
-  const [initialRoute, setInitialRoute] = useState("Login");
+  const [initialRoute, setInitialRoute] = useState('Login');
 
   const Stack = createNativeStackNavigator();
   const [isReady, setIsReady] = useState(false);
@@ -39,9 +59,9 @@ export default function App() {
     async function prepare() {
       const user = await getUser();
       if (user) {
-        setInitialRoute("Home");
+        setInitialRoute('Home');
       } else {
-        setInitialRoute("Login");
+        setInitialRoute('Login');
       }
 
       setIsReady(true);
@@ -156,6 +176,7 @@ export default function App() {
                     })}
                   />
                 </Stack.Navigator>
+                <Toast config={toastConfig} topOffset={70} />
               </View>
             </NavigationContainer>
           </BottomSheetModalProvider>
