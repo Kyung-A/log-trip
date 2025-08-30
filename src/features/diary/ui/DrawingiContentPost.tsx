@@ -1,33 +1,44 @@
-import {IDiary} from '@/entities/diary';
+import { IDiary } from '@/entities/diary';
+import { groupByCountry, GroupByCountryLabel } from '@/features/select-region';
 import dayjs from 'dayjs';
-import {useMemo} from 'react';
-import {View, Dimensions, Image, Text} from 'react-native';
+import { useCallback, useMemo } from 'react';
+import { View, Dimensions, Image, Text, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {groupByCountry} from '../lib';
 
-export default function DrawingiContentPost({data}: {data: IDiary}) {
+export default function DrawingiContentPost({ data }: { data: IDiary }) {
   const groupedRegions = useMemo(
     () => groupByCountry(data.diary_regions),
     [data],
   );
 
+  const regionItems = useMemo(() => {
+    return Object.entries(groupedRegions).map(
+      ([countryCode, { country_name, regions }]: any) => ({
+        key: countryCode,
+        countryName: country_name,
+        regions: regions.join(', '),
+      }),
+    );
+  }, [groupedRegions]);
+
+  const renderItem = useCallback(({ item }) => {
+    return (
+      <GroupByCountryLabel
+        countryName={item.countryName}
+        regions={item.regions}
+      />
+    );
+  }, []);
+
   return (
     <>
       <View className="flex-col px-4 mb-3 gap-y-3">
         <View className="flex-row gap-x-4">
-          {Object.entries(groupedRegions).map(
-            ([countryCode, {country_name, regions}]: any) => (
-              <View
-                key={countryCode}
-                className="px-2 py-1 bg-gray-100 rounded-md"
-              >
-                <Text className="text-base">{country_name}</Text>
-                <Text className="text-sm -mt-0.5 text-gray-600">
-                  {regions.join(', ')}
-                </Text>
-              </View>
-            ),
-          )}
+          <FlatList
+            data={regionItems}
+            keyExtractor={item => item.key}
+            renderItem={renderItem}
+          />
         </View>
 
         <View className="flex-row items-center gap-x-2">
@@ -45,7 +56,7 @@ export default function DrawingiContentPost({data}: {data: IDiary}) {
         }}
       >
         <Image
-          source={{uri: data.drawing_content}}
+          source={{ uri: data.drawing_content }}
           className="object-fill w-full h-full"
         />
       </View>

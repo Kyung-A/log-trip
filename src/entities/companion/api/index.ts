@@ -1,1 +1,2 @@
-export * from "./getCompanions";
+export * from './getCompanions';
+export * from './createCompanions';

@@ -38,7 +38,7 @@ export default function DiaryScreen({ navigation }) {
       {data?.length > 0 ? (
         <FlatList
           data={data}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={item => item.id}
           renderItem={({ item }) => (
             <View key={item.id} className="w-full h-auto mb-2 bg-white">
               <View className="flex-row items-center justify-between p-4">

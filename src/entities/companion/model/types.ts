@@ -1,4 +1,4 @@
-interface ICompanion {
+export interface ICompanion {
   id: string;
   user_id: string;
   created_at: Date;
@@ -11,10 +11,24 @@ interface ICompanion {
   start_date: Date;
   end_date: Date;
   place: string;
+  user_info: {
+    nickname: string;
+    profile_image: string;
+    gender: string;
+  };
+  companion_regions: {
+    id: string;
+    region_name: string;
+    region_code: string;
+    shape_name: string;
+    country_code: string;
+    country_name: string;
+    api_url: string;
+  }[];
 }
 
 export interface ICompanionRequest {
-  // user_id: string;
+  user_id: string;
   title: string;
   content: string;
   companion_count: number;

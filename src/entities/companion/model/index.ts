@@ -1,3 +1,3 @@
-export { ICompanionRequest } from './types';
+export * from './types';
 export * from './queries';
 export * from './mutations';
