@@ -40,10 +40,12 @@ export const CitySelectField = React.memo(
 
     const handleToggle = useCallback((item: IRegion) => {
       setDraft(prev => {
-        const isSelected = prev?.some(data => data.id === item.id);
+        const isSelected = prev?.some(
+          data => data.region_code === item.region_code,
+        );
 
         if (isSelected) {
-          return prev?.filter(p => !(p.id === item.id));
+          return prev?.filter(p => !(p.region_code === item.region_code));
         } else {
           return [...prev, item];
         }
@@ -137,7 +139,9 @@ export const CitySelectField = React.memo(
             }
             stickyHeaderIndices={[0]}
             renderItem={({ item }) => {
-              const selected = draft?.some(v => item.id === v.id);
+              const selected = draft?.some(
+                v => item.region_code === v.region_code,
+              );
 
               return (
                 <Pressable

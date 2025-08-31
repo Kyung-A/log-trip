@@ -22,6 +22,7 @@ export default function CompanionDetailScreen() {
   const navigation = useNavigation<
     NativeStackNavigationProp<{
       Home: NavigatorScreenParams<{ 동행: string }>;
+      CompanionUpdate: any;
     }>
   >();
   const { showActionSheetWithOptions } = useActionSheet();
@@ -65,11 +66,11 @@ export default function CompanionDetailScreen() {
     const options = ['수정', '삭제', '취소'];
 
     showActionSheetWithOptions({ options, cancelButtonIndex: 2 }, idx => {
-      if (idx === 0) console.log('수정');
+      if (idx === 0) navigation.navigate('CompanionUpdate', { id: data?.id });
       else if (idx === 1) handleDeleteCompanion(data.id);
       else if (idx === 2) return;
     });
-  }, [data?.id]);
+  }, [data?.id, navigation]);
 
   useLayoutEffect(() => {
     navigation.setOptions({

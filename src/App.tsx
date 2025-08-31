@@ -18,6 +18,7 @@ import CompanionCreateScreen from './pages/CompanionCreate';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Toast, { ErrorToast } from 'react-native-toast-message';
 import CompanionDetailScreen from './pages/CompanionDetail';
+import CompanionUpdateScreen from './pages/CompanionUpdate';
 
 import './global.css';
 
@@ -121,6 +122,26 @@ export default function App() {
                         <TouchableOpacity onPress={() => navigation.goBack()}>
                           <FontAwesome6
                             name="arrow-left"
+                            size={20}
+                            color="#646464"
+                          />
+                        </TouchableOpacity>
+                      ),
+                    })}
+                  />
+                  <Stack.Screen
+                    name="CompanionUpdate"
+                    component={CompanionUpdateScreen}
+                    options={({ navigation }) => ({
+                      headerTitle: () => (
+                        <Text className="text-lg font-semibold">
+                          동행 글 수정하기
+                        </Text>
+                      ),
+                      headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                          <FontAwesome6
+                            name="xmark"
                             size={20}
                             color="#646464"
                           />

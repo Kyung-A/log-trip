@@ -5,12 +5,16 @@ import {
 } from '@tanstack/react-query';
 import { ICompanionRequest } from './types';
 import { companionsKeys } from './queryKeys';
-import { createCompanions, deleteCompanion } from '../api';
+import { createCompanions, deleteCompanion, updateCompanions } from '../api';
 
 const companionMutations = {
   create: () =>
     mutationOptions({
       mutationFn: (data: ICompanionRequest) => createCompanions(data),
+    }),
+  update: () =>
+    mutationOptions({
+      mutationFn: (data: ICompanionRequest) => updateCompanions(data),
     }),
   delete: () =>
     mutationOptions({
@@ -25,6 +29,25 @@ export const useCreateCompanion = () => {
     ...companionMutations.create(),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: companionsKeys.lists() });
+    },
+  });
+};
+
+export const useUpdateCompanion = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    ...companionMutations.update(),
+    onSuccess: (_, data) => {
+      qc.invalidateQueries({
+        queryKey: companionsKeys.detail(data.id),
+        exact: true,
+        refetchType: 'active',
+      });
+      qc.invalidateQueries({
+        queryKey: companionsKeys.list(data.id),
+        refetchType: 'active',
+      });
     },
   });
 };

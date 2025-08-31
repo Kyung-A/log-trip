@@ -1,25 +1,31 @@
-import { Pressable, ScrollView, Text } from 'react-native';
-import React, { useLayoutEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import {
+  ICompanionRequest,
+  useFetchCompanionDetail,
+  useUpdateCompanion,
+} from '@/entities/companion';
 import { IRegion } from '@/entities/region';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useFetchUserId } from '@/entities/auth';
-import { ICompanionRequest, useCreateCompanion } from '@/entities/companion';
-import Toast from 'react-native-toast-message';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CompanionForm } from '@/features/companion';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useLayoutEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { Pressable, ScrollView, Text } from 'react-native';
+import Toast from 'react-native-toast-message';
 
-export default function CompanionCreateScreen() {
+export default function CompanionUpdateScreen() {
   const navigation = useNavigation<
     NativeStackNavigationProp<{
       CompanionDetail: any;
     }>
   >();
 
-  const [cities, setCities] = useState<IRegion[]>([]);
+  const {
+    params: { id },
+  } = useRoute<RouteProp<any>>();
 
-  const { data: userId } = useFetchUserId();
-  const { mutateAsync } = useCreateCompanion();
+  const { data } = useFetchCompanionDetail(id);
+  const { mutateAsync } = useUpdateCompanion();
+  const [cities, setCities] = useState<IRegion[]>([]);
 
   const methods = useForm({
     mode: 'onSubmit',
@@ -38,7 +44,7 @@ export default function CompanionCreateScreen() {
 
       const body = {
         ...formData,
-        user_id: userId,
+        user_id: data.user_id,
         companion_regions: cities.map(v => ({
           region_code: v.region_code,
           region_name: v.region_name,
@@ -49,9 +55,9 @@ export default function CompanionCreateScreen() {
       };
 
       const resp = await mutateAsync(body);
-      if (resp.status === 201) {
+      if (resp.status === 204) {
         navigation.navigate('CompanionDetail', {
-          id: resp.data.id,
+          id: formData.id,
         });
       }
     },
@@ -68,7 +74,7 @@ export default function CompanionCreateScreen() {
     navigation.setOptions({
       headerRight: () => (
         <Pressable className="pt-1.5" onPress={handleCreateCompanion}>
-          <Text className="text-lg text-blue-500 underline">등록</Text>
+          <Text className="text-lg text-blue-500 underline">수정</Text>
         </Pressable>
       ),
     });
@@ -77,7 +83,11 @@ export default function CompanionCreateScreen() {
   return (
     <FormProvider {...methods}>
       <ScrollView className="flex-1 bg-white">
-        <CompanionForm cities={cities} setCities={setCities} />
+        <CompanionForm
+          cities={cities}
+          setCities={setCities}
+          defaultValues={data}
+        />
       </ScrollView>
     </FormProvider>
   );

@@ -29,6 +29,7 @@ export interface ICompanion {
 }
 
 export interface ICompanionRequest {
+  id?: string;
   user_id: string;
   title: string;
   content: string;
