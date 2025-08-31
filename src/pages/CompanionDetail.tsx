@@ -1,17 +1,37 @@
-import { useFetchCompanionDetail } from '@/entities/companion';
+import { useFetchUserId } from '@/entities/auth';
+import {
+  useDeleteCompanion,
+  useFetchCompanionDetail,
+} from '@/entities/companion';
 import { groupByCountry } from '@/features/select-region';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { useActionSheet } from '@expo/react-native-action-sheet';
+import {
+  NavigatorScreenParams,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
-import { useMemo } from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { useCallback, useLayoutEffect, useMemo } from 'react';
+import { Pressable, ScrollView, TouchableOpacity } from 'react-native';
 import { Text, View, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function CompanionDetailScreen() {
+  const navigation = useNavigation<
+    NativeStackNavigationProp<{
+      Home: NavigatorScreenParams<{ 동행: string }>;
+    }>
+  >();
+  const { showActionSheetWithOptions } = useActionSheet();
   const {
     params: { id },
   } = useRoute<RouteProp<any>>();
+
   const { data } = useFetchCompanionDetail(id);
+  const { data: userId } = useFetchUserId();
+  const { mutateAsync } = useDeleteCompanion();
 
   const groupedRegions = useMemo(
     () => data && groupByCountry(data?.companion_regions),
@@ -30,6 +50,37 @@ export default function CompanionDetailScreen() {
       )
     );
   }, [groupedRegions]);
+
+  const handleDeleteCompanion = useCallback(
+    async (id: string) => {
+      const result = await mutateAsync(id);
+      if (result.status === 204) {
+        navigation.navigate('Home', { screen: '동행' });
+      }
+    },
+    [mutateAsync],
+  );
+
+  const handleOpenActionSheet = useCallback(() => {
+    const options = ['수정', '삭제', '취소'];
+
+    showActionSheetWithOptions({ options, cancelButtonIndex: 2 }, idx => {
+      if (idx === 0) console.log('수정');
+      else if (idx === 1) handleDeleteCompanion(data.id);
+      else if (idx === 2) return;
+    });
+  }, [data?.id]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () =>
+        userId === data?.user_id && (
+          <Pressable className="" onPress={handleOpenActionSheet}>
+            <Ionicons name="ellipsis-vertical" size={22} color="#646464" />
+          </Pressable>
+        ),
+    });
+  }, [userId, data?.user_id]);
 
   return (
     <>
@@ -140,7 +191,7 @@ export default function CompanionDetailScreen() {
           className={`w-full rounded-lg ${dayjs().isAfter(data?.deadline_at) ? 'bg-gray-300' : 'bg-[#d5b2a7]'}`}
         >
           <Text
-            className={`py-4 font-bold text-center ${dayjs().isAfter(data?.deadline_at) ? 'text-zinc-500' : 'text-white'}`}
+            className={`py-3 font-bold text-center text-lg ${dayjs().isAfter(data?.deadline_at) ? 'text-zinc-500' : 'text-white'}`}
             disabled={dayjs().isAfter(data?.deadline_at)}
           >
             동행 신청하기

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, { useCallback, useLayoutEffect, useState } from 'react';
 import { BottomSheetView } from '@gorhom/bottom-sheet';
-import { NavigatorScreenParams, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { PickerIOS } from '@react-native-picker/picker';
 import { BottomSheetField, DateField } from '@/shared';
@@ -26,7 +26,7 @@ const SNAP_POINTS = ['30%'];
 export default function CompanionCreateScreen() {
   const navigation = useNavigation<
     NativeStackNavigationProp<{
-      Home: NavigatorScreenParams<{ 내여행: undefined }>;
+      CompanionDetail: any;
     }>
   >();
   const { showActionSheetWithOptions } = useActionSheet();
@@ -65,12 +65,10 @@ export default function CompanionCreateScreen() {
       };
 
       const resp = await mutateAsync(body);
-      console.log(resp);
-
       if (resp.status === 201) {
-        // navigation.navigate('Home', {
-        //   screen: '내여행',
-        // });
+        navigation.navigate('CompanionDetail', {
+          id: resp.data.id,
+        });
       }
     },
     error => {
@@ -248,6 +246,7 @@ export default function CompanionCreateScreen() {
                 className="text-xl font-semibold"
                 placeholder="제목을 작성해주세요"
                 onChangeText={onChange}
+                maxLength={30}
               />
             )}
           />

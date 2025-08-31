@@ -53,7 +53,7 @@ const CompanionCard = React.memo(({ item }: { item: ICompanion }) => {
             renderItem={renderItem}
           />
         </View>
-        <Text className="mt-3 font-semibold">{item.title}</Text>
+        <Text className="mt-3 font-semibold line-clamp-1">{item.title}</Text>
         <Text className="mt-1 text-slate-600 line-clamp-2">{item.content}</Text>
         <View className="flex-row items-center my-3 gap-x-2">
           <View className="w-5 h-5 overflow-hidden rounded-full">

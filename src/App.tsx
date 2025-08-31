@@ -134,7 +134,11 @@ export default function App() {
                     options={({ navigation }) => ({
                       headerTitle: '',
                       headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <TouchableOpacity
+                          onPress={() =>
+                            navigation.navigate('Home', { screen: '동행' })
+                          }
+                        >
                           <FontAwesome6
                             name="arrow-left"
                             size={20}
