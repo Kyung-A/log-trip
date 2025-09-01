@@ -3,6 +3,7 @@ import {
   useDeleteCompanion,
   useFetchCompanionDetail,
 } from '@/entities/companion';
+import { useApply } from '@/entities/companion-application';
 import { groupByCountry } from '@/features/select-region';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import {
@@ -13,8 +14,14 @@ import {
 } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
-import { useCallback, useLayoutEffect, useMemo } from 'react';
-import { Pressable, ScrollView, TouchableOpacity } from 'react-native';
+import { useCallback, useLayoutEffect, useMemo, useState } from 'react';
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import { Text, View, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -23,6 +30,7 @@ export default function CompanionDetailScreen() {
     NativeStackNavigationProp<{
       Home: NavigatorScreenParams<{ 동행: string }>;
       CompanionUpdate: any;
+      ApplyStatus: any;
     }>
   >();
   const { showActionSheetWithOptions } = useActionSheet();
@@ -32,7 +40,16 @@ export default function CompanionDetailScreen() {
 
   const { data } = useFetchCompanionDetail(id);
   const { data: userId } = useFetchUserId();
-  const { mutateAsync } = useDeleteCompanion();
+  const { mutateAsync: deleteMutateAsync } = useDeleteCompanion();
+  const { mutateAsync: applyMutateAsync } = useApply();
+
+  const [visible, setVisible] = useState<boolean>(false);
+  const [applyMessage, setApplyMessage] = useState<string>();
+
+  const applied = useMemo(
+    () => data?.applications.some(v => v.applicant_id === userId),
+    [data?.applications, userId],
+  );
 
   const groupedRegions = useMemo(
     () => data && groupByCountry(data?.companion_regions),
@@ -54,12 +71,12 @@ export default function CompanionDetailScreen() {
 
   const handleDeleteCompanion = useCallback(
     async (id: string) => {
-      const result = await mutateAsync(id);
+      const result = await deleteMutateAsync(id);
       if (result.status === 204) {
         navigation.navigate('Home', { screen: '동행' });
       }
     },
-    [mutateAsync],
+    [deleteMutateAsync],
   );
 
   const handleOpenActionSheet = useCallback(() => {
@@ -71,6 +88,19 @@ export default function CompanionDetailScreen() {
       else if (idx === 2) return;
     });
   }, [data?.id, navigation]);
+
+  const handleCompanionApplication = useCallback(async () => {
+    const body = {
+      companion_id: data?.id,
+      applicant_id: userId,
+      message: applyMessage,
+    };
+
+    const result = await applyMutateAsync(body);
+    if (result.status === 201) {
+      navigation.navigate('ApplyStatus');
+    }
+  }, [applyMessage, data?.id, userId]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -84,8 +114,8 @@ export default function CompanionDetailScreen() {
   }, [userId, data?.user_id]);
 
   return (
-    <>
-      {data && (
+    data && (
+      <>
         <ScrollView className="w-full h-screen bg-white gap-y-6">
           <View className="p-4 border-b border-gray-200">
             <Text className="text-xl font-semibold">{data.title}</Text>
@@ -94,7 +124,7 @@ export default function CompanionDetailScreen() {
             </Text>
           </View>
 
-          <View className="px-4 pt-6 pb-10 gap-y-6">
+          <View className="px-4 pt-6 pb-16 gap-y-6">
             <View>
               <Text className="text-base font-semibold">여행 일정</Text>
 
@@ -185,20 +215,59 @@ export default function CompanionDetailScreen() {
             </View>
           </View>
         </ScrollView>
-      )}
 
-      <View className="fixed bottom-0 w-full px-4 pt-4 bg-white border-t border-gray-200 pb-14">
-        <TouchableOpacity
-          className={`w-full rounded-lg ${dayjs().isAfter(data?.deadline_at) ? 'bg-gray-300' : 'bg-[#d5b2a7]'}`}
+        {userId !== data?.user_id && (
+          <View className="fixed bottom-0 w-full px-4 pt-4 bg-white border-t border-gray-200 pb-14">
+            <TouchableOpacity
+              onPress={() => setVisible(true)}
+              className={`w-full rounded-lg ${dayjs().isAfter(data?.deadline_at) || applied ? 'bg-gray-300' : 'bg-[#d5b2a7]'}`}
+            >
+              <Text
+                className={`py-3 font-bold text-center text-lg ${dayjs().isAfter(data?.deadline_at) || applied ? 'text-zinc-400' : 'text-white'}`}
+                disabled={dayjs().isAfter(data?.deadline_at)}
+              >
+                {applied ? '동행 신청 완료' : '동행 신청하기'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <Modal
+          visible={visible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setVisible(false)}
         >
-          <Text
-            className={`py-3 font-bold text-center text-lg ${dayjs().isAfter(data?.deadline_at) ? 'text-zinc-500' : 'text-white'}`}
-            disabled={dayjs().isAfter(data?.deadline_at)}
+          <Pressable
+            className="flex-1 bg-[#00000076] items-center justify-center"
+            onPress={() => setVisible(false)}
           >
-            동행 신청하기
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </>
+            <View className="w-5/6 p-6 bg-white rounded-lg">
+              <Text className="text-lg font-semibold">
+                간단한 메세지를 함께 적으면
+              </Text>
+              <Text className="text-lg font-semibold">
+                매칭될 확률이 높아져요!
+              </Text>
+              <TextInput
+                className="p-4 mt-4 rounded-md bg-slate-100 min-h-28 placeholder:text-gray-400"
+                placeholder="메세지를 작성해 주세요."
+                multiline
+                maxLength={200}
+                onChangeText={setApplyMessage}
+              />
+              <TouchableOpacity
+                onPress={handleCompanionApplication}
+                className="w-full bg-[#d5b2a7] mt-4 rounded-md"
+              >
+                <Text className="py-2 text-lg font-semibold text-center text-white">
+                  완료
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Modal>
+      </>
+    )
   );
 }

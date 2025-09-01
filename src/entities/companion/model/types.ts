@@ -11,6 +11,8 @@ export interface ICompanion {
   start_date: Date;
   end_date: Date;
   place: string;
+  accepted_count: number;
+  is_full: boolean;
   user_info: {
     nickname: string;
     profile_image: string;
@@ -25,6 +27,13 @@ export interface ICompanion {
     country_code: string;
     country_name: string;
     api_url: string;
+  }[];
+  applications: {
+    id: string;
+    status: 'pending' | 'accepted' | 'rejected' | 'cancelled';
+    message: string;
+    created_at: string;
+    applicant_id: string;
   }[];
 }
 

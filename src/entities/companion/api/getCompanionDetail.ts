@@ -8,10 +8,14 @@ export const getCompanionDetail = async (id: string) => {
         `
             *,
             user_info:user_id ( nickname, gender, about, profile_image ),
-            companion_regions ( * )
+            companion_regions ( * ),
+            applications:companion_applications (
+              id, status, message, applicant_id
+            )
         `,
       )
       .eq('id', id)
+      .in('applications.status', ['pending', 'accepted'])
       .single();
 
     return data;

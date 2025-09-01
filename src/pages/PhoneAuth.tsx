@@ -1,8 +1,8 @@
-import { sendSMS, verifyCode } from "@/features/auth";
-import { supabase } from "@/shared";
-import { useRoute } from "@react-navigation/native";
-import { useCallback, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { sendSMS, verifyCode } from '@/features/auth';
+import { supabase } from '@/shared';
+import { useRoute } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import {
   FlatList,
   Modal,
@@ -10,23 +10,23 @@ import {
   Text,
   TextInput,
   View,
-} from "react-native";
+} from 'react-native';
 
 const OPTIONS = [
-  "SKT",
-  "KT",
-  "LG U+",
-  "SKT 알뜰폰",
-  "KT 알뜰폰",
-  "LG U+ 알뜰폰",
+  'SKT',
+  'KT',
+  'LG U+',
+  'SKT 알뜰폰',
+  'KT 알뜰폰',
+  'LG U+ 알뜰폰',
 ];
 
 const DEFAULT_VALUES = {
-  name: "",
-  birthday: "",
-  gender: "",
-  mobileCarrier: "",
-  phone: "",
+  name: '',
+  birthday: '',
+  gender: '',
+  mobileCarrier: '',
+  phone: '',
 };
 
 export default function PhoneAuthScreen({ navigation }) {
@@ -47,41 +47,41 @@ export default function PhoneAuthScreen({ navigation }) {
     const formData = getValues();
 
     const { platform } = route.params as any;
-    const isMale = formData.gender === "1" || formData.gender === "3";
+    const isMale = formData.gender === '1' || formData.gender === '3';
 
-    const { error, data } = await supabase.from("users").insert({
+    const { error, data } = await supabase.from('users').insert({
       id: userData.id,
       email: userData.email,
       nickname: formData.name,
       name: formData.name,
       birthday: formData.birthday,
-      gender: isMale ? "male" : "female",
+      gender: isMale ? 'male' : 'female',
       phone: formData.phone,
       platform: platform,
       mobile_carrier: formData.mobileCarrier,
     });
 
     if (error) {
-      console.error("❌ Supabase insert error:", error);
+      console.error('❌ Supabase insert error:', error);
     } else {
-      navigation.navigate("Home");
+      navigation.navigate('Home');
     }
   }, [route]);
 
-  const handleSendSMS = useCallback(async (formData) => {
+  const handleSendSMS = useCallback(async formData => {
     if (formData.phone.length !== 11) {
-      setError("올바른 휴대폰 번호가 아닙니다.");
+      setError('올바른 휴대폰 번호가 아닙니다.');
       return;
     }
 
     const result = await sendSMS(formData.phone);
-    if (result.statusCode === "2000") {
+    if (result.statusCode === '2000') {
       setTimeLeft(180);
     }
   }, []);
 
   const handleVerifyCode = useCallback(async (code: string) => {
-    const phone = getValues("phone");
+    const phone = getValues('phone');
 
     const reislt = await verifyCode({ phone: phone, code: code });
 
@@ -103,7 +103,7 @@ export default function PhoneAuthScreen({ navigation }) {
 
   const onSelect = useCallback((option: string) => {
     setSelected(option);
-    setValue("mobileCarrier", option);
+    setValue('mobileCarrier', option);
     setVisible(false);
   }, []);
 
@@ -114,7 +114,7 @@ export default function PhoneAuthScreen({ navigation }) {
     if (timeLeft <= 0) return;
 
     const interval = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+      setTimeLeft(prev => prev - 1);
     }, 1000);
 
     return () => clearInterval(interval);
@@ -188,8 +188,8 @@ export default function PhoneAuthScreen({ navigation }) {
             className="w-full px-3 text-lg py-4 leading-6 border border-gray-300 rounded-md mt-1.5"
             disabled={timeLeft > 0}
           >
-            <Text style={{ color: selected ? "#000" : "#999" }}>
-              {selected || "통신사 선택"}
+            <Text style={{ color: selected ? '#000' : '#999' }}>
+              {selected || '통신사 선택'}
             </Text>
           </Pressable>
 
@@ -201,7 +201,7 @@ export default function PhoneAuthScreen({ navigation }) {
                 <TextInput
                   className="px-3 py-4 text-lg leading-6 border border-gray-300 rounded-md flex-[2]"
                   placeholder="'-'빼고 휴대폰 번호 입력"
-                  onChangeText={(e) => {
+                  onChangeText={e => {
                     setError(null);
                     onChange(e);
                   }}
@@ -215,14 +215,14 @@ export default function PhoneAuthScreen({ navigation }) {
               onPress={handleSubmit(handleSendSMS)}
               className="justify-center flex-1 bg-blue-200 rounded-md disabled:bg-gray-300"
               disabled={
-                timeLeft > 0 || Object.values(watch()).some((v) => v === "")
+                timeLeft > 0 || Object.values(watch()).some(v => v === '')
               }
             >
               <Text
                 className={`font-bold text-lg text-center ${
-                  timeLeft > 0 || Object.values(watch()).some((v) => v === "")
-                    ? "text-gray-400"
-                    : "text-blue-500"
+                  timeLeft > 0 || Object.values(watch()).some(v => v === '')
+                    ? 'text-gray-400'
+                    : 'text-blue-500'
                 }`}
               >
                 인증하기
@@ -237,13 +237,13 @@ export default function PhoneAuthScreen({ navigation }) {
         {timeLeft > 0 && (
           <View>
             <Text className="mb-1 font-semibold text-red-500">
-              {String(minutes).padStart(2, "0")}:
-              {String(seconds).padStart(2, "0")}
+              {String(minutes).padStart(2, '0')}:
+              {String(seconds).padStart(2, '0')}
             </Text>
             <TextInput
               className="px-3 py-4 text-lg leading-6 border border-gray-300 rounded-md"
               placeholder="인증번호 4자리 입력"
-              onChangeText={(value) => {
+              onChangeText={value => {
                 setErrorVerifyCode(false);
                 if (value.length === 6) {
                   handleVerifyCode(value);
@@ -267,17 +267,17 @@ export default function PhoneAuthScreen({ navigation }) {
         onRequestClose={() => setVisible(false)}
       >
         <Pressable
-          className="flex-1 bg-[#0000005c] items-center justify-center"
+          className="flex-1 bg-[#00000076] items-center justify-center"
           onPress={() => setVisible(false)}
         >
           <View className="bg-white rounded-md w-80">
             <FlatList
               data={OPTIONS}
-              keyExtractor={(item) => item}
+              keyExtractor={item => item}
               renderItem={({ item, index }) => (
                 <Pressable
                   onPress={() => onSelect(item)}
-                  className={`px-4 py-3 border-gray-300 ${index === 5 ? "" : "border-b"}`}
+                  className={`px-4 py-3 border-gray-300 ${index === 5 ? '' : 'border-b'}`}
                 >
                   <Text className="text-lg">{item}</Text>
                 </Pressable>

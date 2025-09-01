@@ -8,6 +8,7 @@ import React, { useCallback, useMemo } from 'react';
 import { FlatList, Pressable, Text, View, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+// TODO: 같은 기기로 로그아웃, 로그인 시 예전 캐싱이 남아있음
 const CompanionCard = React.memo(({ item }: { item: ICompanion }) => {
   const navigation = useNavigation<
     NativeStackNavigationProp<{
