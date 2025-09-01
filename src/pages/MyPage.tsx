@@ -1,9 +1,9 @@
-import { getUser, getUserProfile } from "@/entities/auth";
-import { logout } from "@/features/auth";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback, useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { getUser, getUserProfile } from '@/entities/auth';
+import { logout } from '@/features/auth';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useCallback, useState } from 'react';
+import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export interface IProfile {
   birthday: string;
@@ -25,7 +25,7 @@ export default function MyPageScreen({ navigation }) {
 
   const handleLogout = useCallback(async () => {
     await logout();
-    navigation.navigate("Login");
+    navigation.navigate('Login');
   }, []);
 
   const fetchData = useCallback(async () => {
@@ -37,7 +37,7 @@ export default function MyPageScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       fetchData();
-    }, [])
+    }, []),
   );
 
   return (
@@ -56,7 +56,7 @@ export default function MyPageScreen({ navigation }) {
       </View>
       <Text className="mt-4 text-xl font-semibold">{profile?.name}</Text>
       <Text className="mt-3">
-        {profile?.about ?? "간단한 자기소개를 작성해 주세요!"}
+        {profile?.about ?? '간단한 자기소개를 작성해 주세요!'}
       </Text>
       <View className="flex-row items-center mt-6">
         <View className="items-center px-6">
@@ -66,19 +66,23 @@ export default function MyPageScreen({ navigation }) {
           </Text>
         </View>
         <View className="h-10 w-[1px] bg-gray-200"></View>
-        <View className="items-center px-6">
-          <Text className="text-sm text-gray-500">여행한 나라</Text>
-          <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">4</Text>
-        </View>
         <View className="h-10 w-[1px] bg-gray-200"></View>
         <View className="items-center px-6">
           <Text className="text-sm text-gray-500">동행 글</Text>
           <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">0</Text>
         </View>
+        <View className="h-10 w-[1px] bg-gray-200"></View>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ApplyStatus')}
+          className="items-center px-6"
+        >
+          <Text className="text-sm text-gray-500">동행 현황</Text>
+          <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">0</Text>
+        </TouchableOpacity>
       </View>
       <Pressable
         onPress={() =>
-          navigation.navigate("ProfileUpdate", {
+          navigation.navigate('ProfileUpdate', {
             id: profile.id,
             profile_image: profile.profile_image,
             nickname: profile.nickname,

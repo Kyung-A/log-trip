@@ -19,6 +19,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Toast, { ErrorToast } from 'react-native-toast-message';
 import CompanionDetailScreen from './pages/CompanionDetail';
 import CompanionUpdateScreen from './pages/CompanionUpdate';
+import ApplyStatusScreen from './pages/ApplyStatus';
 
 import './global.css';
 
@@ -204,6 +205,26 @@ export default function App() {
                       headerTitle: () => (
                         <Text className="text-lg font-semibold">
                           프로필 수정
+                        </Text>
+                      ),
+                      headerLeft: () => (
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                          <FontAwesome6
+                            name="arrow-left"
+                            size={20}
+                            color="#646464"
+                          />
+                        </TouchableOpacity>
+                      ),
+                    })}
+                  />
+                  <Stack.Screen
+                    name="ApplyStatus"
+                    component={ApplyStatusScreen}
+                    options={({ navigation }) => ({
+                      headerTitle: () => (
+                        <Text className="text-lg font-semibold">
+                          나의 동행 신청 현황
                         </Text>
                       ),
                       headerLeft: () => (
