@@ -1,3 +1,4 @@
+import { useFetchUserId } from '@/entities/auth';
 import {
   IApplyStatus,
   useCancelApply,
@@ -59,7 +60,8 @@ const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
 });
 
 export default function ApplyStatusScreen() {
-  const { data, isRefetching, refetch } = useMyApplyStatus();
+  const { data: userId } = useFetchUserId();
+  const { data, isRefetching, refetch } = useMyApplyStatus(userId);
   console.log(data);
 
   return (

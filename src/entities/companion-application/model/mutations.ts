@@ -24,9 +24,9 @@ export const useApply = () => {
 
   return useMutation({
     ...applicationMutations.apply(),
-    onSuccess: (_, { companion_id }) => {
+    onSuccess: (_, { companion_id, applicant_id }) => {
       qc.invalidateQueries({
-        queryKey: applicationKeys.mine(),
+        queryKey: applicationKeys.mine(applicant_id),
         refetchType: 'active',
       });
       qc.invalidateQueries({
@@ -43,23 +43,25 @@ export const useCancelApply = () => {
 
   return useMutation({
     ...applicationMutations.cancel(),
-    onMutate: async ({ companion_id, id }) => {
-      await qc.cancelQueries({ queryKey: applicationKeys.mine() });
+    onMutate: async ({ companion_id, id, applicant_id }) => {
+      await qc.cancelQueries({ queryKey: applicationKeys.mine(applicant_id) });
 
-      const prevData = qc.getQueryData<IApplyStatus[]>(applicationKeys.mine());
+      const prevData = qc.getQueryData<IApplyStatus[]>(
+        applicationKeys.mine(applicant_id),
+      );
 
       if (prevData) {
         qc.setQueryData(
-          applicationKeys.mine(),
+          applicationKeys.mine(applicant_id),
           prevData.map(a => (a.id === id ? { ...a, status: 'cancelled' } : a)),
         );
       }
 
       return { prevData, companion_id };
     },
-    onSuccess: (_, { companion_id }) => {
+    onSuccess: (_, { companion_id, applicant_id }) => {
       qc.invalidateQueries({
-        queryKey: applicationKeys.mine(),
+        queryKey: applicationKeys.mine(applicant_id),
         refetchType: 'active',
       });
       qc.invalidateQueries({

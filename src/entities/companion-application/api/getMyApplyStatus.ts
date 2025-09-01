@@ -1,11 +1,12 @@
 import { supabase } from '@/shared';
 import { status } from '../model';
 
-export const getMyApplyStatus = async (status: status) => {
+export const getMyApplyStatus = async (userId: string, status?: status) => {
   try {
     let q = supabase
       .from('companion_applications')
-      .select('*, companion:companions(title)');
+      .select('*, companion:companions(title)')
+      .eq('applicant_id', userId);
 
     if (status) {
       q = q.eq('status', status);
