@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export interface IApply {
   companion_id: string;
   applicant_id: string;
@@ -36,4 +38,12 @@ export interface IApplicantsForMyPost {
     nickname: string;
     profile_image: string | null;
   };
+}
+
+export interface IAcceptCompanion {
+  id: string;
+  decided_by: string;
+  decision_message: string;
+  decided_at: dayjs.Dayjs;
+  companion_id: string;
 }

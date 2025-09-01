@@ -49,7 +49,7 @@ const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
             onPress={() => mutate(item)}
             className="w-full mt-2 bg-[#f2eeec] rounded-lg"
           >
-            <Text className="text-[#a38f86] py-4 text-center font-semibold">
+            <Text className="text-[#a38f86] py-4 text-center font-bold">
               취소하기
             </Text>
           </Pressable>
@@ -62,7 +62,6 @@ const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
 export default function ApplyStatusScreen() {
   const { data: userId } = useFetchUserId();
   const { data, isRefetching, refetch } = useMyApplyStatus(userId);
-  console.log(data);
 
   return (
     <>
