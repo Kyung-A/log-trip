@@ -1,4 +1,4 @@
-import { useFetchUserId } from '@/entities/auth';
+import { useFetchUserId, useFetchUserProfile } from '@/entities/auth';
 import {
   useDeleteCompanion,
   useFetchCompanionDetail,
@@ -40,11 +40,24 @@ export default function CompanionDetailScreen() {
 
   const { data } = useFetchCompanionDetail(id);
   const { data: userId } = useFetchUserId();
+  const { data: profile } = useFetchUserProfile(userId);
   const { mutateAsync: deleteMutateAsync } = useDeleteCompanion();
   const { mutateAsync: applyMutateAsync } = useApply();
 
   const [visible, setVisible] = useState<boolean>(false);
   const [applyMessage, setApplyMessage] = useState<string>();
+
+  const gender = useMemo(() => {
+    if (data?.gender_preference === 'F' && profile?.gender === 'female') {
+      return true;
+    } else if (data?.gender_preference === 'M' && profile?.gender === 'male') {
+      return true;
+    } else if (data?.gender_preference === 'R') {
+      return true;
+    } else {
+      return false;
+    }
+  }, [data, profile]);
 
   const applied = useMemo(
     () => data?.applications.some(v => v.applicant_id === userId),
@@ -178,7 +191,7 @@ export default function CompanionDetailScreen() {
                 <View className="flex-row gap-x-2">
                   <Ionicons name="people-sharp" size={16} color="#4b5563" />
                   <Text className="text-gray-800">
-                    현재 인원 : 0 / {data.companion_count}
+                    현재 인원 : {data.accepted_count} / {data.companion_count}
                   </Text>
                 </View>
               </View>
@@ -217,17 +230,21 @@ export default function CompanionDetailScreen() {
           </View>
         </ScrollView>
 
-        {userId !== data?.user_id && (
+        {userId !== data?.user_id && gender && (
           <View className="fixed bottom-0 w-full px-4 pt-4 bg-white border-t border-gray-200 pb-14">
             <TouchableOpacity
               onPress={() => setVisible(true)}
-              className={`w-full rounded-lg ${dayjs().isAfter(data?.deadline_at) || applied ? 'bg-gray-300' : 'bg-[#d5b2a7]'}`}
+              className={`w-full rounded-lg ${dayjs().isAfter(data?.deadline_at) || applied || data.is_full ? 'bg-gray-300' : 'bg-[#d5b2a7]'}`}
             >
               <Text
-                className={`py-3 font-bold text-center text-lg ${dayjs().isAfter(data?.deadline_at) || applied ? 'text-zinc-400' : 'text-white'}`}
+                className={`py-3 font-bold text-center text-lg ${dayjs().isAfter(data?.deadline_at) || applied || data.is_full ? 'text-zinc-400' : 'text-white'}`}
                 disabled={dayjs().isAfter(data?.deadline_at)}
               >
-                {applied ? '동행 신청 완료' : '동행 신청하기'}
+                {applied
+                  ? '동행 신청 완료'
+                  : data.is_full
+                    ? '동행 신청 마감'
+                    : '동행 신청하기'}
               </Text>
             </TouchableOpacity>
           </View>

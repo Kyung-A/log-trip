@@ -67,14 +67,14 @@ const CompanionCard = React.memo(({ item }: { item: ICompanion }) => {
             {item.user_info.gender === 'female' ? '여자' : '남자'}
           </Text>
         </View>
-        {/* // TODO: 카운팅 추가 */}
+
         <Text className="text-sm font-semibold text-blue-500">
           {item.gender_preference === 'R'
             ? '무관'
             : item.gender_preference === 'M'
               ? '남자만'
               : '여자만'}{' '}
-          · 0 / {item.companion_count} ·{' '}
+          · {item.accepted_count} / {item.companion_count} ·{' '}
           {dayjs(item.deadline_at).diff(new Date(), 'days') > 0
             ? `모집 마감 ${dayjs(item.deadline_at).diff(new Date(), 'days')}일 전`
             : '곧 마감'}

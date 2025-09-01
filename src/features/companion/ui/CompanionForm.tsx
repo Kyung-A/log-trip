@@ -55,6 +55,7 @@ export default function CompanionForm({
         deadline_at,
         start_date,
         end_date,
+        applications,
         ...rest
       } = defaultValues;
 
@@ -93,7 +94,15 @@ export default function CompanionForm({
             <BottomSheetView>
               <PickerIOS
                 selectedValue={value}
-                onValueChange={itemValue => onChange(itemValue)}
+                onValueChange={itemValue => {
+                  if (defaultValues) {
+                    if (Number(itemValue) >= defaultValues.accepted_count) {
+                      onChange(itemValue);
+                    }
+                  } else {
+                    onChange(itemValue);
+                  }
+                }}
               >
                 {Array.from({ length: 6 }, (_, i) => (
                   <PickerIOS.Item
@@ -116,6 +125,7 @@ export default function CompanionForm({
         }}
         render={({ field: { onChange, value } }) => (
           <TouchableOpacity
+            disabled={!!defaultValues}
             onPress={() => handleOpenActionSheet(onChange)}
             className="flex-row justify-between w-full px-4 py-3 border-b border-gray-300"
           >
