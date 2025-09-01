@@ -97,7 +97,8 @@ export default function CompanionDetailScreen() {
     };
 
     const result = await applyMutateAsync(body);
-    if (result.status === 201) {
+    if (result.status === 201 || result.status === 200) {
+      setVisible(false);
       navigation.navigate('ApplyStatus');
     }
   }, [applyMessage, data?.id, userId]);
@@ -232,12 +233,7 @@ export default function CompanionDetailScreen() {
           </View>
         )}
 
-        <Modal
-          visible={visible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setVisible(false)}
-        >
+        <Modal visible={visible} transparent animationType="fade">
           <Pressable
             className="flex-1 bg-[#00000076] items-center justify-center"
             onPress={() => setVisible(false)}

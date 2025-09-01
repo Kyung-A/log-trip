@@ -1,7 +1,7 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { applicationKeys } from './queryKeys';
-import { getMyApplyStatus } from '../api/getMyApplyStatus';
 import { IApplyStatus, status } from './types';
+import { getMyApplyStatus } from '../api';
 
 const applicationQuery = {
   mine: (status?: status) =>

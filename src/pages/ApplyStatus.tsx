@@ -1,5 +1,6 @@
 import {
   IApplyStatus,
+  useCancelApply,
   useMyApplyStatus,
 } from '@/entities/companion-application';
 import { useNavigation } from '@react-navigation/native';
@@ -27,6 +28,8 @@ const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
     }>
   >();
 
+  const { mutate } = useCancelApply();
+
   return (
     <Pressable
       onPress={() =>
@@ -41,7 +44,10 @@ const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
         </Text>
         {statusLabel[item.status]}
         {(item.status === 'pending' || item.status === 'accepted') && (
-          <Pressable className="w-full mt-2 bg-[#f2eeec] rounded-lg">
+          <Pressable
+            onPress={() => mutate(item)}
+            className="w-full mt-2 bg-[#f2eeec] rounded-lg"
+          >
             <Text className="text-[#a38f86] py-4 text-center font-semibold">
               취소하기
             </Text>

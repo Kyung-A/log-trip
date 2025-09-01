@@ -1,6 +1,7 @@
 import { getUser, getUserProfile } from '@/entities/auth';
 import { logout } from '@/features/auth';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -21,10 +22,12 @@ export interface IProfile {
 }
 
 export default function MyPageScreen({ navigation }) {
+  const qc = useQueryClient();
   const [profile, setProfile] = useState<IProfile>();
 
   const handleLogout = useCallback(async () => {
     await logout();
+    qc.clear();
     navigation.navigate('Login');
   }, []);
 
