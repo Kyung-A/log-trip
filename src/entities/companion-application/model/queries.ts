@@ -1,13 +1,19 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { applicationKeys } from './queryKeys';
-import { IApplyStatus, status } from './types';
-import { getMyApplyStatus } from '../api';
+import { IApplicantsForMyPost, IApplyStatus, status } from './types';
+import { getApplicantsForMyPosts, getMyApplyStatus } from '../api';
 
 const applicationQuery = {
   mine: (userId: string, status?: status) =>
     queryOptions({
       queryKey: applicationKeys.mine(userId, status),
       queryFn: () => getMyApplyStatus(userId, status),
+    }),
+
+  byAuthor: (userId: string, status?: status) =>
+    queryOptions({
+      queryKey: applicationKeys.byAuthor(userId, status),
+      queryFn: () => getApplicantsForMyPosts(userId, status),
     }),
 };
 
@@ -21,3 +27,11 @@ export const useMyApplyStatus = (userId: string, status?: status) => {
     refetchOnMount: false,
   });
 };
+
+export function useApplicantsForMyPosts(userId: string, status?: status) {
+  return useQuery<IApplicantsForMyPost[]>({
+    ...applicationQuery.byAuthor(userId, status),
+    enabled: !!userId,
+    refetchOnWindowFocus: true,
+  });
+}

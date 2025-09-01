@@ -6,4 +6,6 @@ export const applicationKeys = {
     [...applicationKeys.all, 'byCompanion', id] as const,
   mine: (userId: string, status?: status) =>
     [...applicationKeys.all, 'mine', userId, status] as const,
+  byAuthor: (userId: string, status?: status) =>
+    [...applicationKeys.all, 'byAuthor', userId, status] as const,
 };

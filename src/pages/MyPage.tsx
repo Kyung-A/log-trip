@@ -68,18 +68,24 @@ export default function MyPageScreen({ navigation }) {
             10
           </Text>
         </View>
+
         <View className="h-10 w-[1px] bg-gray-200"></View>
-        <View className="h-10 w-[1px] bg-gray-200"></View>
-        <View className="items-center px-6">
-          <Text className="text-sm text-gray-500">동행 글</Text>
-          <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">0</Text>
-        </View>
-        <View className="h-10 w-[1px] bg-gray-200"></View>
+
         <TouchableOpacity
           onPress={() => navigation.navigate('ApplyStatus')}
           className="items-center px-6"
         >
-          <Text className="text-sm text-gray-500">동행 현황</Text>
+          <Text className="text-sm text-gray-500">동행 신청 현황</Text>
+          <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">0</Text>
+        </TouchableOpacity>
+
+        <View className="h-10 w-[1px] bg-gray-200"></View>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('RecruitStatus')}
+          className="items-center px-6"
+        >
+          <Text className="text-sm text-gray-500">동행 모집 현황</Text>
           <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">0</Text>
         </TouchableOpacity>
       </View>

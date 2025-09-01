@@ -20,6 +20,7 @@ import Toast, { ErrorToast } from 'react-native-toast-message';
 import CompanionDetailScreen from './pages/CompanionDetail';
 import CompanionUpdateScreen from './pages/CompanionUpdate';
 import ApplyStatusScreen from './pages/ApplyStatus';
+import RecruitStatusScreen from './pages/RecruitStatus';
 
 import './global.css';
 
@@ -44,6 +45,14 @@ const toastConfig = {
       }}
     />
   ),
+};
+
+const MoveBackButton = ({ navigation }) => {
+  return (
+    <TouchableOpacity onPress={() => navigation.goBack()}>
+      <FontAwesome6 name="arrow-left" size={20} color="#646464" />
+    </TouchableOpacity>
+  );
 };
 
 export default function App() {
@@ -100,13 +109,7 @@ export default function App() {
                         <Text className="text-lg font-semibold">일기 작성</Text>
                       ),
                       headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                          <FontAwesome6
-                            name="arrow-left"
-                            size={20}
-                            color="#646464"
-                          />
-                        </TouchableOpacity>
+                        <MoveBackButton navigation={navigation} />
                       ),
                     })}
                   />
@@ -120,13 +123,7 @@ export default function App() {
                         </Text>
                       ),
                       headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                          <FontAwesome6
-                            name="arrow-left"
-                            size={20}
-                            color="#646464"
-                          />
-                        </TouchableOpacity>
+                        <MoveBackButton navigation={navigation} />
                       ),
                     })}
                   />
@@ -140,13 +137,7 @@ export default function App() {
                         </Text>
                       ),
                       headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                          <FontAwesome6
-                            name="xmark"
-                            size={20}
-                            color="#646464"
-                          />
-                        </TouchableOpacity>
+                        <MoveBackButton navigation={navigation} />
                       ),
                     })}
                   />
@@ -208,13 +199,7 @@ export default function App() {
                         </Text>
                       ),
                       headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                          <FontAwesome6
-                            name="arrow-left"
-                            size={20}
-                            color="#646464"
-                          />
-                        </TouchableOpacity>
+                        <MoveBackButton navigation={navigation} />
                       ),
                     })}
                   />
@@ -228,13 +213,21 @@ export default function App() {
                         </Text>
                       ),
                       headerLeft: () => (
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                          <FontAwesome6
-                            name="arrow-left"
-                            size={20}
-                            color="#646464"
-                          />
-                        </TouchableOpacity>
+                        <MoveBackButton navigation={navigation} />
+                      ),
+                    })}
+                  />
+                  <Stack.Screen
+                    name="RecruitStatus"
+                    component={RecruitStatusScreen}
+                    options={({ navigation }) => ({
+                      headerTitle: () => (
+                        <Text className="text-lg font-semibold">
+                          나의 동행 모집 현황
+                        </Text>
+                      ),
+                      headerLeft: () => (
+                        <MoveBackButton navigation={navigation} />
                       ),
                     })}
                   />

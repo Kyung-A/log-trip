@@ -20,3 +20,20 @@ export interface IApplyStatus {
     title: string;
   };
 }
+
+export interface IApplicantsForMyPost {
+  id: string;
+  status: status;
+  message: string;
+  applicant_id: string;
+  created_at: string;
+  companion: {
+    id: string;
+    title: string;
+  };
+  applicant: {
+    id: string;
+    nickname: string;
+    profile_image: string | null;
+  };
+}
