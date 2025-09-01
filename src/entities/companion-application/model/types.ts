@@ -13,6 +13,8 @@ export interface IApplyStatus {
   companion_id: string;
   applicant_id: string;
   message: string;
+  decision_message: string;
+  decision_read_at: string;
   status: status;
   created_at: string;
   updated_at: string;

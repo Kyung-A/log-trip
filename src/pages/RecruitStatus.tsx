@@ -19,6 +19,7 @@ import {
   Modal,
   TextInput,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const statusLabel = {
@@ -49,6 +50,14 @@ const StatusCard = React.memo(
     const { mutate: rejectMutate } = useRejectCompanion();
 
     const handleAcceptCompanion = useCallback(async () => {
+      if (!applyMessage) {
+        Toast.show({
+          type: 'error',
+          text1: '메세지 작성은 필수 입니다.',
+        });
+        return;
+      }
+
       const body = {
         id: item.id,
         decided_by: userId,

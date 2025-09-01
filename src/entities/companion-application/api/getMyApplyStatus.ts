@@ -6,7 +6,9 @@ export const getMyApplyStatus = async (userId: string, status?: status) => {
     let q = supabase
       .from('companion_applications')
       .select('*, companion:companions(title)')
-      .eq('applicant_id', userId);
+      .eq('applicant_id', userId)
+      .order('status', { ascending: true })
+      .order('created_at', { ascending: false });
 
     if (status) {
       q = q.eq('status', status);

@@ -40,14 +40,32 @@ const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
       className="w-full h-auto mb-2 bg-white"
     >
       <View className="flex-col p-6">
-        <Text className="mb-1 text-lg font-semibold line-clamp-1">
-          {item.companion.title}
-        </Text>
+        <View className="flex-row items-center justify-between">
+          <Text className="w-5/6 mb-1 text-lg font-semibold line-clamp-1">
+            {item.companion.title}
+          </Text>
+          {item.status === 'accepted' && !item.decision_read_at && (
+            <View className="px-2 py-0.5 rounded-md bg-blue-100">
+              <Text className="text-xs font-semibold text-blue-600">NEW</Text>
+            </View>
+          )}
+        </View>
+
         {statusLabel[item.status]}
+
+        {item.status === 'accepted' && (
+          <View className="w-full p-4 mt-2 rounded-md bg-zinc-100">
+            <Text>모집자의 메세지</Text>
+            <Text className="mt-1 whitespace-pre-wrap text-zinc-500">
+              {item.decision_message}
+            </Text>
+          </View>
+        )}
+
         {(item.status === 'pending' || item.status === 'accepted') && (
           <Pressable
             onPress={() => mutate(item)}
-            className="w-full mt-2 bg-[#f2eeec] rounded-lg"
+            className="w-full mt-4 bg-[#f2eeec] rounded-lg"
           >
             <Text className="text-[#a38f86] py-4 text-center font-bold">
               취소하기
