@@ -3,7 +3,7 @@ import {
   IApplicantsForMyPost,
   useAcceptCompanion,
   useApplicantsForMyPosts,
-  useCancelApply,
+  useRejectCompanion,
 } from '@/entities/companion-application';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -28,9 +28,9 @@ const statusLabel = {
   accepted: (
     <Text className="text-sm font-semibold text-blue-600">● 매칭완료</Text>
   ),
-  rejected: <Text className="text-sm font-semibold text-red-800">● 거절</Text>,
+  rejected: <Text className="text-sm font-semibold text-red-600">● 거절</Text>,
   cancelled: (
-    <Text className="text-sm font-semibold text-slate-300">● 취소함</Text>
+    <Text className="text-sm font-semibold text-slate-400">● 신청취소</Text>
   ),
 };
 
@@ -45,7 +45,8 @@ const StatusCard = React.memo(
     const [visible, setVisible] = useState<boolean>(false);
     const [applyMessage, setApplyMessage] = useState<string>();
 
-    const { mutateAsync } = useAcceptCompanion();
+    const { mutateAsync: acceptMutateAsync } = useAcceptCompanion();
+    const { mutate: rejectMutate } = useRejectCompanion();
 
     const handleAcceptCompanion = useCallback(async () => {
       const body = {
@@ -56,7 +57,7 @@ const StatusCard = React.memo(
         companion_id: item?.companion.id,
       };
 
-      const result = await mutateAsync(body);
+      const result = await acceptMutateAsync(body);
       if (result.status === 204) {
         setVisible(false);
       }
@@ -114,7 +115,14 @@ const StatusCard = React.memo(
                 </Pressable>
 
                 <Pressable
-                  // onPress={() => mutate(item)}
+                  onPress={() =>
+                    rejectMutate({
+                      id: item.id,
+                      decided_by: userId,
+                      decided_at: dayjs(),
+                      companion_id: item?.companion.id,
+                    })
+                  }
                   className="bg-[#f2eeec] rounded-lg w-1/2"
                 >
                   <Text className="text-[#a38f86] py-4 text-center font-bold">
@@ -162,7 +170,6 @@ const StatusCard = React.memo(
 export default function RecruitStatusScreen() {
   const { data: userId } = useFetchUserId();
   const { data, isRefetching, refetch } = useApplicantsForMyPosts(userId);
-  console.log(data);
 
   return (
     <>

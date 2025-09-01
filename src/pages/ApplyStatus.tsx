@@ -18,7 +18,7 @@ const statusLabel = {
   ),
   rejected: <Text className="text-sm font-semibold text-red-800">● 거절</Text>,
   cancelled: (
-    <Text className="text-sm font-semibold text-slate-300">● 취소함</Text>
+    <Text className="text-sm font-semibold text-slate-300">● 신청취소</Text>
   ),
 };
 

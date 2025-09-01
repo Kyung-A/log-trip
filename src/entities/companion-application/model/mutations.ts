@@ -3,8 +3,13 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
-import { acceptCompanion, apply, cancelApply } from '../api';
-import { IAcceptCompanion, IApply, IApplyStatus } from './types';
+import { acceptCompanion, apply, cancelApply, rejectCompanion } from '../api';
+import {
+  IAcceptCompanion,
+  IApply,
+  IApplyStatus,
+  IRejectCompanion,
+} from './types';
 import { applicationKeys } from './queryKeys';
 import { companionsKeys } from '@/entities/companion/model/queryKeys';
 
@@ -20,6 +25,10 @@ const applicationMutations = {
   accept: () =>
     mutationOptions({
       mutationFn: (data: IAcceptCompanion) => acceptCompanion(data),
+    }),
+  reject: () =>
+    mutationOptions({
+      mutationFn: (data: IRejectCompanion) => rejectCompanion(data),
     }),
 };
 
@@ -99,6 +108,47 @@ export const useAcceptCompanion = () => {
         qc.setQueryData(
           applicationKeys.byAuthor(decided_by),
           prevData.map(a => (a.id === id ? { ...a, status: 'accepted' } : a)),
+        );
+      }
+
+      return { prevData, companion_id };
+    },
+    onSuccess: (_, { decided_by, companion_id }) => {
+      qc.invalidateQueries({
+        queryKey: applicationKeys.byCompanion(companion_id),
+        refetchType: 'active',
+      });
+      qc.invalidateQueries({
+        queryKey: applicationKeys.byAuthor(decided_by),
+        refetchType: 'active',
+      });
+      qc.invalidateQueries({
+        queryKey: companionsKeys.detail(companion_id),
+        exact: true,
+        refetchType: 'active',
+      });
+    },
+  });
+};
+
+export const useRejectCompanion = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    ...applicationMutations.reject(),
+    onMutate: async ({ decided_by, id, companion_id }) => {
+      await qc.cancelQueries({
+        queryKey: applicationKeys.byAuthor(decided_by),
+      });
+
+      const prevData = qc.getQueryData<IApplyStatus[]>(
+        applicationKeys.byAuthor(decided_by),
+      );
+
+      if (prevData) {
+        qc.setQueryData(
+          applicationKeys.byAuthor(decided_by),
+          prevData.map(a => (a.id === id ? { ...a, status: 'rejected' } : a)),
         );
       }
 

@@ -47,3 +47,10 @@ export interface IAcceptCompanion {
   decided_at: dayjs.Dayjs;
   companion_id: string;
 }
+
+export interface IRejectCompanion {
+  id: string;
+  decided_by: string;
+  decided_at: dayjs.Dayjs;
+  companion_id: string;
+}
