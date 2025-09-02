@@ -2,16 +2,24 @@ module.exports = function (api) {
   api.cache(true);
   return {
     presets: [
-      ["babel-preset-expo", { jsxImportSource: "nativewind" }],
-      "nativewind/babel",
+      ['babel-preset-expo', { jsxImportSource: 'nativewind' }],
+      'nativewind/babel',
     ],
     plugins: [
       [
-        "module:react-native-dotenv",
+        'module-resolver',
         {
-          envName: "MAPBOX_KEY",
-          moduleName: "@env",
-          path: ".env",
+          root: ['./src'],
+          alias: { '@': './src' },
+          extensions: ['.tsx', '.ts', '.js', '.jsx', '.json'],
+        },
+      ],
+      [
+        'module:react-native-dotenv',
+        {
+          envName: 'MAPBOX_KEY',
+          moduleName: '@env',
+          path: '.env',
           blocklist: null,
           allowlist: null,
           safe: false,

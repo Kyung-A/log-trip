@@ -1,8 +1,8 @@
-import * as AppleAuthentication from "expo-apple-authentication";
-import { Image, Pressable, Text, View } from "react-native";
-import { useEffect } from "react";
-import NaverLogin from "@react-native-seoul/naver-login";
-import { useAppleLogin, useKakaoLogin, useNaverLogin } from "@/features/auth";
+import * as AppleAuthentication from 'expo-apple-authentication';
+import { Image, Pressable, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import NaverLogin from '@react-native-seoul/naver-login';
+import { useAppleLogin, useKakaoLogin, useNaverLogin } from '@/features/auth';
 
 export default function LoginScreen() {
   const kakaoLogin = useKakaoLogin();
@@ -11,10 +11,10 @@ export default function LoginScreen() {
 
   useEffect(() => {
     NaverLogin.initialize({
-      appName: "로그트립",
+      appName: '로그트립',
       consumerKey: process.env.NAVER_CLIENT_ID,
       consumerSecret: process.env.NAVER_CLIENT_SECRET,
-      serviceUrlSchemeIOS: "com.nek777.mytripapp",
+      serviceUrlSchemeIOS: 'com.nek777.mytripapp',
       disableNaverAppAuthIOS: true,
     });
   }, []);
@@ -23,7 +23,7 @@ export default function LoginScreen() {
     <View className="items-center justify-center flex-1 bg-[#f2eeec]">
       <View className="w-40 h-40">
         <Image
-          source={require("../../assets/images/logo.png")}
+          source={require('../../assets/images/logo.png')}
           className="object-cover w-full h-full"
         />
       </View>
@@ -34,7 +34,7 @@ export default function LoginScreen() {
         >
           <View className="w-5 h-5">
             <Image
-              source={require("../../assets/kakao-logo.png")}
+              source={require('../../assets/kakao-logo.png')}
               className="w-full h-full"
             />
           </View>
@@ -48,7 +48,7 @@ export default function LoginScreen() {
         >
           <View className="w-8 h-8">
             <Image
-              source={require("../../assets/naver-logo.png")}
+              source={require('../../assets/naver-logo.png')}
               className="w-full h-full"
             />
           </View>

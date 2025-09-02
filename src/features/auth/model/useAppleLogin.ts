@@ -1,9 +1,14 @@
-import * as AppleAuthentication from "expo-apple-authentication";
-import { useCallback } from "react";
-import { checkIfUserExists } from "../lib";
-import { useNavigation } from "@react-navigation/native";
-import { getUser } from "@/entities/auth";
-import { generateRawNonce, sha256Hex, supabase } from "@/shared";
+import * as AppleAuthentication from 'expo-apple-authentication';
+import { useCallback } from 'react';
+import { checkIfUserExists } from '../lib';
+import { useNavigation } from '@react-navigation/native';
+import { getUser } from '@/entities/auth';
+import {
+  generateRawNonce,
+  registerPushToken,
+  sha256Hex,
+  supabase,
+} from '@/shared';
 
 export const useAppleLogin = () => {
   const navigation = useNavigation();
@@ -22,21 +27,22 @@ export const useAppleLogin = () => {
       });
 
       const { identityToken } = credential;
-      if (!identityToken) throw new Error("identityToken is null");
+      if (!identityToken) throw new Error('identityToken is null');
 
       const { error } = await supabase.auth.signInWithIdToken({
-        provider: "apple",
+        provider: 'apple',
         token: identityToken,
         nonce: rawNonce,
       });
 
-      if (error) throw new Error("error apply supabase");
+      if (error) throw new Error('error apply supabase');
 
       const user = await getUser();
       const isUserExists = await checkIfUserExists(user.id);
 
-      navigation.navigate(isUserExists ? "Home" : "PhoneAuth", {
-        platform: "apple",
+      await registerPushToken(user.id);
+      navigation.navigate(isUserExists ? 'Home' : 'PhoneAuth', {
+        platform: 'apple',
       });
     } catch (error) {
       console.error(error);

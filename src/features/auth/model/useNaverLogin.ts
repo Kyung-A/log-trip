@@ -1,8 +1,8 @@
-import { supabase } from "@/shared";
-import NaverLogin from "@react-native-seoul/naver-login";
-import { useNavigation } from "@react-navigation/native";
-import { useCallback } from "react";
-import { checkIfUserExists } from "../lib";
+import { registerPushToken, supabase } from '@/shared';
+import NaverLogin from '@react-native-seoul/naver-login';
+import { useNavigation } from '@react-navigation/native';
+import { useCallback } from 'react';
+import { checkIfUserExists } from '../lib';
 
 export const useNaverLogin = () => {
   const navigation = useNavigation();
@@ -10,10 +10,10 @@ export const useNaverLogin = () => {
   return useCallback(async () => {
     const { failureResponse, successResponse } = await NaverLogin.login();
     if (successResponse) {
-      let userId = "";
+      let userId = '';
 
       const profileResult = await NaverLogin.getProfile(
-        successResponse!.accessToken
+        successResponse!.accessToken,
       );
 
       const {
@@ -45,8 +45,9 @@ export const useNaverLogin = () => {
 
       const isUserExists = await checkIfUserExists(userId);
 
-      navigation.navigate(isUserExists ? "Home" : "PhoneAuth", {
-        platform: "naver",
+      await registerPushToken(userId);
+      navigation.navigate(isUserExists ? 'Home' : 'PhoneAuth', {
+        platform: 'naver',
       });
     } else {
       console.error(failureResponse);
