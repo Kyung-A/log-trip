@@ -87,7 +87,7 @@ const StatusCard = React.memo(
             </Text>
 
             <View className="w-full p-4 mt-4 rounded-md bg-zinc-100">
-              <TouchableOpacity>
+              <Pressable>
                 <View className="flex-row items-center gap-x-2">
                   <View className="w-6 h-6 overflow-hidden bg-[#d5b2a7] rounded-full">
                     {item.applicant.profile_image ? (
@@ -109,7 +109,7 @@ const StatusCard = React.memo(
                 </Text>
 
                 {statusLabel[item.status]}
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             {item.status === 'pending' && (
@@ -193,7 +193,7 @@ export default function RecruitStatusScreen() {
       ) : (
         <View className="items-center justify-center flex-1 gap-6">
           <Image
-            source={require('../../assets/images/logo.png')}
+            source={require('@/assets/images/logo.png')}
             className="object-cover w-32 h-32"
           />
           <Text>아쉽게도 아직 동행 신청자가 없습니다</Text>

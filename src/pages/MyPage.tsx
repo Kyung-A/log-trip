@@ -1,9 +1,14 @@
-import { useFetchUserId, useFetchUserProfile } from '@/entities/auth';
+import {
+  deleteUser,
+  deleteUserProfile,
+  useFetchUserId,
+  useFetchUserProfile,
+} from '@/entities/auth';
 import { useFetchMyCounter } from '@/entities/my';
 import { logout } from '@/features/auth';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export interface IProfile {
@@ -30,6 +35,13 @@ export default function MyPageScreen({ navigation }) {
 
   const handleLogout = useCallback(async () => {
     await logout();
+    qc.clear();
+    navigation.navigate('Login');
+  }, []);
+
+  const handleDeleteUser = useCallback(async () => {
+    await deleteUserProfile(userId);
+    await deleteUser(userId);
     qc.clear();
     navigation.navigate('Login');
   }, []);
@@ -84,7 +96,7 @@ export default function MyPageScreen({ navigation }) {
           </Text>
         </TouchableOpacity>
       </View>
-      <Pressable
+      <TouchableOpacity
         onPress={() =>
           navigation.navigate('ProfileUpdate', {
             id: profile.id,
@@ -96,10 +108,13 @@ export default function MyPageScreen({ navigation }) {
         className="px-20 py-2 mt-14 border rounded-lg border-[#a38f86]"
       >
         <Text className="text-[#a38f86]">프로필 수정</Text>
-      </Pressable>
-      <Pressable onPress={handleLogout} className="mt-6">
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleLogout} className="mt-6">
         <Text className="text-[#a38f86] underline">로그아웃</Text>
-      </Pressable>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleDeleteUser} className="mt-4">
+        <Text className="text-[#a38f86] text-sm">계정 탈퇴</Text>
+      </TouchableOpacity>
     </View>
   );
 }

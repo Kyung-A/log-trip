@@ -23,7 +23,7 @@ export default function LoginScreen() {
     <View className="items-center justify-center flex-1 bg-[#f2eeec]">
       <View className="w-40 h-40">
         <Image
-          source={require('../../assets/images/logo.png')}
+          source={require('@/assets/images/logo.png')}
           className="object-cover w-full h-full"
         />
       </View>
@@ -34,7 +34,7 @@ export default function LoginScreen() {
         >
           <View className="w-5 h-5">
             <Image
-              source={require('../../assets/kakao-logo.png')}
+              source={require('@/assets/kakao-logo.png')}
               className="w-full h-full"
             />
           </View>
@@ -48,7 +48,7 @@ export default function LoginScreen() {
         >
           <View className="w-8 h-8">
             <Image
-              source={require('../../assets/naver-logo.png')}
+              source={require('@/assets/naver-logo.png')}
               className="w-full h-full"
             />
           </View>

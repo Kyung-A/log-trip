@@ -94,7 +94,7 @@ export default function ApplyStatusScreen() {
       ) : (
         <View className="items-center justify-center flex-1 gap-6">
           <Image
-            source={require('../../assets/images/logo.png')}
+            source={require('@/assets/images/logo.png')}
             className="object-cover w-32 h-32"
           />
           <Text>여행을 함께 할 동행을 구해보세요!</Text>

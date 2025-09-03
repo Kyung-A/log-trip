@@ -8,7 +8,14 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { Image, Pressable, Text, TextInput, View } from 'react-native';
+import {
+  Image,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Controller, useForm } from 'react-hook-form';
@@ -141,12 +148,12 @@ export default function ProfileUpdateScreen({}) {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable
+        <TouchableOpacity
           className="pt-1.5"
           onPress={() => handleSubmit(handleSaveProfile)()}
         >
           <Text className="text-lg text-blue-500 underline">저장</Text>
-        </Pressable>
+        </TouchableOpacity>
       ),
     });
   }, [profileImg]);

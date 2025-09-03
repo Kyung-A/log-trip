@@ -5,8 +5,9 @@ import {
   View,
   Text,
   Image,
-} from "react-native";
-import React, { useCallback, useRef, useState } from "react";
+  TouchableOpacity,
+} from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   Canvas,
   CanvasRef,
@@ -15,8 +16,8 @@ import {
   SkPath,
   Image as SkImage,
   useImage,
-} from "@shopify/react-native-skia";
-import Fontisto from "react-native-vector-icons/Fontisto";
+} from '@shopify/react-native-skia';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 interface IColoredPath {
   path: SkPath;
@@ -32,23 +33,23 @@ interface IDrawingProps {
 }
 
 const COLORS = {
-  red: "#ef4444",
-  yellow: "#facc15",
-  orange: "#fb923c",
-  green: "#15803d",
-  blue: "#3b82f6",
-  purple: "#a855f7",
-  pink: "#ec4899",
-  gray: "#78716c",
-  black: "#000",
+  red: '#ef4444',
+  yellow: '#facc15',
+  orange: '#fb923c',
+  green: '#15803d',
+  blue: '#3b82f6',
+  purple: '#a855f7',
+  pink: '#ec4899',
+  gray: '#78716c',
+  black: '#000',
 };
 
 const BG = {
-  bg1: require("../../../../assets/bg1.jpg"),
-  bg2: require("../../../../assets/bg2.jpg"),
-  bg3: require("../../../../assets/bg3.jpg"),
-  bg4: require("../../../../assets/bg4.jpg"),
-  bg5: require("../../../../assets/bg5.jpg"),
+  bg1: require('@/assets/bg1.jpg'),
+  bg2: require('@/assets/bg2.jpg'),
+  bg3: require('@/assets/bg3.jpg'),
+  bg4: require('@/assets/bg4.jpg'),
+  bg5: require('@/assets/bg5.jpg'),
 };
 
 export default function Drawing({
@@ -60,14 +61,14 @@ export default function Drawing({
 }: IDrawingProps) {
   const currentPath = useRef<SkPath>(Skia.Path.Make());
   const currentColor = useRef<string>(COLORS.black);
-  const currentTool = useRef<string>("pen");
+  const currentTool = useRef<string>('pen');
 
   const [paths, setPaths] = useState<IColoredPath[]>([]);
   const [bgImage, setBgImage] = useState();
   const image = useImage(bgImage);
   const [, setTick] = useState(0);
 
-  const forceRender = () => setTick((t) => t + 1);
+  const forceRender = () => setTick(t => t + 1);
 
   const eraseAtPoint = (x: number, y: number) => {
     const padding = 10;
@@ -89,7 +90,7 @@ export default function Drawing({
       forceRender();
     }
 
-    setPaths((prev) =>
+    setPaths(prev =>
       prev.filter(({ path }) => {
         const bounds = path.getBounds();
         const left = bounds.x - padding;
@@ -98,17 +99,17 @@ export default function Drawing({
         const bottom = bounds.y + bounds.height + padding;
 
         return !(x >= left && x <= right && y >= top && y <= bottom);
-      })
+      }),
     );
   };
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
-      onPanResponderGrant: (e) => {
+      onPanResponderGrant: e => {
         const { locationX, locationY } = e.nativeEvent;
 
-        if (currentTool.current === "eraser") {
+        if (currentTool.current === 'eraser') {
           eraseAtPoint(locationX, locationY);
           return;
         }
@@ -116,10 +117,10 @@ export default function Drawing({
         currentPath.current = Skia.Path.Make();
         currentPath.current.moveTo(locationX, locationY);
       },
-      onPanResponderMove: (e) => {
+      onPanResponderMove: e => {
         const { locationX, locationY } = e.nativeEvent;
 
-        if (currentTool.current === "eraser") {
+        if (currentTool.current === 'eraser') {
           eraseAtPoint(locationX, locationY);
           return;
         }
@@ -128,8 +129,8 @@ export default function Drawing({
         forceRender();
       },
       onPanResponderRelease: () => {
-        if (currentTool.current === "eraser") return;
-        setPaths((prev) => [
+        if (currentTool.current === 'eraser') return;
+        setPaths(prev => [
           ...prev,
           {
             path: currentPath.current.copy(),
@@ -137,12 +138,12 @@ export default function Drawing({
           },
         ]);
       },
-    })
+    }),
   ).current;
 
   const handleChangeColor = (color: string) => {
     currentColor.current = color;
-    currentTool.current = "pen";
+    currentTool.current = 'pen';
   };
 
   const handleAllClear = useCallback(() => {
@@ -153,13 +154,13 @@ export default function Drawing({
 
   return (
     <View
-      className={`absolute left-0 bg-white flex-1 h-screen ${isOpenDrawing ? "top-0" : "-top-[100vh]"}`}
+      className={`absolute left-0 bg-white flex-1 h-screen ${isOpenDrawing ? 'top-0' : '-top-[100vh]'}`}
       {...panResponder.panHandlers}
     >
       <Canvas
         style={{
-          width: Dimensions.get("window").width,
-          height: Dimensions.get("window").height - 220,
+          width: Dimensions.get('window').width,
+          height: Dimensions.get('window').height - 220,
         }}
         ref={canvasRef}
       >
@@ -167,8 +168,8 @@ export default function Drawing({
           image={image}
           x={0}
           y={0}
-          width={Dimensions.get("window").width}
-          height={Dimensions.get("window").height - 220}
+          width={Dimensions.get('window').width}
+          height={Dimensions.get('window').height - 220}
           fit="fill"
         />
         {paths.map((p, index) => (
@@ -190,13 +191,13 @@ export default function Drawing({
 
       <View className="w-full px-4 pt-4 border-t border-gray-300">
         <View className="flex flex-row items-end gap-x-3">
-          <Pressable onPress={() => (currentTool.current = "eraser")}>
+          <TouchableOpacity onPress={() => (currentTool.current = 'eraser')}>
             <Fontisto name="eraser" size={24} color="#707070" />
-          </Pressable>
-          <Pressable onPress={handleAllClear}>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleAllClear}>
             <Text className="text-xl font-semibold text-[#707070]">AC</Text>
-          </Pressable>
-          <Pressable
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() => {
               setOpenDrawing(false);
               setShowTopBar(true);
@@ -206,10 +207,10 @@ export default function Drawing({
             <Text className="text-xl font-semibold text-blue-500">
               그리기 완료
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
-        <View className="flex flex-row items-end gap-x-2">
+        <View className="flex flex-row items-end mt-2 gap-x-2">
           {Object.entries(COLORS).map(([key, color]) => (
             <Pressable
               key={key}
@@ -218,9 +219,9 @@ export default function Drawing({
               className="w-8 h-8 rounded-full"
             />
           ))}
-          <Pressable className="flex flex-col items-center justify-center ml-auto border-2 border-white rounded-full shadow w-14 h-14 bg-rose-400">
+          {/* <Pressable className="flex flex-col items-center justify-center ml-auto border-2 border-white rounded-full shadow w-14 h-14 bg-rose-400">
             <Fontisto name="plus-a" size={30} color="#fff" />
-          </Pressable>
+          </Pressable> */}
         </View>
 
         <View className="flex flex-row items-center mt-3 gap-x-2">

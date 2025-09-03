@@ -1,5 +1,5 @@
 import { sendSMS, verifyCode } from '@/features/auth';
-import { supabase } from '@/shared';
+import { registerPushToken, supabase } from '@/shared';
 import { useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -64,6 +64,7 @@ export default function PhoneAuthScreen({ navigation }) {
     if (error) {
       console.error('❌ Supabase insert error:', error);
     } else {
+      await registerPushToken(userData.id);
       navigation.navigate('Home');
     }
   }, [route]);
@@ -96,7 +97,7 @@ export default function PhoneAuthScreen({ navigation }) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const response = await supabase.auth.getSession();
+    await supabase.auth.getSession();
 
     return user;
   }, []);

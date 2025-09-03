@@ -1,12 +1,12 @@
-import React from "react";
-import { Pressable, View, Image, Button } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { Canvas, Image as SkImage } from "@shopify/react-native-skia";
+import React from 'react';
+import { Pressable, View, Image, Button } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Canvas, Image as SkImage } from '@shopify/react-native-skia';
 
 const FRAMES = {
-  frame1: require("../../../../assets/frame/frame1.png"),
-  frame2: require("../../../../assets/frame/frame2.png"),
-  frame3: require("../../../../assets/frame/frame3.png"),
+  frame1: require('@/assets/frame/frame1.png'),
+  frame2: require('@/assets/frame/frame2.png'),
+  frame3: require('@/assets/frame/frame3.png'),
 };
 
 export default function EditImage({
@@ -31,7 +31,7 @@ export default function EditImage({
         style={{
           width: 350,
           height: 350,
-          overflow: "hidden",
+          overflow: 'hidden',
         }}
         ref={canvasRef}
       >

@@ -59,6 +59,10 @@ export const useDeleteCompanion = () => {
     ...companionMutations.delete(),
     onSuccess: (_, postId) => {
       qc.invalidateQueries({
+        queryKey: ['myCounters'],
+        refetchType: 'active',
+      });
+      qc.invalidateQueries({
         queryKey: companionsKeys.list(postId),
         refetchType: 'active',
       });

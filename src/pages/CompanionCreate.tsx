@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, Text } from 'react-native';
+import { ScrollView, Text, TouchableOpacity } from 'react-native';
 import React, { useLayoutEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { IRegion } from '@/entities/region';
@@ -67,9 +67,9 @@ export default function CompanionCreateScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable className="pt-1.5" onPress={handleCreateCompanion}>
+        <TouchableOpacity className="pt-1.5" onPress={handleCreateCompanion}>
           <Text className="text-lg text-blue-500 underline">등록</Text>
-        </Pressable>
+        </TouchableOpacity>
       ),
     });
   }, [methods.handleSubmit, handleCreateCompanion]);

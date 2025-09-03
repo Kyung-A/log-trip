@@ -8,6 +8,7 @@ import {
   Text,
   TextInput,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import React, {
   useCallback,
@@ -243,9 +244,9 @@ export default function DiaryCreateScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable className="pt-1.5" onPress={handleCreateDiary}>
+        <TouchableOpacity className="pt-1.5" onPress={handleCreateDiary}>
           <Text className="text-lg text-blue-500 underline">등록</Text>
-        </Pressable>
+        </TouchableOpacity>
       ),
     });
   }, [imgs, cities, capturedDrawingImage, userId]);

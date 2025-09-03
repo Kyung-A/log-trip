@@ -39,6 +39,10 @@ export const useApply = () => {
     ...applicationMutations.apply(),
     onSuccess: (_, { companion_id, applicant_id }) => {
       qc.invalidateQueries({
+        queryKey: ['myCounters'],
+        refetchType: 'active',
+      });
+      qc.invalidateQueries({
         queryKey: applicationKeys.mine(applicant_id),
         refetchType: 'active',
       });
