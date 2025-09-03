@@ -28,5 +28,15 @@
         <data android:scheme="com.nek777.mytripapp"/>
       </intent-filter>
     </activity>
+    <activity
+      android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:host="oauth" android:scheme="kakao20359231c81f2846ca2d5805a81c2c08" />
+      </intent-filter>
+    </activity>
   </application>
 </manifest>

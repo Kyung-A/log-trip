@@ -2,4 +2,5 @@
   <string name="app_name">my-trip-app</string>
   <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
   <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+  <string name="kakao_app_key">20359231c81f2846ca2d5805a81c2c08</string>
 </resources>

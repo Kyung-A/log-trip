@@ -32,13 +32,19 @@ public class AppDelegate: ExpoAppDelegate {
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-  // Linking API
   public override func application(
     _ app: UIApplication,
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey: Any] = [:]
   ) -> Bool {
-    return super.application(app, open: url, options: options) || RCTLinkingManager.application(app, open: url, options: options)
+    print("openURL:", url.absoluteString) // 진단용 로그
+    if RNKakaoLogins.isKakaoTalkLoginUrl(url) {
+      let handled = RNKakaoLogins.handleOpen(url)
+      print("Kakao handled:", handled)
+      return handled
+    }
+    return super.application(app, open: url, options: options)
+      || RCTLinkingManager.application(app, open: url, options: options)
   }
 
   // Universal Links
@@ -67,4 +73,5 @@ class ReactNativeDelegate: ExpoReactNativeFactoryDelegate {
     return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif
   }
+  
 }

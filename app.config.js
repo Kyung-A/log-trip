@@ -35,6 +35,10 @@ export default ({ config }) => ({
     ],
     ['@react-native-seoul/naver-login', { urlScheme: 'com.nek777.mytripapp' }],
     [
+      '@react-native-seoul/kakao-login',
+      { kakaoAppKey: process.env.KAKAO_APP_KEY, kotlinVersion: '1.9.0' },
+    ],
+    [
       'expo-splash-screen',
       {
         backgroundColor: '#F2EEEC',

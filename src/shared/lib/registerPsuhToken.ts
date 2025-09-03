@@ -4,7 +4,10 @@ import * as Device from 'expo-device';
 import { supabase } from './supabase';
 
 export async function registerPushToken(userId) {
-  if (!Device.isDevice) throw new Error('실기기에서만 사용 가능');
+  if (!Device.isDevice) {
+    console.error('실기기에서만 사용 가능');
+    return;
+  }
 
   const perm = await Notifications.getPermissionsAsync();
   let status = perm.status;

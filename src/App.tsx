@@ -9,7 +9,6 @@ import DiaryCreateScreen from './pages/DiaryCreate';
 import ProfileUpdateScreen from './pages/ProfileUpdate';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import { Text, TouchableOpacity, View } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
 import PhoneAuthScreen from './pages/PhoneAuth';
 import LoginScreen from './pages/Login';
 import { deleteUser, getUser } from './entities/auth';
@@ -25,7 +24,7 @@ import RecruitStatusScreen from './pages/RecruitStatus';
 import './global.css';
 
 SplashScreen.preventAutoHideAsync();
-WebBrowser.maybeCompleteAuthSession();
+
 const queryClient = new QueryClient();
 
 const toastConfig = {
