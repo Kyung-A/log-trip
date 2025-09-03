@@ -97,13 +97,23 @@ export default function CompanionScreen() {
 
   return (
     <>
-      <FlatList
-        data={data}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => <CompanionCard item={item} />}
-        onRefresh={refetch}
-        refreshing={isRefetching}
-      />
+      {data && data?.length > 0 ? (
+        <FlatList
+          data={data}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => <CompanionCard item={item} />}
+          onRefresh={refetch}
+          refreshing={isRefetching}
+        />
+      ) : (
+        <View className="items-center justify-center flex-1 gap-6">
+          <Image
+            source={require('../../assets/images/logo.png')}
+            className="object-cover w-32 h-32"
+          />
+          <Text>지금 바로 동행 모집하는 글을 작성해보세요!</Text>
+        </View>
+      )}
     </>
   );
 }

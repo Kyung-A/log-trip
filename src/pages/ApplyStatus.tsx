@@ -7,7 +7,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { View, Text, FlatList, Pressable } from 'react-native';
+import { View, Text, FlatList, Pressable, Image } from 'react-native';
 
 const statusLabel = {
   pending: (
@@ -44,11 +44,11 @@ const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
           <Text className="w-5/6 mb-1 text-lg font-semibold line-clamp-1">
             {item.companion.title}
           </Text>
-          {item.status === 'accepted' && !item.decision_read_at && (
+          {/* {item.status === 'accepted' && !item.decision_read_at && (
             <View className="px-2 py-0.5 rounded-md bg-blue-100">
               <Text className="text-xs font-semibold text-blue-600">NEW</Text>
             </View>
-          )}
+          )} */}
         </View>
 
         {statusLabel[item.status]}
@@ -83,7 +83,7 @@ export default function ApplyStatusScreen() {
 
   return (
     <>
-      {data && (
+      {data && data?.length > 0 ? (
         <FlatList
           data={data}
           keyExtractor={item => item.id}
@@ -91,6 +91,14 @@ export default function ApplyStatusScreen() {
           onRefresh={refetch}
           refreshing={isRefetching}
         />
+      ) : (
+        <View className="items-center justify-center flex-1 gap-6">
+          <Image
+            source={require('../../assets/images/logo.png')}
+            className="object-cover w-32 h-32"
+          />
+          <Text>여행을 함께 할 동행을 구해보세요!</Text>
+        </View>
       )}
     </>
   );

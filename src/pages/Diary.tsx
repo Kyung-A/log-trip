@@ -101,7 +101,7 @@ export default function DiaryScreen({ navigation }) {
             source={require('../../assets/images/logo.png')}
             className="object-cover w-32 h-32"
           />
-          <Text className="text-lg">나만의 여행 일기를 작성해보세요!</Text>
+          <Text>나만의 여행 일기를 작성해보세요!</Text>
         </View>
       )}
     </>

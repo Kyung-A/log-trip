@@ -182,7 +182,7 @@ export default function RecruitStatusScreen() {
 
   return (
     <>
-      {data && (
+      {data && data?.length > 0 ? (
         <FlatList
           data={data}
           keyExtractor={item => item.id}
@@ -190,6 +190,14 @@ export default function RecruitStatusScreen() {
           onRefresh={refetch}
           refreshing={isRefetching}
         />
+      ) : (
+        <View className="items-center justify-center flex-1 gap-6">
+          <Image
+            source={require('../../assets/images/logo.png')}
+            className="object-cover w-32 h-32"
+          />
+          <Text>아쉽게도 아직 동행 신청자가 없습니다</Text>
+        </View>
       )}
     </>
   );

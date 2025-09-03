@@ -56,7 +56,7 @@ export default function MyPageScreen({ navigation }) {
         <View className="items-center px-6">
           <Text className="text-sm text-gray-500">여행 일기</Text>
           <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">
-            {counters.diaries_count}
+            {counters?.diaries_count}
           </Text>
         </View>
 
@@ -68,7 +68,7 @@ export default function MyPageScreen({ navigation }) {
         >
           <Text className="text-sm text-gray-500">동행 신청 현황</Text>
           <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">
-            {counters.applied_count}
+            {counters?.applied_count}
           </Text>
         </TouchableOpacity>
 
@@ -80,7 +80,7 @@ export default function MyPageScreen({ navigation }) {
         >
           <Text className="text-sm text-gray-500">동행 모집 현황</Text>
           <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">
-            {counters.received_count}
+            {counters?.received_count}
           </Text>
         </TouchableOpacity>
       </View>
