@@ -1,8 +1,8 @@
-import { getUser, getUserProfile } from '@/entities/auth';
+import { useFetchUserId, useFetchUserProfile } from '@/entities/auth';
+import { useFetchMyCounter } from '@/entities/my';
 import { logout } from '@/features/auth';
-import { useFocusEffect } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -23,25 +23,16 @@ export interface IProfile {
 
 export default function MyPageScreen({ navigation }) {
   const qc = useQueryClient();
-  const [profile, setProfile] = useState<IProfile>();
+
+  const { data: userId } = useFetchUserId();
+  const { data: profile } = useFetchUserProfile(userId);
+  const { data: counters } = useFetchMyCounter(userId);
 
   const handleLogout = useCallback(async () => {
     await logout();
     qc.clear();
     navigation.navigate('Login');
   }, []);
-
-  const fetchData = useCallback(async () => {
-    const user = await getUser();
-    const data = await getUserProfile(user.id);
-    setProfile(data);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchData();
-    }, []),
-  );
 
   return (
     <View className="items-center flex-1 bg-white">
@@ -65,7 +56,7 @@ export default function MyPageScreen({ navigation }) {
         <View className="items-center px-6">
           <Text className="text-sm text-gray-500">여행 일기</Text>
           <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">
-            10
+            {counters.diaries_count}
           </Text>
         </View>
 
@@ -76,7 +67,9 @@ export default function MyPageScreen({ navigation }) {
           className="items-center px-6"
         >
           <Text className="text-sm text-gray-500">동행 신청 현황</Text>
-          <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">0</Text>
+          <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">
+            {counters.applied_count}
+          </Text>
         </TouchableOpacity>
 
         <View className="h-10 w-[1px] bg-gray-200"></View>
@@ -86,7 +79,9 @@ export default function MyPageScreen({ navigation }) {
           className="items-center px-6"
         >
           <Text className="text-sm text-gray-500">동행 모집 현황</Text>
-          <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">0</Text>
+          <Text className="text-lg mt-0.5 font-semibold text-[#a38f86]">
+            {counters.received_count}
+          </Text>
         </TouchableOpacity>
       </View>
       <Pressable
