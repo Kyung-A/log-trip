@@ -15,7 +15,9 @@ export const getApplicantsForMyPosts = async (
           companion:companions!inner ( id, title )
         `,
       )
-      .eq('companion.user_id', userId);
+      .eq('companion.user_id', userId)
+      .order('status', { ascending: true })
+      .order('created_at', { ascending: false });
 
     if (status) {
       q = q.in('applications.status', [status]);
