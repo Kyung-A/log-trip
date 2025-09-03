@@ -1,11 +1,11 @@
-import * as ImagePicker from "expo-image-picker";
-import { useActionSheet } from "@expo/react-native-action-sheet";
-import { Pressable, Text, View } from "react-native";
-import React, { useCallback } from "react";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import Swiper from "react-native-web-swiper";
-import { Canvas, useImage, Image as SkImage } from "@shopify/react-native-skia";
+import * as ImagePicker from 'expo-image-picker';
+import { useActionSheet } from '@expo/react-native-action-sheet';
+import { Pressable, Text, View } from 'react-native';
+import React, { useCallback } from 'react';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Swiper from 'react-native-web-swiper';
+import { Canvas, useImage, Image as SkImage } from '@shopify/react-native-skia';
 
 const SIZE = 350;
 
@@ -19,7 +19,7 @@ const Slide = ({ uri }: { uri: string }) => {
       style={{
         width: SIZE,
         height: SIZE,
-        alignSelf: "center",
+        alignSelf: 'center',
       }}
     >
       <SkImage image={img} x={0} y={0} width={SIZE} height={SIZE} fit="cover" />
@@ -47,14 +47,13 @@ export default function UploadImages({
   const { showActionSheetWithOptions } = useActionSheet();
 
   const handleDeleted = useCallback(
-    (origin: string) =>
-      setImgs((prev) => prev.filter((i) => i.origin !== origin)),
-    []
+    (origin: string) => setImgs(prev => prev.filter(i => i.origin !== origin)),
+    [],
   );
 
   const handleResult = useCallback((res: ImagePicker.ImagePickerResult) => {
     if (!res.canceled) {
-      setImgs(res.assets.map((a) => ({ origin: a.uri, uri: a.uri })));
+      setImgs(res.assets.map(a => ({ origin: a.uri, uri: a.uri })));
     }
   }, []);
 
@@ -84,18 +83,18 @@ export default function UploadImages({
   }, []);
 
   const onPress = useCallback(() => {
-    const options = ["카메라 촬영", "앨범에서 선택", "취소"];
+    const options = ['카메라 촬영', '앨범에서 선택', '취소'];
 
     showActionSheetWithOptions(
       {
         options,
         cancelButtonIndex: 2,
       },
-      (idx) => {
+      idx => {
         if (idx === 0) takeWithCamera();
         else if (idx === 1) pickFromLibrary();
         else if (idx === 2) return;
-      }
+      },
     );
   }, []);
 
@@ -113,18 +112,18 @@ export default function UploadImages({
       <View className="w-full h-[350px]">
         {imgs && imgs.length > 0 ? (
           <Swiper
-            key={imgs.map((i) => i.uri).join("|")}
+            key={imgs.map(i => i.uri).join('|')}
             loop
-            containerStyle={{ width: "100%", height: "100%", zIndex: 20 }}
+            containerStyle={{ width: '100%', height: '100%', zIndex: 20 }}
             controlsProps={{
               prevPos: false,
               nextPos: false,
               dotsTouchable: true,
-              dotsPos: "bottom",
-              dotActiveStyle: { backgroundColor: "#d5b2a7" },
+              dotsPos: 'bottom',
+              dotActiveStyle: { backgroundColor: '#d5b2a7' },
             }}
           >
-            {imgs.map((img) => (
+            {imgs.map(img => (
               <Pressable
                 key={img.origin}
                 onPress={() => {

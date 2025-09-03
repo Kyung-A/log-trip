@@ -25,6 +25,7 @@ export const useCreateDiary = () => {
   return useMutation({
     ...diaryMutatins.create(),
     onSuccess: (_, data) => {
+      qc.invalidateQueries({ queryKey: ['myCounters'] });
       qc.invalidateQueries({ queryKey: diaryKeys.list(data.user_id) });
       qc.invalidateQueries({
         queryKey: diaryRegionKeys.byUser(data.user_id),
@@ -62,6 +63,7 @@ export const useDeleteDiary = () => {
       ctx?.prevData?.forEach(([key, data]) => qc.setQueriesData(key, data));
     },
     onSuccess: (_, data) => {
+      qc.invalidateQueries({ queryKey: ['myCounters'] });
       qc.invalidateQueries({
         queryKey: diaryKeys.list(data.user_id),
         refetchType: 'active',

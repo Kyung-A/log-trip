@@ -1,21 +1,22 @@
-import { useActionSheet } from "@expo/react-native-action-sheet";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import * as ImagePicker from "expo-image-picker";
+import { useActionSheet } from '@expo/react-native-action-sheet';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 import {
   useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
   useState,
-} from "react";
-import { Image, Pressable, Text, TextInput, View } from "react-native";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { Controller, useForm } from "react-hook-form";
-import { getImageUrl, imageUpload } from "@/shared/api";
-import { decode } from "base64-arraybuffer";
-import * as FileSystem from "expo-file-system";
-import { supabase } from "@/shared";
+} from 'react';
+import { Image, Pressable, Text, TextInput, View } from 'react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Controller, useForm } from 'react-hook-form';
+import { getImageUrl, imageUpload } from '@/shared/api';
+import { decode } from 'base64-arraybuffer';
+import * as FileSystem from 'expo-file-system';
+import { supabase } from '@/shared';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface IProfile {
   id: string;
@@ -28,6 +29,7 @@ export default function ProfileUpdateScreen({}) {
   const { showActionSheetWithOptions } = useActionSheet();
   const navigation = useNavigation();
   const route = useRoute();
+  const qc = useQueryClient();
 
   const profile = useMemo(() => route.params as IProfile, [route]);
   const [profileImg, setProfileImg] = useState<string>();
@@ -67,7 +69,7 @@ export default function ProfileUpdateScreen({}) {
   }, []);
 
   const onPress = useCallback(() => {
-    const options = ["카메라 촬영", "앨범에서 선택", "삭제", "취소"];
+    const options = ['카메라 촬영', '앨범에서 선택', '삭제', '취소'];
 
     showActionSheetWithOptions(
       {
@@ -75,36 +77,36 @@ export default function ProfileUpdateScreen({}) {
         cancelButtonIndex: 3,
         destructiveButtonIndex: 2,
       },
-      (idx) => {
+      idx => {
         if (idx === 0) takeWithCamera();
         else if (idx === 1) pickFromLibrary();
         else if (idx === 2) handleDeleted();
         else if (idx === 3) return;
-      }
+      },
     );
   }, []);
 
   const uploadAndGetUrlImage = async () => {
-    if (!profileImg || !profileImg.startsWith("file://")) {
+    if (!profileImg || !profileImg.startsWith('file://')) {
       return null;
     }
 
     const path = `profiles/${profile.id}/profile-image.jpg`;
     const base64 = await FileSystem.readAsStringAsync(profileImg, {
-      encoding: "base64",
+      encoding: 'base64',
     });
     const buffer = decode(base64);
 
-    await supabase.storage.from("log-trip-images").remove([path]);
-    await imageUpload("log-trip-images", path, buffer);
-    const result = await getImageUrl("log-trip-images", path);
+    await supabase.storage.from('log-trip-images').remove([path]);
+    await imageUpload('log-trip-images', path, buffer);
+    const result = await getImageUrl('log-trip-images', path);
 
     return result.publicUrl;
   };
 
-  const handleSaveProfile = async (formData) => {
+  const handleSaveProfile = async formData => {
     try {
-      const imageUrl = profileImg?.includes("https://")
+      const imageUrl = profileImg?.includes('https://')
         ? profileImg
         : await uploadAndGetUrlImage();
 
@@ -114,12 +116,17 @@ export default function ProfileUpdateScreen({}) {
       };
 
       const response = await supabase
-        .from("users")
+        .from('users')
         .update(data)
-        .eq("id", profile.id)
+        .eq('id', profile.id)
         .select();
 
       if (response.status === 200) {
+        qc.invalidateQueries({
+          queryKey: ['profile'],
+          refetchType: 'active',
+          exact: true,
+        });
         navigation.goBack();
       }
     } catch (error) {

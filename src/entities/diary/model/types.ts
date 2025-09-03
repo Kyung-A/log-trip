@@ -6,7 +6,7 @@ export interface IDiary {
   text_content: string | null;
   drawing_content: string | null;
   is_drawing: boolean;
-  travel_date: string | null;
+  travel_date: Date | null;
   diary_images: string[] | { id: string; url: string }[] | null;
   diary_regions:
     | {

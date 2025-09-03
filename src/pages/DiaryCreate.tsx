@@ -29,13 +29,15 @@ import dayjs from 'dayjs';
 import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
 import uuid from 'react-native-uuid';
-import { getUser, useFetchUserId } from '@/entities/auth';
+import { useFetchUserId } from '@/entities/auth';
 import { IDiary } from '@/entities/diary/model/types';
 import { imageUpload, getImageUrl, DateField } from '@/shared';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { IRegion, useFetchRegions } from '@/entities/region';
 import { CitySelectField } from '@/features/select-region';
 import { useCreateDiary } from '@/entities/diary';
+import { Controller, useForm } from 'react-hook-form';
+import Toast from 'react-native-toast-message';
 
 export interface IColoredPath {
   path: SkPath;
@@ -62,12 +64,10 @@ export default function DiaryCreateScreen() {
   const contentCanvasRef = useCanvasRef();
   const editCanvasRef = useCanvasRef();
 
-  const [formData, setFormData] = useState<IDiary>(DEFAULT_FORM_VALUES);
   const [cities, setCities] = useState<IRegion[]>([]);
   const [isShowTopBar, setShowTopBar] = useState<boolean>(true);
 
   const [imgs, setImgs] = useState<{ origin: string; uri: string }[]>([]);
-  const [isDrawingMode, setDrawingMode] = useState<boolean>(false);
   const [isOpenDrawing, setOpenDrawing] = useState<boolean>(false);
   const [isOpenEditMode, setOpenEditMode] = useState<boolean>(false);
   const [capturedDrawingImage, setCapturedDrawingImage] =
@@ -78,11 +78,13 @@ export default function DiaryCreateScreen() {
   const [currentEditImage, setCurrentEditImage] = useState<string>();
   const editImage = useImage(currentEditImage);
 
-  const [date, setDate] = useState<Date | null>(null);
-
   const { data: userId } = useFetchUserId();
   const { data: regions } = useFetchRegions();
   const { mutateAsync } = useCreateDiary();
+
+  const { control, watch, setValue, handleSubmit } = useForm<IDiary>({
+    defaultValues: DEFAULT_FORM_VALUES,
+  });
 
   const handleCaptureContent = useCallback(() => {
     const snapshot = contentCanvasRef.current?.makeImageSnapshot();
@@ -115,7 +117,7 @@ export default function DiaryCreateScreen() {
           {
             text: '예',
             onPress: () => {
-              setDrawingMode(true);
+              setValue('is_drawing', true);
               setOpenDrawing(true);
               setShowTopBar(false);
             },
@@ -131,7 +133,7 @@ export default function DiaryCreateScreen() {
           {
             text: '예',
             onPress: () => {
-              setDrawingMode(false);
+              setValue('is_drawing', false);
               setCapturedDrawingImage(null);
               setShowTopBar(true);
             },
@@ -140,8 +142,6 @@ export default function DiaryCreateScreen() {
         ],
       );
     }
-
-    handleChangeFormValues('is_drawing', value);
   }, []);
 
   const handleCloseEditMode = useCallback(() => {
@@ -164,14 +164,10 @@ export default function DiaryCreateScreen() {
     setCurrentEditImage,
   ]);
 
-  const handleChangeFormValues = useCallback((key: string, value: any) => {
-    setFormData(prev => ({ ...prev, [key]: value }));
-  }, []);
-
   const uploadAndGetUrlImage = async (file: string) => {
     if (!file) return null;
 
-    const path = `diary-images/${formData.user_id}/${uuid.v4()}.jpg`;
+    const path = `diary-images/${userId}/${uuid.v4()}.jpg`;
     let base64 = '';
 
     if (file.startsWith('file://')) {
@@ -190,74 +186,69 @@ export default function DiaryCreateScreen() {
     return result.publicUrl;
   };
 
-  const handleSubmit = async () => {
-    const diary_regions = cities?.map(v => ({
-      region_code: v.region_code,
-      region_name: v.region_name,
-      shape_name: v.shape_name,
-      country_code: v.country_code,
-      country_name: v.country_name,
-    }));
+  const handleCreateDiary = handleSubmit(
+    async (formData: IDiary) => {
+      if (cities.length === 0) {
+        Toast.show({
+          type: 'error',
+          text1: '도시 선택은 필수입니다.',
+        });
 
-    if (formData.is_drawing) {
-      if (
-        !capturedDrawingImage ||
-        diary_regions.length === 0 ||
-        !formData.travel_date
-      ) {
-        console.error('필수값 누락');
         return;
       }
-    } else {
-      if (
-        !formData.title ||
-        !formData.text_content ||
-        !formData.travel_date ||
-        diary_regions.length === 0
-      ) {
-        console.error('필수값 누락');
-        return;
+
+      let body = {
+        ...formData,
+        user_id: userId,
+        diary_regions: cities.map(v => ({
+          region_code: v.region_code,
+          region_name: v.region_name,
+          shape_name: v.shape_name,
+          country_code: v.country_code,
+          country_name: v.country_name,
+        })),
+      };
+
+      if (imgs && imgs.length > 0) {
+        const diaryImagesUrls = await Promise.all(
+          imgs.map(v => uploadAndGetUrlImage(v.uri)),
+        );
+        body = { ...body, diary_images: diaryImagesUrls };
       }
-    }
 
-    let body = {
-      ...formData,
-      user_id: userId,
-      diary_regions,
-    };
+      if (formData.is_drawing) {
+        const drawingContentBase64 = capturedDrawingImage.encodeToBase64();
+        const drawingContentUrl =
+          await uploadAndGetUrlImage(drawingContentBase64);
 
-    if (imgs && imgs.length > 0) {
-      const diaryImagesUrls = await Promise.all(
-        imgs.map(v => uploadAndGetUrlImage(v.uri)),
-      );
-      body = { ...body, diary_images: diaryImagesUrls };
-    }
+        body = { ...body, drawing_content: drawingContentUrl };
+      }
 
-    if (formData.is_drawing) {
-      const drawingContentBase64 = capturedDrawingImage.encodeToBase64();
-      const drawingContentUrl =
-        await uploadAndGetUrlImage(drawingContentBase64);
-
-      body = { ...body, drawing_content: drawingContentUrl };
-    }
-
-    const result = await mutateAsync(body);
-    if (result) {
-      navigation.navigate('Home', {
-        screen: '내여행',
+      const result = await mutateAsync(body);
+      if (result) {
+        navigation.navigate('Home', {
+          screen: '내여행',
+        });
+      }
+    },
+    error => {
+      Toast.show({
+        type: 'error',
+        text1: Object.values(error)[0].message as string,
       });
-    }
-  };
+      console.error(Object.values(error)[0].message);
+    },
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable className="pt-1.5" onPress={handleSubmit}>
+        <Pressable className="pt-1.5" onPress={handleCreateDiary}>
           <Text className="text-lg text-blue-500 underline">등록</Text>
         </Pressable>
       ),
     });
-  }, [formData, imgs, capturedDrawingImage, userId]);
+  }, [imgs, cities, capturedDrawingImage, userId]);
 
   useEffect(() => {
     navigation.setOptions({ headerShown: isShowTopBar });
@@ -281,21 +272,28 @@ export default function DiaryCreateScreen() {
           options={regions}
         />
 
-        <DateField
-          defaultLabel="여행일"
-          valueLabel={date && dayjs(date).format('YYYY-MM-DD')}
-          onConfirm={date => {
-            setDate(date);
-            handleChangeFormValues('travel_date', date);
+        <Controller
+          control={control}
+          name="travel_date"
+          rules={{
+            required: '여행일은 필수입니다.',
           }}
-          date={date}
-          title="여행일"
+          render={({ field: { onChange, value } }) => (
+            <DateField
+              defaultLabel="여행일"
+              valueLabel={value && dayjs(value).format('YYYY-MM-DD')}
+              onConfirm={date => onChange(date)}
+              date={value || new Date()}
+              title="여행일"
+              mode="date"
+            />
+          )}
         />
 
         <Pressable className="flex-row flex-wrap items-center justify-between w-full px-4 py-2 border-b border-gray-300">
           <Text className="mr-4 text-lg">드로잉 모드</Text>
           <View className="flex-row items-center gap-x-2">
-            {isDrawingMode && (
+            {watch('is_drawing') && (
               <Button
                 onPress={() => {
                   setOpenDrawing(true);
@@ -304,25 +302,47 @@ export default function DiaryCreateScreen() {
                 title="열기"
               />
             )}
-            <Switch value={isDrawingMode} onValueChange={handleChangeMode} />
+            <Switch
+              value={watch('is_drawing')}
+              onValueChange={handleChangeMode}
+            />
           </View>
         </Pressable>
 
-        {!isDrawingMode ? (
+        {!watch('is_drawing') ? (
           <View className="p-4">
-            <TextInput
-              className="text-xl font-semibold"
-              placeholder="제목을 작성해주세요"
-              onChangeText={value => handleChangeFormValues('title', value)}
+            <Controller
+              control={control}
+              name="title"
+              rules={{
+                ...(!watch('is_drawing') && { required: '제목은 필수입니다.' }),
+              }}
+              render={({ field: { value, onChange } }) => (
+                <TextInput
+                  className="text-xl font-semibold"
+                  placeholder="제목을 작성해주세요"
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
             />
-            <TextInput
-              className="pb-20 mt-4 text-lg"
-              placeholder="내용을 작성해주세요"
-              multiline={true}
-              textAlignVertical="top"
-              onChangeText={value =>
-                handleChangeFormValues('text_content', value)
-              }
+
+            <Controller
+              control={control}
+              name="text_content"
+              rules={{
+                ...(!watch('is_drawing') && { required: '내용은 필수입니다.' }),
+              }}
+              render={({ field: { value, onChange } }) => (
+                <TextInput
+                  className="pb-20 mt-4 text-lg"
+                  placeholder="내용을 작성해주세요"
+                  multiline={true}
+                  textAlignVertical="top"
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
             />
           </View>
         ) : (
