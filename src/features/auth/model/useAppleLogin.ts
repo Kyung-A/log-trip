@@ -3,12 +3,7 @@ import { useCallback } from 'react';
 import { checkIfUserExists } from '../lib';
 import { useNavigation } from '@react-navigation/native';
 import { getUser } from '@/entities/auth';
-import {
-  generateRawNonce,
-  registerPushToken,
-  sha256Hex,
-  supabase,
-} from '@/shared';
+import { generateRawNonce, sha256Hex, supabase } from '@/shared';
 
 export const useAppleLogin = () => {
   const navigation = useNavigation();
@@ -39,8 +34,6 @@ export const useAppleLogin = () => {
 
       const user = await getUser();
       const isUserExists = await checkIfUserExists(user.id);
-
-      await registerPushToken(user.id);
       navigation.navigate(isUserExists ? 'Home' : 'PhoneAuth', {
         platform: 'apple',
       });

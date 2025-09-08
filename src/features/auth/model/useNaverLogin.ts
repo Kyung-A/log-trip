@@ -1,9 +1,9 @@
-import { registerPushToken, supabase } from '@/shared';
 import NaverLogin from '@react-native-seoul/naver-login';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { checkIfUserExists } from '../lib';
 import Toast from 'react-native-toast-message';
+import { emailLogin, emailSignUp } from '../api';
 
 export const useNaverLogin = () => {
   const navigation = useNavigation();
@@ -18,27 +18,17 @@ export const useNaverLogin = () => {
           successResponse!.accessToken,
         );
 
-        const {
-          data: { user: loginUser },
-        } = await supabase.auth.signInWithPassword({
-          email: profileResult.response.email,
-          password: `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
-        });
+        const { user: loginUser } = await emailLogin(
+          profileResult.response.email,
+          `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
+        );
 
         if (!loginUser) {
-          const {
-            data: { user: signUpUser },
-          } = await supabase.auth.signUp({
-            email: profileResult.response.email,
-            password: `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
-            options: {
-              data: {
-                name: profileResult.response.name,
-                email_verified: true,
-                email: profileResult.response.email,
-              },
-            },
-          });
+          const { user: signUpUser } = await emailSignUp(
+            profileResult.response.email,
+            `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
+            profileResult.response.name,
+          );
 
           if (!signUpUser) {
             Toast.show({
@@ -55,8 +45,6 @@ export const useNaverLogin = () => {
         }
 
         const isUserExists = await checkIfUserExists(userId);
-
-        await registerPushToken(userId);
         navigation.navigate(isUserExists ? 'Home' : 'PhoneAuth', {
           platform: 'naver',
         });

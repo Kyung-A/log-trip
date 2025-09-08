@@ -1,4 +1,4 @@
-import { registerPushToken, supabase } from '@/shared';
+import { supabase } from '@/shared';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { checkIfUserExists } from '../lib';
@@ -25,8 +25,6 @@ export const useKakaoLogin = () => {
       }
 
       const isUserExists = await checkIfUserExists(data.user.id);
-
-      await registerPushToken(data.user.id);
       navigation.navigate(isUserExists ? 'Home' : 'PhoneAuth', {
         platform: 'kakao',
       });
