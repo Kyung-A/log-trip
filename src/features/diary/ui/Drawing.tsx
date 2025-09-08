@@ -6,6 +6,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import React, { useCallback, useRef, useState } from 'react';
 import {
@@ -18,6 +19,7 @@ import {
   useImage,
 } from '@shopify/react-native-skia';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import Swiper from 'react-native-web-swiper';
 
 interface IColoredPath {
   path: SkPath;
@@ -64,7 +66,7 @@ export default function Drawing({
   const currentTool = useRef<string>('pen');
 
   const [paths, setPaths] = useState<IColoredPath[]>([]);
-  const [bgImage, setBgImage] = useState();
+  const [bgImage, setBgImage] = useState(null);
   const image = useImage(bgImage);
   const [, setTick] = useState(0);
 
@@ -153,41 +155,44 @@ export default function Drawing({
   }, []);
 
   return (
-    <View
-      className={`absolute left-0 bg-white flex-1 h-screen ${isOpenDrawing ? 'top-0' : '-top-[100vh]'}`}
-      {...panResponder.panHandlers}
+    <Modal
+      visible={isOpenDrawing}
+      animationType="slide"
+      className="items-center justify-center flex-1 bg-white"
     >
-      <Canvas
-        style={{
-          width: Dimensions.get('window').width,
-          height: Dimensions.get('window').height - 220,
-        }}
-        ref={canvasRef}
-      >
-        <SkImage
-          image={image}
-          x={0}
-          y={0}
-          width={Dimensions.get('window').width}
-          height={Dimensions.get('window').height - 220}
-          fit="fill"
-        />
-        {paths.map((p, index) => (
+      <View {...panResponder.panHandlers}>
+        <Canvas
+          style={{
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height - 220,
+          }}
+          ref={canvasRef}
+        >
+          <SkImage
+            image={image}
+            x={0}
+            y={0}
+            width={Dimensions.get('window').width}
+            height={Dimensions.get('window').height - 220}
+            fit="fill"
+          />
+          {paths.map((p, index) => (
+            <Path
+              key={`draw-${index}`}
+              path={p.path}
+              color={p.color}
+              style="stroke"
+              strokeWidth={3}
+            />
+          ))}
           <Path
-            key={`draw-${index}`}
-            path={p.path}
-            color={p.color}
+            path={currentPath.current}
+            color={currentColor.current}
             style="stroke"
             strokeWidth={3}
           />
-        ))}
-        <Path
-          path={currentPath.current}
-          color={currentColor.current}
-          style="stroke"
-          strokeWidth={3}
-        />
-      </Canvas>
+        </Canvas>
+      </View>
 
       <View className="w-full px-4 pt-4 border-t border-gray-300">
         <View className="flex flex-row items-end gap-x-3">
@@ -224,18 +229,40 @@ export default function Drawing({
           </Pressable> */}
         </View>
 
-        <View className="flex flex-row items-center mt-3 gap-x-2">
-          {Object.entries(BG).map(([key, value]) => (
+        <View className="flex-row items-center mt-3 gap-x-2">
+          <Swiper
+            key="my"
+            loop
+            containerStyle={{
+              width: '100%',
+              height: 80,
+            }}
+            slideWrapperStyle={{
+              width: 80,
+            }}
+            controlsProps={{
+              prevPos: false,
+              nextPos: false,
+            }}
+          >
             <Pressable
-              onPress={() => setBgImage(value)}
-              key={key}
-              className="w-20 h-20"
+              onPress={() => setBgImage(null)}
+              className="items-center justify-center w-20 h-20 border border-gray-300"
             >
-              <Image source={value} className="w-full h-full object-fit" />
+              <Fontisto name="close-a" size={24} color="#ccc" />
             </Pressable>
-          ))}
+            {Object.entries(BG).map(([key, value]) => (
+              <Pressable
+                onPress={() => setBgImage(value)}
+                key={key}
+                className="w-20 h-20"
+              >
+                <Image source={value} className="w-full h-full object-fit" />
+              </Pressable>
+            ))}
+          </Swiper>
         </View>
       </View>
-    </View>
+    </Modal>
   );
 }
