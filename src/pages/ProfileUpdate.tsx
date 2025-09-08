@@ -66,13 +66,20 @@ export default function ProfileUpdateScreen({}) {
 
   const takeWithCamera = useCallback(async () => {
     const perm = await ImagePicker.requestCameraPermissionsAsync();
-    if (!perm.granted) return;
+    if (!perm.granted) {
+      alert('카메라 권한이 필요합니다.');
+      return;
+    }
 
     const result = await ImagePicker.launchCameraAsync({
       quality: 0.8,
+      allowsEditing: true,
+      aspect: [4, 3],
     });
 
-    handleResult(result);
+    if (!result.canceled) {
+      handleResult(result);
+    }
   }, []);
 
   const onPress = useCallback(() => {
