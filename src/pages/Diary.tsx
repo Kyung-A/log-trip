@@ -25,6 +25,7 @@ export default function DiaryScreen({ navigation }) {
       {
         options,
         cancelButtonIndex: 1,
+        tintColor: 'red',
       },
       idx => {
         if (idx === 0) handleDeleteDiary(item);
