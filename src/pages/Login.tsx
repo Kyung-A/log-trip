@@ -1,10 +1,10 @@
 import * as AppleAuthentication from 'expo-apple-authentication';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import { useEffect } from 'react';
 import NaverLogin from '@react-native-seoul/naver-login';
 import { useAppleLogin, useKakaoLogin, useNaverLogin } from '@/features/auth';
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   const kakaoLogin = useKakaoLogin();
   const naverLogin = useNaverLogin();
   const applyLogin = useAppleLogin();
@@ -42,6 +42,7 @@ export default function LoginScreen() {
             카카오로 로그인
           </Text>
         </Pressable>
+
         <Pressable
           onPress={naverLogin}
           className="h-12 justify-center rounded-full w-[240px] border border-[#00c659] bg-[#00c659] mt-2 flex-row items-center gap-x-1"
@@ -56,6 +57,7 @@ export default function LoginScreen() {
             네이버로 로그인
           </Text>
         </Pressable>
+
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
           buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
@@ -63,6 +65,13 @@ export default function LoginScreen() {
           style={{ width: 240, height: 48, marginTop: 8 }}
           onPress={applyLogin}
         />
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('EmailLogin')}
+          className="justify-center w-[240px] mt-6"
+        >
+          <Text className="text-base text-center">이메일로 로그인</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
