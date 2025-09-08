@@ -8,6 +8,7 @@ import { ICompanionRequest, useCreateCompanion } from '@/entities/companion';
 import Toast from 'react-native-toast-message';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CompanionForm } from '@/features/companion';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function CompanionCreateScreen() {
   const navigation = useNavigation<
@@ -76,9 +77,11 @@ export default function CompanionCreateScreen() {
 
   return (
     <FormProvider {...methods}>
-      <ScrollView className="flex-1 bg-white">
-        <CompanionForm cities={cities} setCities={setCities} />
-      </ScrollView>
+      <KeyboardAwareScrollView className="flex-1 bg-white">
+        <ScrollView className="flex-1">
+          <CompanionForm cities={cities} setCities={setCities} />
+        </ScrollView>
+      </KeyboardAwareScrollView>
     </FormProvider>
   );
 }

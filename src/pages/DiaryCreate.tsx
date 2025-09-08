@@ -39,6 +39,7 @@ import { CitySelectField } from '@/features/select-region';
 import { useCreateDiary } from '@/entities/diary';
 import { Controller, useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export interface IColoredPath {
   path: SkPath;
@@ -256,8 +257,12 @@ export default function DiaryCreateScreen() {
   }, [navigation, isShowTopBar]);
 
   return (
-    <>
-      <ScrollView className="flex-1 bg-white">
+    <KeyboardAwareScrollView
+      enableOnAndroid={true}
+      extraScrollHeight={20}
+      className="flex-1 bg-white"
+    >
+      <ScrollView className="flex-1">
         <UploadImages
           imgs={imgs}
           setImgs={setImgs}
@@ -336,7 +341,7 @@ export default function DiaryCreateScreen() {
               }}
               render={({ field: { value, onChange } }) => (
                 <TextInput
-                  className="pb-20 mt-4 text-lg"
+                  className="pb-10 mt-4 text-lg min-h-44"
                   placeholder="내용을 작성해주세요"
                   multiline={true}
                   textAlignVertical="top"
@@ -372,16 +377,15 @@ export default function DiaryCreateScreen() {
         setShowTopBar={setShowTopBar}
       />
 
-      {isOpenEditMode && (
-        <EditImage
-          canvasRef={editCanvasRef}
-          editImage={editImage}
-          frameImg={frameImg}
-          setFrameImage={setFrameImage}
-          handleCloseEditMode={handleCloseEditMode}
-          handleSaveEditMode={handleSaveEditMode}
-        />
-      )}
-    </>
+      <EditImage
+        isOpenEditMode={isOpenEditMode}
+        canvasRef={editCanvasRef}
+        editImage={editImage}
+        frameImg={frameImg}
+        setFrameImage={setFrameImage}
+        handleCloseEditMode={handleCloseEditMode}
+        handleSaveEditMode={handleSaveEditMode}
+      />
+    </KeyboardAwareScrollView>
   );
 }
