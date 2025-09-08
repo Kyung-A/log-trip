@@ -24,6 +24,7 @@ import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system';
 import { supabase } from '@/shared';
 import { useQueryClient } from '@tanstack/react-query';
+import uuid from 'react-native-uuid';
 
 interface IProfile {
   id: string;
@@ -77,9 +78,7 @@ export default function ProfileUpdateScreen({}) {
       aspect: [4, 3],
     });
 
-    if (!result.canceled) {
-      handleResult(result);
-    }
+    handleResult(result);
   }, []);
 
   const onPress = useCallback(() => {
@@ -105,7 +104,7 @@ export default function ProfileUpdateScreen({}) {
       return null;
     }
 
-    const path = `profiles/${profile.id}/profile-image.jpg`;
+    const path = `profiles/${profile.id}/${uuid.v4()}.jpg`;
     const base64 = await FileSystem.readAsStringAsync(profileImg, {
       encoding: 'base64',
     });

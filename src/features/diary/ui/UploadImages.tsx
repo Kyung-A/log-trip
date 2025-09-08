@@ -84,9 +84,7 @@ export default function UploadImages({
       aspect: [4, 3],
     });
 
-    if (!result.canceled) {
-      handleResult(result);
-    }
+    handleResult(result);
   }, []);
 
   const onPress = useCallback(() => {
