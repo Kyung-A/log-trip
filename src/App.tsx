@@ -1,6 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
-import { NavigationContainer } from '@react-navigation/native';
+import * as Linking from 'expo-linking';
+import * as QueryParams from 'expo-auth-session/build/QueryParams';
+import {
+  createNavigationContainerRef,
+  NavigationContainer,
+} from '@react-navigation/native';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -11,15 +16,17 @@ import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import { Text, TouchableOpacity, View } from 'react-native';
 import PhoneAuthScreen from './pages/PhoneAuth';
 import LoginScreen from './pages/Login';
-import { deleteUser, getUser } from './entities/auth';
-import { TabBar } from './shared';
+import { getUser, getUserProfile } from './entities/auth';
+import { supabase, TabBar } from './shared';
 import CompanionCreateScreen from './pages/CompanionCreate';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Toast, { ErrorToast } from 'react-native-toast-message';
+import Toast, { ErrorToast, SuccessToast } from 'react-native-toast-message';
 import CompanionDetailScreen from './pages/CompanionDetail';
 import CompanionUpdateScreen from './pages/CompanionUpdate';
 import ApplyStatusScreen from './pages/ApplyStatus';
 import RecruitStatusScreen from './pages/RecruitStatus';
+import EmailLoginScreen from './pages/EmailLogin';
+import EmailSignUpScreen from './pages/EmailSignUp';
 
 import './global.css';
 
@@ -34,11 +41,27 @@ const toastConfig = {
       contentContainerStyle={{ paddingHorizontal: 12, height: 40 }}
       style={{
         height: 40,
-        backgroundColor: '#e35959',
-        borderLeftWidth: 0,
+        backgroundColor: '#ecc8c4',
+        borderLeftColor: '#a43336',
       }}
       text1Style={{
-        color: '#fff',
+        color: '#a43336',
+        fontSize: 13,
+        fontWeight: 500,
+      }}
+    />
+  ),
+  success: props => (
+    <SuccessToast
+      {...props}
+      contentContainerStyle={{ paddingHorizontal: 12, height: 40 }}
+      style={{
+        height: 40,
+        backgroundColor: '#def3d6',
+        borderLeftColor: '#596e50',
+      }}
+      text1Style={{
+        color: '#596e50',
         fontSize: 13,
         fontWeight: 500,
       }}
@@ -54,10 +77,59 @@ const MoveBackButton = ({ navigation }) => {
   );
 };
 
-export default function App() {
-  const [initialRoute, setInitialRoute] = useState('Login');
+const navRef = createNavigationContainerRef();
 
+async function createSessionFromUrl(url: string) {
+  const { params } = QueryParams.getQueryParams(url);
+  const access_token = (params as any)?.access_token as string | undefined;
+  const refresh_token = (params as any)?.refresh_token as string | undefined;
+  if (!access_token || !refresh_token) return;
+
+  const { error } = await supabase.auth.setSession({
+    access_token,
+    refresh_token,
+  });
+  if (error) {
+    console.error('setSession error:', error.message);
+    return;
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user?.email_confirmed_at && navRef.isReady()) {
+    navRef.reset({ index: 0, routes: [{ name: 'PhoneAuth' }] });
+  }
+}
+
+function useSupabaseEmailLinking() {
+  const handled = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    (async () => {
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl && !handled.current.has(initialUrl)) {
+        handled.current.add(initialUrl);
+        await createSessionFromUrl(initialUrl);
+      }
+    })();
+
+    const sub = Linking.addEventListener('url', async ({ url }) => {
+      if (!handled.current.has(url)) {
+        handled.current.add(url);
+        await createSessionFromUrl(url);
+      }
+    });
+
+    return () => sub.remove();
+  }, []);
+}
+
+export default function App() {
+  useSupabaseEmailLinking();
   const Stack = createNativeStackNavigator();
+
+  const [initialRoute, setInitialRoute] = useState<string>('Login');
   const [isReady, setIsReady] = useState(false);
 
   const onLayoutRootView = useCallback(async () => {
@@ -69,8 +141,12 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       const user = await getUser();
-      if (user) {
+      const profile = await getUserProfile(user?.id);
+
+      if (user && profile) {
         setInitialRoute('Home');
+      } else if (user && !profile) {
+        setInitialRoute('Login');
       } else {
         setInitialRoute('Login');
       }
@@ -87,7 +163,7 @@ export default function App() {
       <ActionSheetProvider>
         <GestureHandlerRootView className="flex-1">
           <BottomSheetModalProvider>
-            <NavigationContainer>
+            <NavigationContainer ref={navRef}>
               <View className="flex-1" onLayout={onLayoutRootView}>
                 <Stack.Navigator id={undefined} initialRouteName={initialRoute}>
                   <Stack.Screen
@@ -99,6 +175,32 @@ export default function App() {
                     name="Login"
                     component={LoginScreen}
                     options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="EmailLogin"
+                    component={EmailLoginScreen}
+                    options={({ navigation }) => ({
+                      headerTitle: () => (
+                        <Text className="text-lg font-semibold">
+                          이메일 로그인
+                        </Text>
+                      ),
+                      headerLeft: () => (
+                        <MoveBackButton navigation={navigation} />
+                      ),
+                    })}
+                  />
+                  <Stack.Screen
+                    name="EmailSignUp"
+                    component={EmailSignUpScreen}
+                    options={({ navigation }) => ({
+                      headerTitle: () => (
+                        <Text className="text-lg font-semibold">회원가입</Text>
+                      ),
+                      headerLeft: () => (
+                        <MoveBackButton navigation={navigation} />
+                      ),
+                    })}
                   />
                   <Stack.Screen
                     name="DiaryCreate"
@@ -163,29 +265,11 @@ export default function App() {
                   <Stack.Screen
                     name="PhoneAuth"
                     component={PhoneAuthScreen}
-                    options={({ navigation }) => ({
+                    options={() => ({
                       headerTitle: () => (
                         <Text className="text-lg font-semibold">본인인증</Text>
                       ),
-                      headerLeft: () => (
-                        <TouchableOpacity
-                          onPress={async () => {
-                            const user = await getUser();
-                            if (user) {
-                              const response = await deleteUser(user.id);
-                              if (response.success) {
-                                navigation.goBack();
-                              }
-                            }
-                          }}
-                        >
-                          <FontAwesome6
-                            name="arrow-left"
-                            size={20}
-                            color="#646464"
-                          />
-                        </TouchableOpacity>
-                      ),
+                      headerLeft: () => '',
                     })}
                   />
                   <Stack.Screen
