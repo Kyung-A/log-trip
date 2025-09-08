@@ -1,3 +1,4 @@
+import { getUser } from '@/entities/auth';
 import { sendSMS, verifyCode } from '@/features/auth';
 import { registerPushToken, supabase } from '@/shared';
 import { useRoute } from '@react-navigation/native';
@@ -9,8 +10,10 @@ import {
   Pressable,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 const OPTIONS = [
   'SKT',
@@ -29,97 +32,106 @@ const DEFAULT_VALUES = {
   phone: '',
 };
 
+// TODO: 주석처리 한 부분은 추후 추가예정
 export default function PhoneAuthScreen({ navigation }) {
   const route = useRoute();
 
-  const [selected, setSelected] = useState<string | null>(null);
-  const [visible, setVisible] = useState(false);
+  // const [selected, setSelected] = useState<string | null>(null);
+  // const [visible, setVisible] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number>(0);
-  const [error, setError] = useState<string>();
-  const [errorVerifyCode, setErrorVerifyCode] = useState<boolean>(false);
+  // const [errorVerifyCode, setErrorVerifyCode] = useState<boolean>(false);
 
   const { control, setValue, handleSubmit, watch, getValues } = useForm({
     defaultValues: DEFAULT_VALUES,
   });
 
-  const createUser = useCallback(async () => {
-    const userData = await getAuthEmail();
-    const formData = getValues();
+  const createUser = async () => {
+    const user = await getUser();
 
+    const formData = getValues();
     const { platform } = route.params as any;
     const isMale = formData.gender === '1' || formData.gender === '3';
 
-    const { error, data } = await supabase.from('users').insert({
-      id: userData.id,
-      email: userData.email,
+    const { error } = await supabase.from('users').insert({
+      id: user.id,
+      email: user.email,
       nickname: formData.name,
       name: formData.name,
       birthday: formData.birthday,
       gender: isMale ? 'male' : 'female',
-      phone: formData.phone,
-      platform: platform,
-      mobile_carrier: formData.mobileCarrier,
+      // phone: formData.phone,
+      platform: platform || 'email',
+      // mobile_carrier: formData.mobileCarrier,
     });
 
     if (error) {
       console.error('❌ Supabase insert error:', error);
     } else {
-      await registerPushToken(userData.id);
+      await registerPushToken(user.id);
       navigation.navigate('Home');
     }
-  }, [route]);
+  };
 
-  const handleSendSMS = useCallback(async formData => {
-    if (formData.phone.length !== 11) {
-      setError('올바른 휴대폰 번호가 아닙니다.');
-      return;
-    }
+  // const handleSendSMS = handleSubmit(
+  //   async formData => {
+  //     if (formData.phone.length !== 11) {
+  //       Toast.show({
+  //         type: 'error',
+  //         text1: '올바른 휴대폰 번호가 아닙니다.',
+  //       });
+  //       return;
+  //     }
+  //     if (!formData.mobileCarrier) {
+  //       Toast.show({
+  //         type: 'error',
+  //         text1: '이동통신사 선액은 필수입니다.',
+  //       });
+  //       return;
+  //     }
 
-    const result = await sendSMS(formData.phone);
-    if (result.statusCode === '2000') {
-      setTimeLeft(180);
-    }
-  }, []);
+  //     const result = await sendSMS(formData.phone);
+  //     if (result.statusCode === '2000') {
+  //       setTimeLeft(180);
+  //     }
+  //   },
+  //   error => {
+  //     Toast.show({
+  //       type: 'error',
+  //       text1: Object.values(error)[0].message as string,
+  //     });
+  //   },
+  // );
 
-  const handleVerifyCode = useCallback(async (code: string) => {
-    const phone = getValues('phone');
+  // const handleVerifyCode = useCallback(async (code: string) => {
+  //   const phone = getValues('phone');
 
-    const reislt = await verifyCode({ phone: phone, code: code });
+  //   const reislt = await verifyCode({ phone: phone, code: code });
 
-    if (reislt.status === 200) {
-      return await createUser();
-    } else {
-      setErrorVerifyCode(true);
-    }
-  }, []);
+  //   if (reislt.status === 200) {
+  //     return await createUser();
+  //   } else {
+  //     setErrorVerifyCode(true);
+  //   }
+  // }, []);
 
-  const getAuthEmail = useCallback(async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    await supabase.auth.getSession();
+  // const onSelect = useCallback((option: string) => {
+  //   setSelected(option);
+  //   setValue('mobileCarrier', option);
+  //   setVisible(false);
+  // }, []);
 
-    return user;
-  }, []);
+  // const minutes = Math.floor(timeLeft / 60);
+  // const seconds = timeLeft % 60;
 
-  const onSelect = useCallback((option: string) => {
-    setSelected(option);
-    setValue('mobileCarrier', option);
-    setVisible(false);
-  }, []);
+  // useEffect(() => {
+  //   if (timeLeft <= 0) return;
 
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+  //   const interval = setInterval(() => {
+  //     setTimeLeft(prev => prev - 1);
+  //   }, 1000);
 
-  useEffect(() => {
-    if (timeLeft <= 0) return;
-
-    const interval = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [timeLeft]);
+  //   return () => clearInterval(interval);
+  // }, [timeLeft]);
 
   return (
     <>
@@ -127,12 +139,15 @@ export default function PhoneAuthScreen({ navigation }) {
         <Controller
           control={control}
           name="name"
+          rules={{
+            required: '이름은 필수입니다.',
+          }}
           render={({ field: { onChange, value } }) => (
             <View>
               <Text className="text-lg font-semibold">이름</Text>
               <TextInput
                 className="px-3 text-lg py-4 leading-6 mt-1.5 border border-gray-300 rounded-md"
-                placeholder="휴대폰 명의자 입력"
+                placeholder="이름 입력"
                 onChangeText={onChange}
                 value={value}
                 editable={timeLeft <= 0}
@@ -147,6 +162,9 @@ export default function PhoneAuthScreen({ navigation }) {
             <Controller
               control={control}
               name="birthday"
+              rules={{
+                required: '주민번호 앞자리는 필수입니다.',
+              }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   secureTextEntry={true}
@@ -165,6 +183,9 @@ export default function PhoneAuthScreen({ navigation }) {
             <Controller
               control={control}
               name="gender"
+              rules={{
+                required: '주민번호 뒷자리 1자리는 필수입니다.',
+              }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   className="px-4 py-4 text-lg leading-6 border border-gray-300 rounded-md"
@@ -182,7 +203,7 @@ export default function PhoneAuthScreen({ navigation }) {
           </View>
         </View>
 
-        <View>
+        {/* <View>
           <Text className="text-lg font-semibold">휴대폰 번호</Text>
           <Pressable
             onPress={() => setVisible(true)}
@@ -198,14 +219,14 @@ export default function PhoneAuthScreen({ navigation }) {
             <Controller
               control={control}
               name="phone"
+              rules={{
+                required: '휴대폰 번호는 필수입니다.',
+              }}
               render={({ field: { onChange, value } }) => (
                 <TextInput
                   className="px-3 py-4 text-lg leading-6 border border-gray-300 rounded-md flex-[2]"
                   placeholder="'-'빼고 휴대폰 번호 입력"
-                  onChangeText={e => {
-                    setError(null);
-                    onChange(e);
-                  }}
+                  onChangeText={onChange}
                   value={value}
                   editable={timeLeft <= 0}
                 />
@@ -213,7 +234,7 @@ export default function PhoneAuthScreen({ navigation }) {
             />
 
             <Pressable
-              onPress={handleSubmit(handleSendSMS)}
+              onPress={handleSendSMS}
               className="justify-center flex-1 bg-blue-200 rounded-md disabled:bg-gray-300"
               disabled={
                 timeLeft > 0 || Object.values(watch()).some(v => v === '')
@@ -230,12 +251,9 @@ export default function PhoneAuthScreen({ navigation }) {
               </Text>
             </Pressable>
           </View>
-          {error && (
-            <Text className="mt-1.5 text-red-500 font-semibold">{error}</Text>
-          )}
-        </View>
+        </View> */}
 
-        {timeLeft > 0 && (
+        {/* {timeLeft > 0 && (
           <View>
             <Text className="mb-1 font-semibold text-red-500">
               {String(minutes).padStart(2, '0')}:
@@ -258,10 +276,37 @@ export default function PhoneAuthScreen({ navigation }) {
               </Text>
             )}
           </View>
-        )}
+        )} */}
+        <TouchableOpacity
+          onPress={createUser}
+          className={`justify-center rounded-md ${
+            watch('name') === '' ||
+            watch('birthday') === '' ||
+            watch('gender') === ''
+              ? 'bg-gray-200 '
+              : 'bg-blue-200'
+          }`}
+          disabled={
+            watch('name') === '' ||
+            watch('birthday') === '' ||
+            watch('gender') === ''
+          }
+        >
+          <Text
+            className={`py-3 text-lg font-semibold text-center ${
+              watch('name') === '' ||
+              watch('birthday') === '' ||
+              watch('gender') === ''
+                ? 'text-gray-400'
+                : 'text-blue-500'
+            }`}
+          >
+            완료
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      <Modal
+      {/* <Modal
         visible={visible}
         transparent
         animationType="fade"
@@ -286,7 +331,7 @@ export default function PhoneAuthScreen({ navigation }) {
             />
           </View>
         </Pressable>
-      </Modal>
+      </Modal> */}
     </>
   );
 }
