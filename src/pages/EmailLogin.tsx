@@ -1,5 +1,5 @@
-import { useEmailLogin } from '@/features/auth';
-import { useState } from 'react';
+import { resendEmail, useEmailLogin } from '@/features/auth';
+import { useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
   View,
@@ -12,8 +12,18 @@ import Toast from 'react-native-toast-message';
 
 export default function EmailLoginScreen({ navigation }) {
   const [resendMail, setResendMail] = useState<boolean>(false);
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit, getValues } = useForm();
   const login = useEmailLogin();
+
+  const handleResendMail = useCallback(async () => {
+    const email = getValues('email');
+    await resendEmail(email);
+
+    Toast.show({
+      type: 'success',
+      text1: '메일을 확인해주세요.',
+    });
+  }, [getValues]);
 
   const handleLogin = handleSubmit(
     async formData => {
@@ -91,8 +101,8 @@ export default function EmailLoginScreen({ navigation }) {
       {resendMail && (
         <View className="py-2 mx-auto">
           <Text>인증 메일 다시 보내기</Text>
-          <TouchableOpacity className="mt-2 bg-orange-100 rounded-lg">
-            <Text className="py-4 font-semibold text-center text-orange-600">
+          <TouchableOpacity onPress={handleResendMail} className="mt-2">
+            <Text className="py-2 font-semibold text-center text-orange-600">
               메일 재전송
             </Text>
           </TouchableOpacity>
