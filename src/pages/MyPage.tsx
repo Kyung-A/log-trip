@@ -41,7 +41,7 @@ export default function MyPageScreen({ navigation }) {
 
   // TODO: 데이터 모두 삭제할지 말지?
   const handleDeleteUser = useCallback(async () => {
-    // await deleteUserProfile(userId);
+    await deleteUserProfile(userId);
     await deleteUser(userId);
     qc.clear();
     navigation.navigate('Login');

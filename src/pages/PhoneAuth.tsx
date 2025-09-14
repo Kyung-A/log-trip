@@ -38,7 +38,7 @@ export default function PhoneAuthScreen({ navigation }) {
 
   // const [selected, setSelected] = useState<string | null>(null);
   // const [visible, setVisible] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<number>(0);
+  // const [timeLeft, setTimeLeft] = useState<number>(0);
   // const [errorVerifyCode, setErrorVerifyCode] = useState<boolean>(false);
 
   const { control, setValue, handleSubmit, watch, getValues } = useForm({
@@ -52,7 +52,7 @@ export default function PhoneAuthScreen({ navigation }) {
     const { platform } = route.params as any;
     const isMale = formData.gender === '1' || formData.gender === '3';
 
-    const { error } = await supabase.from('users').insert({
+    await supabase.from('users').insert({
       id: user.id,
       email: user.email,
       nickname: formData.name,
@@ -64,12 +64,8 @@ export default function PhoneAuthScreen({ navigation }) {
       // mobile_carrier: formData.mobileCarrier,
     });
 
-    if (error) {
-      console.error('❌ Supabase insert error:', error);
-    } else {
-      await registerPushToken(user.id);
-      navigation.navigate('Home');
-    }
+    await registerPushToken(user.id);
+    navigation.navigate('Home');
   };
 
   // const handleSendSMS = handleSubmit(
@@ -150,7 +146,7 @@ export default function PhoneAuthScreen({ navigation }) {
                 placeholder="이름 입력"
                 onChangeText={onChange}
                 value={value}
-                editable={timeLeft <= 0}
+                // editable={timeLeft <= 0}
               />
             </View>
           )}
@@ -173,7 +169,7 @@ export default function PhoneAuthScreen({ navigation }) {
                   maxLength={6}
                   onChangeText={onChange}
                   value={value}
-                  editable={timeLeft <= 0}
+                  // editable={timeLeft <= 0}
                 />
               )}
             />
@@ -192,7 +188,7 @@ export default function PhoneAuthScreen({ navigation }) {
                   placeholder="●"
                   onChangeText={onChange}
                   value={value}
-                  editable={timeLeft <= 0}
+                  // editable={timeLeft <= 0}
                   maxLength={1}
                 />
               )}
