@@ -1,15 +1,15 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "@/pages/Home";
-import DiaryScreen from "@/pages/Diary";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
-import DummyScreen from "@/pages/Dummy";
-import MyPageScreen from "@/pages/MyPage";
-import CompanionScreen from "@/pages/Companion";
-import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import Popover from "react-native-popover-view";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import HomeScreen from '@/pages/Home';
+import DiaryScreen from '@/pages/Diary';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Pressable, Text, TouchableOpacity, View } from 'react-native';
+import DummyScreen from '@/pages/Dummy';
+import MyPageScreen from '@/pages/MyPage';
+import CompanionScreen from '@/pages/Companion';
+import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import Popover from 'react-native-popover-view';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,13 +22,13 @@ function ComposeTabButton() {
       from={
         <Pressable
           onPress={() => setVisible(true)}
-          className="absolute self-center z-10 -top-5"
+          className="absolute z-10 self-center -top-5"
         >
           <Ionicons name="add-circle" size={60} color="#d5b2a8" />
         </Pressable>
       }
-      popoverStyle={{ backgroundColor: "#d5b2a8", borderRadius: 6 }}
-      backgroundStyle={{ backgroundColor: "transparent" }}
+      popoverStyle={{ backgroundColor: '#d5b2a8', borderRadius: 6 }}
+      backgroundStyle={{ backgroundColor: 'transparent' }}
       isVisible={visible}
       onRequestClose={() => setVisible(false)}
     >
@@ -36,21 +36,21 @@ function ComposeTabButton() {
         <TouchableOpacity
           onPress={() => {
             setVisible(false);
-            navigation.navigate("DiaryCreate");
+            navigation.navigate('DiaryCreate');
           }}
         >
-          <Text className="text-white font-semibold text-lg text-center">
+          <Text className="text-lg font-semibold text-center text-white">
             일기 쓰기
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
             setVisible(false);
-            navigation.navigate("CompanionCreate");
+            navigation.navigate('CompanionCreate');
           }}
           className="mt-2"
         >
-          <Text className="text-white font-semibold text-lg text-center">
+          <Text className="text-lg font-semibold text-center text-white">
             동행 모집
           </Text>
         </TouchableOpacity>
@@ -66,45 +66,45 @@ export default function TabBar() {
       screenOptions={({ route }) => ({
         tabBarStyle: {
           height: 80,
-          overflow: "visible",
+          overflow: 'visible',
         },
         tabBarIcon: ({ focused }) => {
-          if (route.name === "세계지도") {
+          if (route.name === '세계지도') {
             return (
               <Ionicons
                 name="map"
-                size={20}
-                color={focused ? "#a38f86" : "#A9A9A9"}
+                size={19}
+                color={focused ? '#a38f86' : '#A9A9A9'}
               />
             );
-          } else if (route.name === "동행") {
+          } else if (route.name === '동행') {
             return (
               <Ionicons
                 name="people"
                 size={20}
-                color={focused ? "#a38f86" : "#A9A9A9"}
+                color={focused ? '#a38f86' : '#A9A9A9'}
               />
             );
-          } else if (route.name === "내여행") {
+          } else if (route.name === '내여행') {
             return (
-              <FontAwesome5
+              <FontAwesome
                 name="suitcase"
-                size={20}
-                color={focused ? "#a38f86" : "#A9A9A9"}
+                size={18}
+                color={focused ? '#a38f86' : '#A9A9A9'}
               />
             );
-          } else if (route.name === "마이페이지") {
+          } else if (route.name === '마이페이지') {
             return (
               <Ionicons
                 name="person"
-                size={20}
-                color={focused ? "#a38f86" : "#A9A9A9"}
+                size={19}
+                color={focused ? '#a38f86' : '#A9A9A9'}
               />
             );
           }
         },
-        tabBarActiveTintColor: "#a38f86",
-        tabBarInactiveTintColor: "#A9A9A9",
+        tabBarActiveTintColor: '#a38f86',
+        tabBarInactiveTintColor: '#A9A9A9',
       })}
     >
       <Tab.Screen name="세계지도" component={HomeScreen} />
@@ -113,8 +113,8 @@ export default function TabBar() {
         name="글쓰기"
         component={DummyScreen}
         options={{
-          tabBarLabel: "",
-          tabBarButton: (props) => <ComposeTabButton {...props} />,
+          tabBarLabel: '',
+          tabBarButton: props => <ComposeTabButton {...props} />,
         }}
       />
       <Tab.Screen name="내여행" component={DiaryScreen} />
