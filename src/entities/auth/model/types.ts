@@ -1,7 +1,7 @@
 export interface IProfile {
   id: string;
   name: string;
-  birthday: string;
+  year_of_birth: string;
   gender: 'female' | 'male';
   phone: string;
   platform: string;

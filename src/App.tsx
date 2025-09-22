@@ -267,7 +267,7 @@ export default function App() {
                     component={PhoneAuthScreen}
                     options={() => ({
                       headerTitle: () => (
-                        <Text className="text-lg font-semibold">본인인증</Text>
+                        <Text className="text-lg font-semibold">추가정보</Text>
                       ),
                       headerLeft: () => '',
                     })}

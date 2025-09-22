@@ -12,7 +12,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export interface IProfile {
-  birthday: string;
+  year_of_birth: string;
   created_at: string;
   gender: string;
   id: string;

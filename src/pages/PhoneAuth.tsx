@@ -1,19 +1,11 @@
 import { getUser } from '@/entities/auth';
-import { sendSMS, verifyCode } from '@/features/auth';
 import { registerPushToken, supabase } from '@/shared';
+import { PickerIOS } from '@react-native-picker/picker';
 import { useRoute } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  FlatList,
-  Modal,
-  Pressable,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Toast from 'react-native-toast-message';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const OPTIONS = [
   'SKT',
@@ -26,7 +18,7 @@ const OPTIONS = [
 
 const DEFAULT_VALUES = {
   name: '',
-  birthday: '',
+  year_of_birth: '',
   gender: '',
   mobileCarrier: '',
   phone: '',
@@ -41,7 +33,7 @@ export default function PhoneAuthScreen({ navigation }) {
   // const [timeLeft, setTimeLeft] = useState<number>(0);
   // const [errorVerifyCode, setErrorVerifyCode] = useState<boolean>(false);
 
-  const { control, setValue, handleSubmit, watch, getValues } = useForm({
+  const { control, watch, getValues } = useForm({
     defaultValues: DEFAULT_VALUES,
   });
 
@@ -50,17 +42,16 @@ export default function PhoneAuthScreen({ navigation }) {
 
     const formData = getValues();
     const { platform } = route.params as any;
-    const isMale = formData.gender === '1' || formData.gender === '3';
 
     await supabase.from('users').insert({
       id: user.id,
       email: user.email,
       nickname: formData.name,
       name: formData.name,
-      birthday: formData.birthday,
-      gender: isMale ? 'male' : 'female',
-      // phone: formData.phone,
+      year_of_birth: formData.year_of_birth,
+      gender: formData.gender,
       platform: platform || 'email',
+      // phone: formData.phone,
       // mobile_carrier: formData.mobileCarrier,
     });
 
@@ -153,50 +144,95 @@ export default function PhoneAuthScreen({ navigation }) {
         />
 
         <View>
-          <Text className="text-lg font-semibold">주민등록번호 앞 7자리</Text>
-          <View className="flex-row items-center mt-1.5">
-            <Controller
-              control={control}
-              name="birthday"
-              rules={{
-                required: '주민번호 앞자리는 필수입니다.',
-              }}
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  secureTextEntry={true}
-                  className="w-1/2 px-3 py-4 text-lg leading-6 border border-gray-300 rounded-md"
-                  placeholder="●●●●●●"
-                  maxLength={6}
-                  onChangeText={onChange}
-                  value={value}
-                  // editable={timeLeft <= 0}
-                />
-              )}
-            />
+          <Text className="text-lg font-semibold">성별</Text>
+          <Controller
+            control={control}
+            name="gender"
+            rules={{
+              required: '성별은 필수입니다.',
+            }}
+            render={({ field: { onChange, value } }) => (
+              <View className="flex-row items-center gap-x-6 mt-1.5">
+                <TouchableOpacity
+                  onPress={() => {
+                    if (!value || value === 'M') {
+                      onChange('F');
+                    }
+                  }}
+                  className="flex-row items-center gap-x-1"
+                >
+                  <MaterialCommunityIcons
+                    name={
+                      value === 'F'
+                        ? 'checkbox-marked'
+                        : 'checkbox-blank-outline'
+                    }
+                    size={24}
+                    color={value === 'F' ? '#000' : '#ccc'}
+                  />
+                  <Text>여성</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (!value || value === 'F') {
+                      onChange('M');
+                    }
+                  }}
+                  className="flex-row items-center gap-x-1"
+                >
+                  <MaterialCommunityIcons
+                    name={
+                      value === 'M'
+                        ? 'checkbox-marked'
+                        : 'checkbox-blank-outline'
+                    }
+                    size={24}
+                    color={value === 'M' ? '#000' : '#ccc'}
+                  />
+                  <Text>남성</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </View>
 
-            <Text className="mx-3 text-lg text-gray-700">-</Text>
+        <View>
+          <Text className="text-lg font-semibold">태어난 연도</Text>
+          <Controller
+            control={control}
+            name="year_of_birth"
+            rules={{
+              required: '태어난 연도는 필수입니다.',
+            }}
+            render={({ field: { onChange, value } }) => {
+              const curYear = dayjs().get('year');
+              const minYear = 1900;
+              const maxYear = curYear - 18;
 
-            <Controller
-              control={control}
-              name="gender"
-              rules={{
-                required: '주민번호 뒷자리 1자리는 필수입니다.',
-              }}
-              render={({ field: { onChange, value } }) => (
-                <TextInput
-                  className="px-4 py-4 text-lg leading-6 border border-gray-300 rounded-md"
-                  placeholder="●"
-                  onChangeText={onChange}
-                  value={value}
-                  // editable={timeLeft <= 0}
-                  maxLength={1}
-                />
-              )}
-            />
-            <Text className="ml-3 tracking-[2px] text-lg text-gray-700">
-              ●●●●●●
-            </Text>
-          </View>
+              const years = [];
+              for (let y = maxYear; y >= minYear; y--) {
+                years.push(y);
+              }
+
+              return (
+                <View className="w-full">
+                  <PickerIOS
+                    selectedValue={value}
+                    onValueChange={onChange}
+                    style={{ height: 180 }}
+                  >
+                    {years?.map(year => (
+                      <PickerIOS.Item
+                        key={year}
+                        label={`${year}`}
+                        value={year}
+                      />
+                    ))}
+                  </PickerIOS>
+                </View>
+              );
+            }}
+          />
         </View>
 
         {/* <View>
@@ -277,21 +313,21 @@ export default function PhoneAuthScreen({ navigation }) {
           onPress={createUser}
           className={`justify-center rounded-md ${
             watch('name') === '' ||
-            watch('birthday') === '' ||
+            watch('year_of_birth') === '' ||
             watch('gender') === ''
               ? 'bg-gray-200 '
               : 'bg-blue-200'
           }`}
           disabled={
             watch('name') === '' ||
-            watch('birthday') === '' ||
+            watch('year_of_birth') === '' ||
             watch('gender') === ''
           }
         >
           <Text
             className={`py-3 text-lg font-semibold text-center ${
               watch('name') === '' ||
-              watch('birthday') === '' ||
+              watch('year_of_birth') === '' ||
               watch('gender') === ''
                 ? 'text-gray-400'
                 : 'text-blue-500'
