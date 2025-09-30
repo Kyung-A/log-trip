@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 export default ({ config }) => ({
   ...config,
-  name: 'my-trip-app',
+  name: '로그트립',
   slug: 'my-trip-app',
   version: '1.0.0',
   extra: {
