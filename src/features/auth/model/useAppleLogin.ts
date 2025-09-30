@@ -21,7 +21,7 @@ export const useAppleLogin = () => {
         nonce: hashedNonce,
       });
 
-      const { identityToken } = credential;
+      const { identityToken, fullName } = credential;
       if (!identityToken) throw new Error('identityToken is null');
 
       const { error } = await supabase.auth.signInWithIdToken({
@@ -29,8 +29,21 @@ export const useAppleLogin = () => {
         token: identityToken,
         nonce: rawNonce,
       });
-
       if (error) throw new Error('error apply supabase');
+
+      if (fullName) {
+        const displayName = fullName
+          ? `${fullName.familyName ?? ''}${fullName.givenName ?? ''}`.trim()
+          : null;
+
+        const { error: updateError } = await supabase.auth.updateUser({
+          data: {
+            name: displayName,
+          },
+        });
+
+        if (updateError) throw new Error('error update full name');
+      }
 
       const user = await getUser();
       const isUserExists = await checkIfUserExists(user.id);

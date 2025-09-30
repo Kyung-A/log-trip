@@ -61,7 +61,7 @@ export default function MyPageScreen({ navigation }) {
           </View>
         )}
       </View>
-      <Text className="mt-4 text-xl font-semibold">{profile?.name}</Text>
+      <Text className="mt-4 text-xl font-semibold">{profile?.nickname}</Text>
       <Text className="mt-3">
         {profile?.about ?? '간단한 자기소개를 작성해 주세요!'}
       </Text>

@@ -53,7 +53,7 @@ export default function DiaryScreen({ navigation }) {
                       className="object-cover w-full h-full"
                     />
                   </View>
-                  <Text>{item.user_info.name}</Text>
+                  <Text>{item.user_info.name ?? item.user_info.nickname}</Text>
                 </Pressable>
                 <Pressable onPress={() => handleOpenActionSheet(item)}>
                   <Feather name="more-vertical" size={20} />

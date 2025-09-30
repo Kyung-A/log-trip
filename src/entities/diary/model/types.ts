@@ -1,6 +1,11 @@
 export interface IDiary {
   id?: string;
-  user_info?: { name: string; email: string; profile_image: string };
+  user_info?: {
+    name: string;
+    nickname: string;
+    email: string;
+    profile_image: string;
+  };
   user_id: string | null;
   title: string | null;
   text_content: string | null;

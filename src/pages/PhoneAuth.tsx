@@ -17,7 +17,7 @@ const OPTIONS = [
 ];
 
 const DEFAULT_VALUES = {
-  name: '',
+  nickname: '',
   year_of_birth: '',
   gender: '',
   mobileCarrier: '',
@@ -46,8 +46,8 @@ export default function PhoneAuthScreen({ navigation }) {
     await supabase.from('users').insert({
       id: user.id,
       email: user.email,
-      nickname: formData.name,
-      name: formData.name,
+      nickname: formData.nickname,
+      name: user.user_metadata?.name ?? formData.nickname,
       year_of_birth: formData.year_of_birth,
       gender: formData.gender,
       platform: platform || 'email',
@@ -125,16 +125,16 @@ export default function PhoneAuthScreen({ navigation }) {
       <View className="flex-1 px-6 py-10 bg-white gap-y-6">
         <Controller
           control={control}
-          name="name"
+          name="nickname"
           rules={{
-            required: '이름은 필수입니다.',
+            required: '닉네임은 필수입니다.',
           }}
           render={({ field: { onChange, value } }) => (
             <View>
-              <Text className="text-lg font-semibold">이름</Text>
+              <Text className="text-lg font-semibold">닉네임</Text>
               <TextInput
                 className="px-3 text-lg py-4 leading-6 mt-1.5 border border-gray-300 rounded-md"
-                placeholder="이름 입력"
+                placeholder="닉네임 입력"
                 onChangeText={onChange}
                 value={value}
                 // editable={timeLeft <= 0}
@@ -312,21 +312,21 @@ export default function PhoneAuthScreen({ navigation }) {
         <TouchableOpacity
           onPress={createUser}
           className={`justify-center rounded-md ${
-            watch('name') === '' ||
+            watch('nickname') === '' ||
             watch('year_of_birth') === '' ||
             watch('gender') === ''
               ? 'bg-gray-200 '
               : 'bg-blue-200'
           }`}
           disabled={
-            watch('name') === '' ||
+            watch('nickname') === '' ||
             watch('year_of_birth') === '' ||
             watch('gender') === ''
           }
         >
           <Text
             className={`py-3 text-lg font-semibold text-center ${
-              watch('name') === '' ||
+              watch('nickname') === '' ||
               watch('year_of_birth') === '' ||
               watch('gender') === ''
                 ? 'text-gray-400'
