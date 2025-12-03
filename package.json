@@ -1,0 +1,11 @@
+{
+  "name": "log-trip",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel"
+  },
+  "devDependencies": {
+    "turbo": "^2.6.1"
+  }
+}
