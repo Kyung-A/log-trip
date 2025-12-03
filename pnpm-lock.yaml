@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       react-native-worklets:
         specifier: ^0.6.1
         version: 0.6.1(@babel/core@7.28.5)(react-native@0.79.3(@babel/core@7.28.5)(@react-native-community/cli@20.0.2)(@types/react@19.0.14)(react@19.2.0))(react@19.2.0)
@@ -2526,6 +2529,10 @@ packages:
 
   dotenv@16.6.1:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
+    engines: {node: '>=12'}
+
+  dotenv@17.2.3:
+    resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
     engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
@@ -6930,7 +6937,7 @@ snapshots:
       nullthrows: 1.1.1
       yargs: 17.7.2
 
-  '@react-native/community-cli-plugin@0.79.3(@react-native-community/cli@20.0.2)':
+  '@react-native/community-cli-plugin@0.79.3(@react-native-community/cli@20.0.2(typescript@5.8.3))':
     dependencies:
       '@react-native/dev-middleware': 0.79.3
       chalk: 4.1.2
@@ -8354,11 +8361,13 @@ snapshots:
 
   dotenv-expand@11.0.7:
     dependencies:
-      dotenv: 16.4.7
+      dotenv: 16.6.1
 
   dotenv@16.4.7: {}
 
   dotenv@16.6.1: {}
+
+  dotenv@17.2.3: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -10659,7 +10668,7 @@ snapshots:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native/assets-registry': 0.79.3
       '@react-native/codegen': 0.79.3(@babel/core@7.28.5)
-      '@react-native/community-cli-plugin': 0.79.3(@react-native-community/cli@20.0.2)
+      '@react-native/community-cli-plugin': 0.79.3(@react-native-community/cli@20.0.2(typescript@5.8.3))
       '@react-native/gradle-plugin': 0.79.3
       '@react-native/js-polyfills': 0.79.3
       '@react-native/normalize-colors': 0.79.3
@@ -10707,7 +10716,7 @@ snapshots:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native/assets-registry': 0.79.3
       '@react-native/codegen': 0.79.3(@babel/core@7.28.5)
-      '@react-native/community-cli-plugin': 0.79.3(@react-native-community/cli@20.0.2)
+      '@react-native/community-cli-plugin': 0.79.3(@react-native-community/cli@20.0.2(typescript@5.8.3))
       '@react-native/gradle-plugin': 0.79.3
       '@react-native/js-polyfills': 0.79.3
       '@react-native/normalize-colors': 0.79.3
