@@ -1,10 +1,9 @@
 const path = require('path');
 const { getDefaultConfig } = require('expo/metro-config');
-const { withNativeWind } = require('nativewind/metro');
 
 const config = getDefaultConfig(__dirname);
 
-// 모노레포용 설정 추가
+// 모노레포 설정
 const projectRoot = __dirname;
 const workspaceRoot = path.resolve(projectRoot, '../..');
 
@@ -17,4 +16,4 @@ config.resolver.nodeModulesPaths = [
 
 config.resolver.unstable_enableSymlinks = true;
 
-module.exports = withNativeWind(config, { input: './src/global.css' });
+module.exports = config;

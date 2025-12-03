@@ -28,8 +28,6 @@ import RecruitStatusScreen from './pages/RecruitStatus';
 import EmailLoginScreen from './pages/EmailLogin';
 import EmailSignUpScreen from './pages/EmailSignUp';
 
-import './global.css';
-
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
@@ -156,16 +154,17 @@ export default function App() {
     prepare();
   }, []);
 
+  // console.log(isReady);
   if (!isReady) return null;
 
   return (
     <QueryClientProvider client={queryClient}>
       <ActionSheetProvider>
-        <GestureHandlerRootView className="flex-1">
+        <GestureHandlerRootView style={{ flex: 1 }}>
           <BottomSheetModalProvider>
             <NavigationContainer ref={navRef}>
-              <View className="flex-1" onLayout={onLayoutRootView}>
-                <Stack.Navigator id={undefined} initialRouteName={initialRoute}>
+              <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+                {/* <Stack.Navigator id={undefined} initialRouteName={initialRoute}>
                   <Stack.Screen
                     name="Home"
                     component={TabBar}
@@ -181,7 +180,7 @@ export default function App() {
                     component={EmailLoginScreen}
                     options={({ navigation }) => ({
                       headerTitle: () => (
-                        <Text className="text-lg font-semibold">
+                        <Text style={{ fontSize: 18, fontWeight: '600' }}>
                           이메일 로그인
                         </Text>
                       ),
@@ -195,7 +194,9 @@ export default function App() {
                     component={EmailSignUpScreen}
                     options={({ navigation }) => ({
                       headerTitle: () => (
-                        <Text className="text-lg font-semibold">회원가입</Text>
+                        <Text style={{ fontSize: 18, fontWeight: '600' }}>
+                          회원가입
+                        </Text>
                       ),
                       headerLeft: () => (
                         <MoveBackButton navigation={navigation} />
@@ -207,7 +208,9 @@ export default function App() {
                     component={DiaryCreateScreen}
                     options={({ navigation }) => ({
                       headerTitle: () => (
-                        <Text className="text-lg font-semibold">일기 작성</Text>
+                        <Text style={{ fontSize: 18, fontWeight: '600' }}>
+                          일기 작성
+                        </Text>
                       ),
                       headerLeft: () => (
                         <MoveBackButton navigation={navigation} />
@@ -219,7 +222,7 @@ export default function App() {
                     component={CompanionCreateScreen}
                     options={({ navigation }) => ({
                       headerTitle: () => (
-                        <Text className="text-lg font-semibold">
+                        <Text style={{ fontSize: 18, fontWeight: '600' }}>
                           동행 구하기
                         </Text>
                       ),
@@ -233,7 +236,7 @@ export default function App() {
                     component={CompanionUpdateScreen}
                     options={({ navigation }) => ({
                       headerTitle: () => (
-                        <Text className="text-lg font-semibold">
+                        <Text style={{ fontSize: 18, fontWeight: '600' }}>
                           동행 글 수정하기
                         </Text>
                       ),
@@ -267,7 +270,9 @@ export default function App() {
                     component={PhoneAuthScreen}
                     options={() => ({
                       headerTitle: () => (
-                        <Text className="text-lg font-semibold">추가정보</Text>
+                        <Text style={{ fontSize: 18, fontWeight: '600' }}>
+                          추가정보
+                        </Text>
                       ),
                       headerLeft: () => '',
                     })}
@@ -277,7 +282,7 @@ export default function App() {
                     component={ProfileUpdateScreen}
                     options={({ navigation }) => ({
                       headerTitle: () => (
-                        <Text className="text-lg font-semibold">
+                        <Text style={{ fontSize: 18, fontWeight: '600' }}>
                           프로필 수정
                         </Text>
                       ),
@@ -291,7 +296,7 @@ export default function App() {
                     component={ApplyStatusScreen}
                     options={({ navigation }) => ({
                       headerTitle: () => (
-                        <Text className="text-lg font-semibold">
+                        <Text style={{ fontSize: 18, fontWeight: '600' }}>
                           나의 동행 신청 현황
                         </Text>
                       ),
@@ -305,7 +310,7 @@ export default function App() {
                     component={RecruitStatusScreen}
                     options={({ navigation }) => ({
                       headerTitle: () => (
-                        <Text className="text-lg font-semibold">
+                        <Text style={{ fontSize: 18, fontWeight: '600' }}>
                           나의 동행 모집 현황
                         </Text>
                       ),
@@ -314,7 +319,7 @@ export default function App() {
                       ),
                     })}
                   />
-                </Stack.Navigator>
+                </Stack.Navigator> */}
                 <Toast config={toastConfig} topOffset={70} />
               </View>
             </NavigationContainer>

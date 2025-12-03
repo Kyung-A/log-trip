@@ -38,14 +38,14 @@ export default ({ config }) => ({
       '@react-native-seoul/kakao-login',
       { kakaoAppKey: process.env.KAKAO_APP_KEY, kotlinVersion: '1.9.0' },
     ],
-    [
-      'expo-splash-screen',
-      {
-        backgroundColor: '#F2EEEC',
-        image: './assets/images/logo.png',
-        imageWidth: 250,
-        resizeMode: 'contain',
-      },
-    ],
+    // [
+    //   'expo-splash-screen',
+    //   {
+    //     backgroundColor: '#F2EEEC',
+    //     image: './assets/images/logo.png',
+    //     imageWidth: 250,
+    //     resizeMode: 'contain',
+    //   },
+    // ],
   ],
 });
