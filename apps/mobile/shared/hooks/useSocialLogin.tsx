@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import * as AppleAuthentication from "expo-apple-authentication";
-// import { login } from "@react-native-seoul/kakao-login";
+import { login } from "@react-native-seoul/kakao-login";
 import NaverLogin from "@react-native-seoul/naver-login";
 import {
   emailLogin,
@@ -11,31 +11,31 @@ import {
 } from "@/shared";
 
 export const useSocialLogin = () => {
-  //   const kakaoLogin = useCallback(async () => {
-  //     try {
-  //       const { idToken } = await login();
+  const kakaoLogin = useCallback(async () => {
+    try {
+      const { idToken } = await login();
 
-  //       if (!idToken) {
-  //         throw new Error("Failed to login with Kakao.");
-  //       }
+      if (!idToken) {
+        throw new Error("Failed to login with Kakao.");
+      }
 
-  //       const { data, error } = await supabase.auth.signInWithIdToken({
-  //         provider: "kakao",
-  //         token: idToken,
-  //       });
+      const { data, error } = await supabase.auth.signInWithIdToken({
+        provider: "kakao",
+        token: idToken,
+      });
 
-  //       if (error) {
-  //         throw new Error(error?.message);
-  //       }
+      if (error) {
+        throw new Error(error?.message);
+      }
 
-  //       //   const isUserExists = await checkIfUserExists(data.user.id);
-  //       //   navigation.navigate(isUserExists ? 'Home' : 'PhoneAuth', {
-  //       //     platform: 'kakao',
-  //       //   });
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   }, []);
+      //   const isUserExists = await checkIfUserExists(data.user.id);
+      //   navigation.navigate(isUserExists ? 'Home' : 'PhoneAuth', {
+      //     platform: 'kakao',
+      //   });
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
   const naverLogin = useCallback(async () => {
     try {
@@ -132,5 +132,5 @@ export const useSocialLogin = () => {
     }
   }, []);
 
-  return { naverLogin, appleLogin };
+  return { naverLogin, appleLogin, kakaoLogin };
 };

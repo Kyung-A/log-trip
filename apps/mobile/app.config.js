@@ -5,7 +5,7 @@ export default ({ config }) => ({
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: "mobile",
+    scheme: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {

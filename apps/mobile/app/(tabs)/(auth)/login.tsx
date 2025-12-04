@@ -6,7 +6,7 @@ import NaverLogin from "@react-native-seoul/naver-login";
 import { useSocialLogin } from "@/shared";
 
 export default function LoginScreen() {
-  const { appleLogin, naverLogin } = useSocialLogin();
+  const { appleLogin, naverLogin, kakaoLogin } = useSocialLogin();
 
   useEffect(() => {
     NaverLogin.initialize({
@@ -36,7 +36,7 @@ export default function LoginScreen() {
 
       <View style={{ marginTop: 56 }}>
         <Pressable
-          //   onPress={kakaoLogin}
+          onPress={kakaoLogin}
           style={{
             height: 48,
             justifyContent: "center",
