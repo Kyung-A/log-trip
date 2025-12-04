@@ -15,9 +15,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="login"
+        options={{
+          title: "login",
+        }}
+      />
+      <Tabs.Screen
         name="explore"
         options={{
-          title: "웹뷰",
+          title: "webview",
         }}
       />
     </Tabs>
