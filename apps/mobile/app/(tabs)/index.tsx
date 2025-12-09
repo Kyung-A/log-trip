@@ -1,28 +1,13 @@
-import { StyleSheet, View, Text } from "react-native";
+import { ActivityIndicator } from "react-native";
+import WebView from "react-native-webview";
 
 export default function HomeScreen() {
   return (
-    <View>
-      <Text style={{ fontSize: 20 }}>메인메인메인메인메인메인메인</Text>
-    </View>
+    <WebView
+      source={{ uri: "http://localhost:3000/world-map" }}
+      style={{ flex: 1 }}
+      startInLoadingState={true}
+      renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
-});
