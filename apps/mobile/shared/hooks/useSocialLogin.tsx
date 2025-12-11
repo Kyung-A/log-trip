@@ -9,6 +9,8 @@ import {
   sha256Hex,
   supabase,
 } from "@/shared";
+import { checkIfUserExists } from "../lib/checkIfUserExists";
+import { router } from "expo-router";
 
 export const useSocialLogin = () => {
   const kakaoLogin = useCallback(async () => {
@@ -28,10 +30,18 @@ export const useSocialLogin = () => {
         throw new Error(error?.message);
       }
 
-      //   const isUserExists = await checkIfUserExists(data.user.id);
-      //   navigation.navigate(isUserExists ? 'Home' : 'PhoneAuth', {
-      //     platform: 'kakao',
-      //   });
+      const isUserExists = await checkIfUserExists(data.user.id);
+      if (isUserExists) {
+        router.push({
+          pathname: "/(tabs)/(diary)",
+          params: {
+            accessToken: data?.session.access_token,
+            refreshToken: data?.session.refresh_token,
+          },
+        });
+      } else {
+        // TODO: 회원가입 프로세스
+      }
     } catch (error) {
       console.error(error);
     }
@@ -101,11 +111,12 @@ export const useSocialLogin = () => {
       const { identityToken, fullName } = credential;
       if (!identityToken) throw new Error("identityToken is null");
 
-      const { error } = await supabase.auth.signInWithIdToken({
+      const { data, error } = await supabase.auth.signInWithIdToken({
         provider: "apple",
         token: identityToken,
         nonce: rawNonce,
       });
+
       if (error) throw new Error("error apply supabase");
 
       if (fullName) {
@@ -122,11 +133,19 @@ export const useSocialLogin = () => {
         if (updateError) throw new Error("error update full name");
       }
 
-      //   const user = await getUser();
-      //   const isUserExists = await checkIfUserExists(user.id);
-      //   navigation.navigate(isUserExists ? "Home" : "PhoneAuth", {
-      //     platform: "apple",
-      //   });
+      const isUserExists = await checkIfUserExists(data.user.id);
+
+      if (isUserExists) {
+        router.push({
+          pathname: "/(tabs)/(diary)",
+          params: {
+            accessToken: data?.session.access_token,
+            refreshToken: data?.session.refresh_token,
+          },
+        });
+      } else {
+        // TODO: 회원가입 프로세스
+      }
     } catch (error) {
       console.error(error);
     }
