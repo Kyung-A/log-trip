@@ -1,6 +1,6 @@
 export interface IDiary {
   id?: string;
-  user_info?: {
+  user_info: {
     name: string;
     nickname: string;
     email: string;
@@ -9,19 +9,19 @@ export interface IDiary {
   user_id: string | null;
   title: string | null;
   text_content: string | null;
-  drawing_content: string | null;
+  drawing_content: string;
   is_drawing: boolean;
   travel_date: Date | null;
-  diary_images: string[] | { id: string; url: string }[] | null;
-  diary_regions:
-    | {
-        region_code: string;
-        region_name: string;
-        shape_name: string | null;
-        country_code: string;
-        country_name: string;
-      }[]
-    | null;
+  diary_images: { id: string; url: string }[];
+  diary_regions: IDiaryRegionsRender[];
+}
+
+export interface IDiaryRegionsRender {
+  region_code: string;
+  region_name: string;
+  shape_name: string | null;
+  country_code: string;
+  country_name: string;
 }
 
 export interface IDiaryRegions {

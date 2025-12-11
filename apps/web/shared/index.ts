@@ -1,2 +1,3 @@
 export * from "./supabase";
 export * from "./rootProvider";
+export * from "./utils";
