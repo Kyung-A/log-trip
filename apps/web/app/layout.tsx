@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import RootProvider from "@/shared/rootProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,12 +13,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html>
-      <body className="flex h-screen w-screen items-center justify-center bg-zinc-50">
-        <main className="flex h-screen w-full max-w-3xl flex-col items-center justify-between bg-white">
-          {children}
-        </main>
-      </body>
-    </html>
+    <RootProvider>
+      <html>
+        <body className="flex h-screen w-screen items-center justify-center bg-zinc-50">
+          <main className="flex h-screen w-full max-w-3xl flex-col items-center justify-between bg-white">
+            {children}
+          </main>
+        </body>
+      </html>
+    </RootProvider>
   );
 }
