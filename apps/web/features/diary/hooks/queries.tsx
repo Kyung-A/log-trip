@@ -11,7 +11,7 @@ const diaryQueries = {
       staleTime: Infinity,
     }),
 
-  regions: (userId: string) =>
+  regions: (userId: string | null) =>
     queryOptions<IDiaryRegions[]>({
       queryKey: diaryRegionKeys.byUser(userId),
       queryFn: () => getDiaryRegions(userId),
@@ -29,7 +29,7 @@ export const useFetchDiaries = () => {
   });
 };
 
-export const useFetchDiaryRegions = (userId: string | null | undefined) => {
+export const useFetchDiaryRegions = (userId: string | null) => {
   return useQuery({
     ...diaryQueries.regions(userId),
     placeholderData: (prev) => prev,

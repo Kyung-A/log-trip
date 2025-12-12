@@ -26,8 +26,6 @@ export default function Diary() {
     await mutateAsync(item);
   }, []);
 
-  console.log(data);
-
   return (
     <Suspense fallback={<Loading />}>
       {data ? (
