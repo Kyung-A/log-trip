@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacityProps,
 } from "react-native";
+import { useTabBarVisibility } from "@/shared";
 
 function ComposeTabButton() {
   const anchorRef = useRef(null);
@@ -125,15 +126,22 @@ function ComposeTabButton() {
 }
 
 export default function TabLayout() {
+  const { isTabBarVisible } = useTabBarVisibility();
+
   return (
     <Tabs
       screenOptions={({ route }) => ({
         tabBarStyle: {
-          height: 80,
           paddingLeft: 14,
           paddingRight: 14,
-          overflow: "visible",
+          paddingBottom: 0,
+          display: isTabBarVisible ? "flex" : "none",
         },
+        headerShown: false,
+        contentStyle: {
+          paddingTop: 0,
+        },
+        safeAreaInsets: { top: 0, bottom: 0 },
         tabBarIcon: ({ focused }) => {
           if (route.name === "index") {
             return (
@@ -143,7 +151,7 @@ export default function TabLayout() {
                 color={focused ? "#a38f86" : "#A9A9A9"}
               />
             );
-          } else if (route.name === "explore") {
+          } else if (route.name === "companion") {
             return (
               <Ionicons
                 name="people"
@@ -151,7 +159,7 @@ export default function TabLayout() {
                 color={focused ? "#a38f86" : "#A9A9A9"}
               />
             );
-          } else if (route.name === "(diary)/index") {
+          } else if (route.name === "diary") {
             return (
               <FontAwesome
                 name="suitcase"
@@ -187,7 +195,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="(diary)/index"
+        name="diary"
         options={{
           title: "내여행",
         }}
@@ -199,7 +207,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="companion"
         options={{
           title: "동행",
         }}
