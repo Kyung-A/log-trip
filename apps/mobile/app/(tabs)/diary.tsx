@@ -1,6 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
 import { useRef } from "react";
 import { ActivityIndicator } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
 
 export default function DiaryScreen() {
@@ -21,15 +22,20 @@ export default function DiaryScreen() {
   };
 
   return (
-    <WebView
-      ref={webviewRef}
-      onLoadEnd={injectSession}
-      source={{ uri: "http://localhost:3000/diary" }}
-      style={{ flex: 1 }}
-      renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
-      startInLoadingState={true}
-      webviewDebuggingEnabled={true}
-      pullToRefreshEnabled={true}
-    />
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "#fff" }}
+      edges={["top", "left", "right"]}
+    >
+      <WebView
+        ref={webviewRef}
+        onLoadEnd={injectSession}
+        source={{ uri: "http://localhost:3000/diary" }}
+        style={{ flex: 1 }}
+        renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
+        startInLoadingState={true}
+        webviewDebuggingEnabled={true}
+        pullToRefreshEnabled={true}
+      />
+    </SafeAreaView>
   );
 }
