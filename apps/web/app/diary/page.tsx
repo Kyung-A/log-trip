@@ -61,8 +61,6 @@ export default function Diary() {
                   <Swiper
                     spaceBetween={50}
                     slidesPerView={1}
-                    onSlideChange={() => console.log("slide change")}
-                    onSwiper={(swiper) => console.log(swiper)}
                     pagination={{ clickable: true }}
                     scrollbar={{ draggable: true }}
                     className="h-[400px]"
