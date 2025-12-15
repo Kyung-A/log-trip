@@ -11,6 +11,7 @@ export default function RootLayout() {
     <TabBarProvider>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="createDiary" options={{ headerShown: false }} />
       </Stack>
     </TabBarProvider>
   );

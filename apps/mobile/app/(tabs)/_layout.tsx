@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import {
@@ -86,6 +86,7 @@ function ComposeTabButton() {
                 <TouchableOpacity
                   onPress={() => {
                     setVisible(false);
+                    router.push("/createDiary");
                   }}
                 >
                   <Text
