@@ -115,7 +115,7 @@ export const UploadImages = ({
                   className="w-full aspect-square relative overflow-hidden"
                 >
                   <Image
-                    src={img.origin}
+                    src={img.modified}
                     alt="uploaded image"
                     unoptimized
                     sizes="100vw"

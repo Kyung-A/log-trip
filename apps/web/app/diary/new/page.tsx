@@ -12,7 +12,7 @@ import { IRegion, useFetchRegions } from "@/features/region";
 import { CitySelectField, Switch } from "@/shared";
 import dayjs from "dayjs";
 import Image from "next/image";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 const DEFAULT_FORM_VALUES = {
@@ -27,8 +27,6 @@ const DEFAULT_FORM_VALUES = {
 };
 
 export default function CreateDiary() {
-  //   const editCanvasRef = useCanvasRef();
-
   const [cities, setCities] = useState<IRegion[]>([]);
   const [imgs, setImgs] = useState<{ origin: string; modified: string }[]>([]);
   const [isOpenDrawing, setOpenDrawing] = useState<boolean>(false);
@@ -37,7 +35,7 @@ export default function CreateDiary() {
     string | null
   >(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
-  const [currentEditImage, setCurrentEditImage] = useState<string>();
+  const [currentEditImage, setCurrentEditImage] = useState<string | null>(null);
 
   const { data: userId } = useFetchUserId();
   const { data: regions } = useFetchRegions();
@@ -47,27 +45,7 @@ export default function CreateDiary() {
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
-  const handleImageCapture = (
-    imageDataUrl: string,
-    canvasSize: { width: number; height: number }
-  ) => {
-    setCapturedDrawingImage(imageDataUrl);
-    setCanvasSize(canvasSize);
-  };
-
-  const handleCaptureEditImage = useCallback(() => {
-    // if (!currentEditImage) return;
-    // const snapshot = editCanvasRef.current?.makeImageSnapshot();
-    // if (!snapshot) return;
-    // const b64 = snapshot.encodeToBase64?.() ?? snapshot.encodeToBase64(3, 100);
-    // const newUri = `data:image/png;base64,${b64}`;
-    // setImgs((prev) =>
-    //   prev.map((i) =>
-    //     i.origin === currentEditImage ? { ...i, modified: newUri } : i
-    //   )
-    // );
-  }, []);
-
+  // 드로잉 <-> 텍스트 모드 전환
   const handleChangeMode = useCallback(
     (state: boolean) => {
       let returnState = false;
@@ -100,16 +78,34 @@ export default function CreateDiary() {
     [setValue]
   );
 
+  // 드로잉 이미지 캡쳐 핸들러
+  const handleDrawingImageCapture = (
+    imageDataUrl: string,
+    canvasSize: { width: number; height: number }
+  ) => {
+    setCapturedDrawingImage(imageDataUrl);
+    setCanvasSize(canvasSize);
+  };
+
+  // 업로드 이미지 편집 취소
   const handleCloseEditMode = useCallback(() => {
     setOpenEditMode(false);
     setCurrentEditImage(null);
   }, [setOpenEditMode, setCurrentEditImage]);
 
-  const handleSaveEditMode = useCallback(() => {
-    handleCaptureEditImage();
-    setOpenEditMode(false);
-    setCurrentEditImage(null);
-  }, [handleCaptureEditImage, setOpenEditMode, setCurrentEditImage]);
+  // 업로드 이미지 편집 완료
+  const handleSaveEditMode = useCallback(
+    (imageDataUrl: string) => {
+      setImgs((prev) =>
+        prev.map((i) =>
+          i.origin === currentEditImage ? { ...i, modified: imageDataUrl } : i
+        )
+      );
+
+      handleCloseEditMode();
+    },
+    [currentEditImage, handleCloseEditMode]
+  );
 
   const uploadAndGetUrlImage = async (file: string) => {
     // if (!file) return null;
@@ -281,7 +277,7 @@ export default function CreateDiary() {
       <DrawingCanvasDialog
         isOpenDrawing={isOpenDrawing}
         setOpenDrawing={setOpenDrawing}
-        handleImageCapture={handleImageCapture}
+        handleDrawingImageCapture={handleDrawingImageCapture}
       />
 
       <ImageEditDialog

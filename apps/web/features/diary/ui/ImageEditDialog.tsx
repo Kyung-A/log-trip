@@ -123,11 +123,27 @@ export const ImageEditDialog = ({
     >
       <div className="w-full h-full flex flex-col justify-around gap-y-6 py-20 items-center bg-zinc-900">
         <div className="flex justify-between w-full px-4">
-          <button onClick={handleCloseEditMode}>
+          <button
+            onClick={() => {
+              handleCloseEditMode();
+              setFrameImage(null);
+            }}
+          >
             <X size={28} color="#fff" />
           </button>
           <button
-            onClick={handleSaveEditMode}
+            onClick={() => {
+              const canvas = canvasRef.current;
+              if (!canvas) return;
+
+              try {
+                const imageDataUrl = canvas.toDataURL("image/png");
+                handleSaveEditMode(imageDataUrl);
+                setFrameImage(null);
+              } catch (error) {
+                console.error("Canvas capture failed:", error);
+              }
+            }}
             className="text-lg font-semibold text-blue-500"
           >
             완료

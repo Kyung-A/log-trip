@@ -20,7 +20,7 @@ interface IPoint {
 export const DrawingCanvasDialog = ({
   isOpenDrawing,
   setOpenDrawing,
-  handleImageCapture,
+  handleDrawingImageCapture,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
@@ -195,7 +195,7 @@ export const DrawingCanvasDialog = ({
 
     try {
       const imageDataUrl = canvas.toDataURL("image/png");
-      handleImageCapture(imageDataUrl, canvasSize);
+      handleDrawingImageCapture(imageDataUrl, canvasSize);
       setOpenDrawing(false);
     } catch (error) {
       console.error("Canvas capture failed:", error);
