@@ -7,11 +7,8 @@ export const Switch = ({ initialChecked = false, onToggle }) => {
 
   const handleToggle = useCallback(() => {
     const newState = !isChecked;
-    setIsChecked(newState);
-
-    if (onToggle) {
-      onToggle(newState);
-    }
+    const resultState = onToggle(newState);
+    setIsChecked(resultState);
   }, [isChecked, onToggle]);
 
   return (

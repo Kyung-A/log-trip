@@ -1,36 +1,27 @@
-// components/ModalBottomSheet.jsx
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
-export const BottomSheet = ({ children }: { children: React.ReactNode }) => {
-  const router = useRouter();
-
-  const [isClosing, setIsClosing] = useState(false);
-
+export const BottomSheet = ({
+  isOpen,
+  setIsOpen,
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      router.back();
-    }, 300);
+    setIsOpen(false);
   };
 
   return (
-    <dialog
-      open
-      onClick={handleClose}
-      className="fixed inset-0 z-50 transition-all"
-    >
+    <dialog open={isOpen} onClick={handleClose} className="fixed inset-0 z-50">
       <div
         className={`fixed inset-0 bg-black transition-opacity duration-300 ${
-          isClosing ? "opacity-0" : "opacity-50"
+          isOpen ? "opacity-50" : "opacity-0"
         }`}
       />
 
       <div
-        className={`fixed bottom-0 left-0 w-full bg-white rounded-t-2xl shadow-2xl transition-transform duration-300 ease-out 
-          ${isClosing ? "translate-y-full" : "translate-y-0"}`}
+        className={`fixed bottom-0 -translate-x-1/2 left-1/2 max-w-3xl z-50 w-full bg-white rounded-t-2xl shadow-2xl transition-transform duration-300 ease-out 
+          ${isOpen ? "translate-y-0" : "translate-y-full"}`}
         role="dialog"
         aria-modal="true"
         onClick={(e) => e.stopPropagation()}

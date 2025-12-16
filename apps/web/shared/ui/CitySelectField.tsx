@@ -75,7 +75,7 @@ export const CitySelectField = React.memo(
 
         <dialog
           open={isOpen}
-          className="max-w-3xl w-screen fixed top-0 mx-auto"
+          className="max-w-3xl z-50 w-screen fixed top-0 mx-auto"
         >
           <div onClick={(e) => e.stopPropagation()} className="w-full bg-white">
             <header className="px-6 pb-4 border-b border-[#ebebeb]">

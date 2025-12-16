@@ -9,11 +9,19 @@ import {
   ImageEditDialog,
 } from "@/features/diary";
 import { IRegion, useFetchRegions } from "@/features/region";
-import { CitySelectField, Switch } from "@/shared";
-import dayjs from "dayjs";
+import {
+  CitySelectField,
+  getImageUrl,
+  imageUpload,
+  navigateNative,
+  Switch,
+} from "@/shared";
+import { v4 as uuidv4 } from "uuid";
 import Image from "next/image";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { ChevronLeft } from "lucide-react";
+import { toast, ToastContainer } from "react-toastify";
 
 const DEFAULT_FORM_VALUES = {
   user_id: "",
@@ -107,74 +115,138 @@ export default function CreateDiary() {
     [currentEditImage, handleCloseEditMode]
   );
 
-  const uploadAndGetUrlImage = async (file: string) => {
-    // if (!file) return null;
-    // const path = `diary-images/${userId}/${uuid.v4()}.jpg`;
-    // let base64 = "";
-    // if (file.startsWith("file://")) {
-    //   base64 = await FileSystem.readAsStringAsync(file, {
-    //     encoding: "base64",
-    //   });
-    // } else {
-    //   base64 = file.includes(",") ? file.split(",")[1] : file;
-    // }
-    // const buffer = decode(base64);
-    // await imageUpload("log-trip-images", path, buffer);
-    // const result = await getImageUrl("log-trip-images", path);
-    // return result.publicUrl;
+  // Blob 데이터 -> Base64 Data URL 변환
+  const blobUrlToBase64 = async (blobUrl: string): Promise<string> => {
+    const response = await fetch(blobUrl);
+    if (!response.ok) {
+      throw new Error(
+        `Blob URL에서 데이터를 가져오지 못했습니다: ${response.statusText}`
+      );
+    }
+
+    const blob = await response.blob();
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+        } else {
+          reject(
+            new Error("FileReader가 Base64 문자열을 생성하지 못했습니다.")
+          );
+        }
+      };
+
+      reader.onerror = (error) => {
+        reject(new Error(`FileReader 오류: ${error.target?.error}`));
+      };
+
+      reader.readAsDataURL(blob);
+    });
   };
 
+  // supabase 이미지 업로드 및 URL 반환
+  const uploadAndGetUrlImage = async (file: string): Promise<string | null> => {
+    if (!file) return null;
+    let rawInputData: string = file;
+
+    if (file.startsWith("blob:")) {
+      try {
+        const base64DataUrl = await blobUrlToBase64(file);
+        rawInputData = base64DataUrl;
+      } catch (error) {
+        console.error("Blob URL 변환 중 오류 발생:", error);
+        return null;
+      }
+    }
+
+    try {
+      let base64Part: string;
+
+      if (rawInputData.startsWith("data:")) {
+        const parts = rawInputData.split(",");
+        if (parts.length < 2)
+          throw new Error("유효하지 않은 Data URL 형식입니다.");
+
+        base64Part = parts[1];
+      } else {
+        base64Part = rawInputData;
+      }
+
+      const buffer = Buffer.from(base64Part, "base64");
+      const path = `diary-images/${userId}/${uuidv4()}.jpg`;
+
+      await imageUpload("log-trip-images", path, buffer);
+      const result = await getImageUrl("log-trip-images", path);
+
+      return result.publicUrl;
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      return null;
+    }
+  };
+
+  // 다이어리 생성
   const handleCreateDiary = handleSubmit(
     async (formData: IDiary) => {
-      // if (cities.length === 0) {
-      //   Toast.show({
-      //     type: "error",
-      //     text1: "도시 선택은 필수입니다.",
-      //   });
-      //   return;
-      // }
-      // let body = {
-      //   ...formData,
-      //   user_id: userId,
-      //   diary_regions: cities.map((v) => ({
-      //     region_code: v.region_code,
-      //     region_name: v.region_name,
-      //     shape_name: v.shape_name,
-      //     country_code: v.country_code,
-      //     country_name: v.country_name,
-      //   })),
-      // };
-      // if (imgs && imgs.length > 0) {
-      //   const diaryImagesUrls = await Promise.all(
-      //     imgs.map((v) => uploadAndGetUrlImage(v.modified))
-      //   );
-      //   body = { ...body, diary_images: diaryImagesUrls };
-      // }
-      // if (formData.is_drawing) {
-      //   const drawingContentBase64 = capturedDrawingImage.encodeToBase64();
-      //   const drawingContentUrl = await uploadAndGetUrlImage(
-      //     drawingContentBase64
-      //   );
-      //   body = { ...body, drawing_content: drawingContentUrl };
-      // }
-      // const result = await mutateAsync(body);
-      // if (result) {
-      //   // navigation.navigate('Home', {
-      //   //   screen: '내여행',
-      //   // });
-      // }
+      let body = {
+        ...formData,
+        user_id: userId,
+        diary_regions: cities.map((v) => ({
+          region_code: v.region_code,
+          region_name: v.region_name,
+          shape_name: v.shape_name,
+          country_code: v.country_code,
+          country_name: v.country_name,
+        })),
+      };
+
+      if (imgs && imgs.length > 0) {
+        const diaryImagesUrls = await Promise.all(
+          imgs.map((v) => uploadAndGetUrlImage(v.modified))
+        );
+        body = { ...body, diary_images: diaryImagesUrls };
+      }
+
+      if (formData.is_drawing) {
+        const drawingContentUrl = await uploadAndGetUrlImage(
+          capturedDrawingImage
+        );
+        body = { ...body, drawing_content: drawingContentUrl };
+      }
+
+      const result = await mutateAsync(body);
+      if (result) {
+        navigateNative("/diary");
+      }
     },
     (error) => {
-      // Toast.show({
-      //   type: "error",
-      //   text1: Object.values(error)[0].message as string,
-      // });
-      // console.error(Object.values(error)[0].message);
+      toast.error(Object.values(error)[0].message);
     }
   );
 
+  useEffect(() => {
+    setValue("diary_regions", cities, {
+      shouldValidate: true,
+    });
+  }, [cities, setValue]);
+
   return (
     <>
+      <header className="sticky h-10 top-0 z-30 w-full bg-white border-b border-gray-300 flex items-center px-2">
+        <button onClick={() => navigateNative("/diary")}>
+          <ChevronLeft size={30} color="#646464" />
+        </button>
+        <button
+          type="submit"
+          onClick={handleCreateDiary}
+          className="ml-auto text-lg text-blue-500 font-semibold px-2"
+        >
+          등록
+        </button>
+      </header>
+
       <UploadImages
         imgs={imgs}
         setImgs={setImgs}
@@ -187,6 +259,14 @@ export default function CreateDiary() {
         value={cities}
         onConfirm={setCities}
         options={regions}
+      />
+      <Controller
+        name="diary_regions"
+        control={control}
+        rules={{
+          validate: (v) => v.length > 0 || "도시를 선택해주세요",
+        }}
+        render={() => <></>}
       />
 
       <Controller
@@ -285,6 +365,13 @@ export default function CreateDiary() {
         editImage={currentEditImage}
         handleCloseEditMode={handleCloseEditMode}
         handleSaveEditMode={handleSaveEditMode}
+      />
+
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar
+        theme="colored"
       />
     </>
   );
