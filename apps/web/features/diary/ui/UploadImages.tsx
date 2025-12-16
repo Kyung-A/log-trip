@@ -88,7 +88,7 @@ export const UploadImages = ({
       {imgs.length === 0 && (
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center justify-center w-full py-2 bg-[#f2eeec] gap-x-2"
+          className="flex items-center justify-center w-full py-2 bg-beige gap-x-2"
         >
           <ImagePlus size={20} color="#a38f86" />
           <p className="text-[#a38f86] font-semibold">사진 추가하기</p>

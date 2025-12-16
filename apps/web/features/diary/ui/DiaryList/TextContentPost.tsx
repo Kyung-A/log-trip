@@ -1,9 +1,10 @@
+"use client";
+
 import { useMemo } from "react";
 import dayjs from "dayjs";
-import { groupByCountry } from "@/shared";
-import { GroupByCountryLabel } from ".";
-import { IDiary } from "..";
+import { groupByCountry, GroupByCountryLabel } from "@/shared";
 import { CalendarDays } from "lucide-react";
+import { IDiary } from "../..";
 
 export function TextContentPost({ data }: { data: IDiary }) {
   const groupedRegions = useMemo(

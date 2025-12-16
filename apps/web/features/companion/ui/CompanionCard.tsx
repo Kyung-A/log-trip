@@ -2,9 +2,8 @@ import React from "react";
 import Image from "next/image";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { GroupByCountryLabel } from "@/features/diary";
 import { useMemo } from "react";
-import { groupByCountry } from "@/shared";
+import { groupByCountry, GroupByCountryLabel } from "@/shared";
 import { CalendarDays } from "lucide-react";
 
 export const CompanionCard = React.memo(({ item }) => {
@@ -29,7 +28,7 @@ export const CompanionCard = React.memo(({ item }) => {
       key={item.id}
       className="w-full h-auto mb-2 bg-white block"
     >
-      <div className="flex-col p-4">
+      <div className="flex flex-col p-4">
         <div className="flex gap-x-4">
           {regionItems.map((item) => (
             <GroupByCountryLabel

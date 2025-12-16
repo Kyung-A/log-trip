@@ -1,9 +1,10 @@
+"use client";
+
 import dayjs from "dayjs";
 import { useMemo } from "react";
 import Image from "next/image";
-import { groupByCountry } from "@/shared";
-import { GroupByCountryLabel } from ".";
-import { IDiary } from "..";
+import { groupByCountry, GroupByCountryLabel } from "@/shared";
+import { IDiary } from "../..";
 import { CalendarDays } from "lucide-react";
 
 export function DrawingiContentPost({ data }: { data: IDiary }) {

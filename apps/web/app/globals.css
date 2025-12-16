@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --color-beige: #f2eeec;
+}
+
 .mapboxgl-ctrl-logo {
   display: none !important;
 }
