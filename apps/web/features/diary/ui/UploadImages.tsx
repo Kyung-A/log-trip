@@ -102,7 +102,7 @@ export const UploadImages = ({
           />
         </button>
       )}
-      <div className="w-full">
+      <div className="w-full border-b border-gray-300">
         {imgs && imgs.length > 0 ? (
           <Swiper key={imgs.map((i) => i.origin).join("|")} loop>
             {imgs.map((img) => (

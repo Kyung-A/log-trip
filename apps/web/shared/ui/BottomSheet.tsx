@@ -1,10 +1,14 @@
 "use client";
 
+import { Dispatch, SetStateAction } from "react";
+
 export const BottomSheet = ({
   isOpen,
   setIsOpen,
   children,
 }: {
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
   children: React.ReactNode;
 }) => {
   const handleClose = () => {

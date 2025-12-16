@@ -58,7 +58,7 @@ export const CitySelectField = React.memo(
       <>
         <button
           onClick={handleOpen}
-          className="flex flex-wrap items-start justify-between w-full px-4 py-3 border-t border-b border-gray-300"
+          className="flex flex-wrap items-start justify-between w-full px-4 py-3 border-b border-gray-300"
         >
           <p className="mr-4 text-lg pt-0.5">{label}</p>
           <div className="flex flex-wrap flex-1 gap-2">
