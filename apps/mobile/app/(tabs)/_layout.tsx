@@ -103,6 +103,7 @@ function ComposeTabButton() {
                 <TouchableOpacity
                   onPress={() => {
                     setVisible(false);
+                    router.push("/createCompanion");
                   }}
                   style={{ marginTop: 10 }}
                 >

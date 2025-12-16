@@ -13,6 +13,16 @@ export default function HomeScreen() {
       renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
       startInLoadingState={true}
       webviewDebuggingEnabled={true}
+      injectedJavaScriptBeforeContentLoaded={`
+          (function () {
+            window.ReactNativeWebView = window.ReactNativeWebView || {
+              postMessage: function (data) {
+                window.postMessage(data);
+              }
+            };
+          })();
+          true;
+      `}
     />
   );
 }

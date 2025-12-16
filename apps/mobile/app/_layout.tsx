@@ -12,6 +12,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="createDiary" options={{ headerShown: false }} />
+        <Stack.Screen name="createCompanion" options={{ headerShown: false }} />
       </Stack>
     </TabBarProvider>
   );

@@ -1,4 +1,5 @@
 import { useTabBarVisibility } from "@/shared";
+import { router } from "expo-router";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -27,8 +28,16 @@ export default function TabTwoScreen() {
         startInLoadingState={true}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}
-        keyboardDisplayMode="pan"
-        hideKeyboardAccessoryView
+        injectedJavaScriptBeforeContentLoaded={`
+          (function () {
+            window.ReactNativeWebView = window.ReactNativeWebView || {
+              postMessage: function (data) {
+                window.postMessage(data);
+              }
+            };
+          })();
+          true;
+        `}
       />
     </SafeAreaView>
   );
