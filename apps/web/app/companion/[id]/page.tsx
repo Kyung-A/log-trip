@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useMemo, useCallback, Suspense } from "react";
+import { useMemo, useCallback, useRef, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import {
   CalendarDays,
@@ -10,11 +10,12 @@ import {
   EllipsisVertical,
   Map,
   MapPin,
+  Pencil,
+  Trash,
   Users,
   VenusAndMars,
 } from "lucide-react";
 import Image from "next/image";
-import Loading from "../loading";
 import { groupByCountry } from "@/shared";
 import { useFetchUserId, useFetchUserProfile } from "@/features/auth";
 import {
@@ -24,6 +25,8 @@ import {
 import Link from "next/link";
 
 export default function CompanionDetail() {
+  const popoverRef = useRef<HTMLDivElement>(null);
+
   const { id } = useParams();
   const router = useRouter();
 
@@ -31,6 +34,8 @@ export default function CompanionDetail() {
   const { data: userId } = useFetchUserId();
   const { data: profile } = useFetchUserProfile(userId);
   const { mutateAsync: deleteMutateAsync } = useDeleteCompanion();
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const gender = useMemo(() => {
     if (data?.gender_preference === "F" && profile?.gender === "female") {
@@ -77,27 +82,34 @@ export default function CompanionDetail() {
     [deleteMutateAsync]
   );
 
-  const handleOpenActionSheet = useCallback(() => {
-    // const options = ["수정", "삭제", "취소"];
-    // showActionSheetWithOptions({ options, cancelButtonIndex: 2 }, (idx) => {
-    //   if (idx === 0) navigation.navigate("CompanionUpdate", { id: data?.id });
-    //   else if (idx === 1) handleDeleteCompanion(data?.id);
-    //   else if (idx === 2) return;
-    // });
-  }, [data?.id]);
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen, setIsOpen]);
 
   return (
-    <Suspense fallback={<Loading />}>
+    <div className="w-full relative">
       <header className="bg-white max-w-3xl fixed w-full py-2 border-b border-gray-200 flex items-center justify-between px-4">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push("/companion")}
           className="flex items-center gap-x-1"
         >
           <ChevronLeft size={22} color="#646464" />
           <span className="text-lg">뒤로</span>
         </button>
         {userId === data?.user_id && (
-          <button onClick={handleOpenActionSheet}>
+          <button onClick={() => setIsOpen(true)}>
             <EllipsisVertical size={22} color="#646464" />
           </button>
         )}
@@ -181,6 +193,7 @@ export default function CompanionDetail() {
                     className="object-cover w-full h-full"
                     width={0}
                     height={0}
+                    sizes="100vw"
                     alt="profile image"
                   />
                 </div>
@@ -225,6 +238,31 @@ export default function CompanionDetail() {
           </Link>
         </footer>
       )}
-    </Suspense>
+
+      {isOpen && (
+        <div
+          ref={popoverRef}
+          className="absolute right-6 top-8 z-50 w-32 rounded-lg bg-white shadow-[0px_0px_20px_-1px_rgba(0,0,0,0.3)] py-2"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Link
+            href={`/companion/${id}/update`}
+            className="flex items-center gap-x-2 w-full px-4 py-2 text-left text-base font-semibold text-blue-500"
+          >
+            <Pencil size={20} />
+            수정
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => handleDeleteCompanion(data?.id)}
+            className="flex items-center gap-x-2 w-full px-4 py-2 text-left text-base font-semibold text-red-500"
+          >
+            <Trash size={20} />
+            삭제
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
