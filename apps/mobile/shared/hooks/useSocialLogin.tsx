@@ -33,7 +33,7 @@ export const useSocialLogin = () => {
       const isUserExists = await checkIfUserExists(data.user.id);
       if (isUserExists) {
         router.push({
-          pathname: "/(tabs)/(diary)",
+          pathname: "/(tabs)/diary",
           params: {
             accessToken: data?.session.access_token,
             refreshToken: data?.session.refresh_token,
@@ -137,7 +137,7 @@ export const useSocialLogin = () => {
 
       if (isUserExists) {
         router.push({
-          pathname: "/(tabs)/(diary)",
+          pathname: "/(tabs)/diary",
           params: {
             accessToken: data?.session.access_token,
             refreshToken: data?.session.refresh_token,
