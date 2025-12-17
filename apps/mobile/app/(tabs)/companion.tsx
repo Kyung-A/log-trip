@@ -1,14 +1,11 @@
 import { useTabBarVisibility } from "@/shared";
-import { router } from "expo-router";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import { useRef } from "react";
+import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 
 export default function TabTwoScreen() {
+  const webViewRef = useRef<WebView>(null);
   const { setTabBarVisible } = useTabBarVisibility();
 
   return (
@@ -17,6 +14,7 @@ export default function TabTwoScreen() {
       edges={["top", "left", "right"]}
     >
       <WebView
+        ref={webViewRef}
         source={{ uri: "http://localhost:3000/companion" }}
         style={{ flex: 1 }}
         renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
@@ -38,6 +36,19 @@ export default function TabTwoScreen() {
           })();
           true;
         `}
+        onMessage={(event) => {
+          try {
+            const data = JSON.parse(event.nativeEvent.data);
+            if (data.type === "NAVIGATE") {
+              webViewRef.current?.injectJavaScript(`
+                window.location.href = '/companion';
+                true;
+              `);
+            }
+          } catch (e) {
+            console.warn("Invalid message from web", e);
+          }
+        }}
       />
     </SafeAreaView>
   );

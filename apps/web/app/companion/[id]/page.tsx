@@ -16,7 +16,7 @@ import {
   VenusAndMars,
 } from "lucide-react";
 import Image from "next/image";
-import { groupByCountry } from "@/shared";
+import { groupByCountry, navigateNative } from "@/shared";
 import { useFetchUserId, useFetchUserProfile } from "@/features/auth";
 import {
   useDeleteCompanion,
@@ -75,9 +75,9 @@ export default function CompanionDetail() {
   const handleDeleteCompanion = useCallback(
     async (id: string) => {
       const result = await deleteMutateAsync(id);
-      // if (result.status === 204) {
-      //   navigation.navigate("Home", { screen: "동행" });
-      // }
+      if (result.status === 204) {
+        navigateNative("/companion");
+      }
     },
     [deleteMutateAsync]
   );
@@ -102,7 +102,7 @@ export default function CompanionDetail() {
     <div className="w-full relative">
       <header className="bg-white max-w-3xl fixed w-full py-2 border-b border-gray-200 flex items-center justify-between px-4">
         <button
-          onClick={() => router.push("/companion")}
+          onClick={() => navigateNative("/companion")}
           className="flex items-center gap-x-1"
         >
           <ChevronLeft size={22} color="#646464" />
@@ -189,7 +189,7 @@ export default function CompanionDetail() {
               <div className="flex items-center gap-x-2">
                 <div className="w-12 h-12 overflow-hidden rounded-full">
                   <Image
-                    src={data?.user_info.profile_image}
+                    src={data?.user_info?.profile_image ?? ""}
                     className="object-cover w-full h-full"
                     width={0}
                     height={0}

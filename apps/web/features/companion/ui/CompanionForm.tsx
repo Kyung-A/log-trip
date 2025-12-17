@@ -105,20 +105,35 @@ export function CompanionForm({
             <p className="text-lg">동행수</p>
             <Picker
               value={{ companion_count: value ?? 1 }}
+              defaultValue={1}
               onChange={(v) => onChange(v.companion_count)}
               wheelMode="natural"
               height={30}
+              className="text-gray-500"
             >
-              <Picker.Column name="companion_count" className="text-gray-500">
-                {Array.from({ length: 6 }, (_, i) => (
-                  <Picker.Item
-                    key={i + 1}
-                    value={i + 1}
-                    style={{ fontSize: 18 }}
-                  >
-                    {i + 1}
-                  </Picker.Item>
-                ))}
+              <Picker.Column name="companion_count">
+                {defaultValues
+                  ? Array.from(
+                      { length: 7 - defaultValues.companion_count },
+                      (_, i) => (
+                        <Picker.Item
+                          key={defaultValues.companion_count + i}
+                          value={defaultValues.companion_count + i}
+                          style={{ fontSize: 18 }}
+                        >
+                          {defaultValues.companion_count + i}
+                        </Picker.Item>
+                      )
+                    )
+                  : Array.from({ length: 6 }, (_, i) => (
+                      <Picker.Item
+                        key={i + 1}
+                        value={i + 1}
+                        style={{ fontSize: 18 }}
+                      >
+                        {i + 1}
+                      </Picker.Item>
+                    ))}
               </Picker.Column>
             </Picker>
           </label>
@@ -136,11 +151,13 @@ export function CompanionForm({
             <p className="text-lg">성별</p>
             <Picker
               value={{ gender_preference: value ?? "R" }}
+              defaultValue="R"
               onChange={(v) => onChange(v.gender_preference)}
               wheelMode="natural"
               height={30}
-              disabled={!!defaultValues}
-              className="text-gray-500"
+              className={`text-gray-500 ${
+                !!defaultValues ? "pointer-events-none" : ""
+              }`}
             >
               <Picker.Column name="gender_preference">
                 <Picker.Item key="R" value="R" style={{ fontSize: 18 }}>
@@ -169,17 +186,17 @@ export function CompanionForm({
             <p className="text-lg">모집 마감</p>
             <input
               type="datetime-local"
-              value={value ? dayjs(value).format("YYYY-MM-DD hh:mm") : ""}
+              value={value ? dayjs(value).format("YYYY-MM-DDTHH:mm") : ""}
               onChange={(e) => {
                 const selected = dayjs(e.target.value);
-                const now = dayjs().set("minute", 1);
+                const now = dayjs().set("minute", 10);
 
                 if (selected.isBefore(now)) {
                   alert("현재 시간 이후만 선택할 수 있습니다.");
                   return;
                 }
 
-                onChange(e);
+                onChange(selected.toISOString());
               }}
               min={dayjs().format("YYYY-MM-DDTHH:mm")}
               className="text-right text-gray-500"
@@ -199,10 +216,11 @@ export function CompanionForm({
             <p className="text-lg">동행 시작</p>
             <input
               type="datetime-local"
-              value={value ? dayjs(value).format("YYYY-MM-DD hh:mm") : ""}
+              value={value ? dayjs(value).format("YYYY-MM-DDTHH:mm") : ""}
+              disabled={!!defaultValues}
               onChange={(e) => {
                 const selected = dayjs(e.target.value);
-                const now = dayjs().set("minute", 1);
+                const now = dayjs().set("minute", 10);
 
                 if (selected.isBefore(now)) {
                   alert("현재 시간 이후만 선택할 수 있습니다.");
@@ -210,7 +228,7 @@ export function CompanionForm({
                 }
 
                 setValue("end_date", null);
-                onChange(e);
+                onChange(selected.toISOString());
               }}
               min={dayjs().format("YYYY-MM-DDTHH:mm")}
               className="text-right text-gray-500"
@@ -230,7 +248,8 @@ export function CompanionForm({
             <p className="text-lg">동행 종료</p>
             <input
               type="datetime-local"
-              value={value ? dayjs(value).format("YYYY-MM-DD hh:mm") : ""}
+              value={value ? dayjs(value).format("YYYY-MM-DDTHH:mm") : ""}
+              disabled={!!defaultValues}
               onChange={(e) => {
                 const selected = dayjs(e.target.value);
                 const now = dayjs(watch("start_date"));
@@ -240,7 +259,7 @@ export function CompanionForm({
                   return;
                 }
 
-                onChange(e);
+                onChange(selected.toISOString());
               }}
               min={dayjs(watch("start_date")).format("YYYY-MM-DDTHH:mm")}
               className="text-right text-gray-500"
