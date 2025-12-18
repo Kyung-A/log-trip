@@ -2,7 +2,6 @@
 
 import {
   deleteUserProfile,
-  logout,
   useFetchUserId,
   useFetchUserProfile,
 } from "@/features/auth";
@@ -38,9 +37,8 @@ export default function MyPage() {
   const { data: counters } = useFetchMyCounter(userId);
 
   const handleLogout = useCallback(async () => {
-    await logout();
     qc.clear();
-    navigateNative("/(auth)/login");
+    navigateNative("/mypage", "LOGOUT");
   }, [qc]);
 
   // TODO: 데이터 모두 삭제할지 말지?
@@ -115,7 +113,7 @@ export default function MyPage() {
       >
         <p className="text-[#a38f86]">프로필 수정</p>
       </button>
-      <button onClick={handleLogout} className="mt-6">
+      <button onClick={() => handleLogout()} className="mt-6">
         <p className="text-[#a38f86] underline">로그아웃</p>
       </button>
       <button onClick={handleDeleteUser} className="mt-4">

@@ -24,21 +24,13 @@ export default function HomeScreen() {
     <WebView
       ref={webviewRef}
       source={{ uri: "http://localhost:3000/world-map" }}
-      onLoadEnd={injectSession}
+      onLoadEnd={() => {
+        setTimeout(injectSession, 300);
+      }}
       style={{ flex: 1 }}
       renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
       startInLoadingState={true}
       webviewDebuggingEnabled={true}
-      injectedJavaScriptBeforeContentLoaded={`
-          (function () {
-            window.ReactNativeWebView = window.ReactNativeWebView || {
-              postMessage: function (data) {
-                window.postMessage(data);
-              }
-            };
-          })();
-          true;
-      `}
     />
   );
 }

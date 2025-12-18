@@ -1,4 +1,5 @@
-import { useTabBarVisibility } from "@/shared";
+import { supabase, useTabBarVisibility } from "@/shared";
+import { router } from "expo-router";
 import { useRef } from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -36,10 +37,23 @@ export default function MyPageScreen() {
           })();
           true;
         `}
-        onMessage={(event) => {
+        onMessage={async (event) => {
           try {
             const data = JSON.parse(event.nativeEvent.data);
+            if (data.type === "LOGOUT") {
+              await supabase.auth.signOut();
+              router.replace("/(auth)/login");
+            }
+
             if (data.type === "NAVIGATE") {
+              const { path } = data.payload;
+
+              router.push({
+                pathname: path,
+              });
+            }
+
+            if (data.type === "WINDOW_LOCATION") {
               webViewRef.current?.injectJavaScript(`
                 window.location.href = '/mypage';
                 true;

@@ -9,11 +9,11 @@ export const unstable_settings = {
 export default function RootLayout() {
   return (
     <TabBarProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
-        <Stack.Screen name="createDiary" options={{ headerShown: false }} />
-        <Stack.Screen name="createCompanion" options={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(auth)/login" />
+        <Stack.Screen name="createDiary" />
+        <Stack.Screen name="createCompanion" />
       </Stack>
     </TabBarProvider>
   );
