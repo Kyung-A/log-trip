@@ -1,4 +1,4 @@
-import { getUserProfile } from "../api/getUserProfile";
+import { getUserProfile } from "../api";
 
 export const checkIfUserExists = async (id: string) => {
   const data = await getUserProfile(id);

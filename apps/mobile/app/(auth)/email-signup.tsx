@@ -11,7 +11,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Toast from "react-native-toast-message";
 
+// TODO: 현재 이메일 인증 하기도 전에 회원 가입이 먼저됨, 이메일의 링크를 클릭했을대 회원가입 되게 변경
 export default function EmailSignUpScreen() {
   const { control, handleSubmit, getValues } = useForm();
   const signUp = useEmailSignUp();
@@ -28,10 +30,10 @@ export default function EmailSignUpScreen() {
         .single();
 
       if (data) {
-        // Toast.show({
-        //   type: "error",
-        //   text1: "이미 존재하는 이메일입니다.",
-        // });
+        Toast.show({
+          type: "error",
+          text1: "이미 존재하는 이메일입니다.",
+        });
         return;
       }
 
@@ -44,30 +46,28 @@ export default function EmailSignUpScreen() {
   const handleLogin = handleSubmit(
     async (formData) => {
       if (!duplicateCheck) {
-        // Toast.show({
-        //   type: "error",
-        //   text1: "이메일 중복 체크는 필수입니다.",
-        // });
-
+        Toast.show({
+          type: "error",
+          text1: "이메일 중복 체크는 필수입니다.",
+        });
         return;
       }
 
       if (!selected) {
-        // Toast.show({
-        //   type: "error",
-        //   text1: "개인정보보호 및 이용약관 동의는 필수입니다.",
-        // });
-
+        Toast.show({
+          type: "error",
+          text1: "개인정보보호 및 이용약관 동의는 필수입니다.",
+        });
         return;
       }
 
       await signUp(formData.email, formData.password);
     },
     (error) => {
-      // Toast.show({
-      //   type: "error",
-      //   text1: Object.values(error)[0].message as string,
-      // });
+      Toast.show({
+        type: "error",
+        text1: Object.values(error)[0].message as string,
+      });
     }
   );
 

@@ -9,6 +9,7 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function EmailLoginScreen() {
   const [resendMail, setResendMail] = useState<boolean>(false);
@@ -19,10 +20,10 @@ export default function EmailLoginScreen() {
     const email = getValues("email");
     await resendEmail(email);
 
-    // Toast.show({
-    //   type: "success",
-    //   text1: "메일을 확인해주세요.",
-    // });
+    Toast.show({
+      type: "success",
+      text1: "메일을 확인해주세요.",
+    });
   }, [getValues]);
 
   const handleLogin = handleSubmit(
@@ -30,27 +31,27 @@ export default function EmailLoginScreen() {
       const result = await login(formData.email, formData.password);
 
       if (result?.includes("Invalid login credentials")) {
-        // Toast.show({
-        //   type: "error",
-        //   text1: "잘못된 이메일 또는 비밀번호 입니다.",
-        // });
+        Toast.show({
+          type: "error",
+          text1: "잘못된 이메일 또는 비밀번호 입니다.",
+        });
         return;
       }
 
       if (result?.includes("Email not confirmed")) {
-        // Toast.show({
-        //   type: "error",
-        //   text1: "이메일 인증을 완료해주세요.",
-        // });
+        Toast.show({
+          type: "error",
+          text1: "이메일 인증을 완료해주세요.",
+        });
         setResendMail(true);
         return;
       }
     },
     (error) => {
-      // Toast.show({
-      //   type: "error",
-      //   text1: Object.values(error)[0].message as string,
-      // });
+      Toast.show({
+        type: "error",
+        text1: Object.values(error)[0].message as string,
+      });
     }
   );
 

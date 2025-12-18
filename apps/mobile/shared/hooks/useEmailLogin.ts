@@ -7,7 +7,7 @@ export const useEmailLogin = () => {
   return useCallback(async (email: string, password: string) => {
     try {
       const {
-        data: { user },
+        data: { session, user },
         error,
       } = await emailLogin(email, password);
 
@@ -18,11 +18,22 @@ export const useEmailLogin = () => {
       const isUserExists = await checkIfUserExists(user.id);
 
       if (isUserExists) {
-        router.push("/(tabs)");
+        router.replace({
+          pathname: "/(tabs)",
+          params: {
+            accessToken: session.access_token,
+            refreshToken: session.refresh_token,
+          },
+        });
       } else {
-        // navigation.navigate('PhoneAuth', {
-        //   platform: 'email',
-        // });
+        router.replace({
+          pathname: "/(auth)/phone-auth",
+          params: {
+            accessToken: session.access_token,
+            refreshToken: session.refresh_token,
+            platform: "email",
+          },
+        });
       }
     } catch (error) {
       console.error(error);

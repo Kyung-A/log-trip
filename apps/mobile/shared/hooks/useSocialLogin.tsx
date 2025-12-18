@@ -11,6 +11,7 @@ import {
 } from "@/shared";
 import { checkIfUserExists } from "../lib/checkIfUserExists";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 
 export const useSocialLogin = () => {
   const kakaoLogin = useCallback(async () => {
@@ -32,7 +33,7 @@ export const useSocialLogin = () => {
 
       const isUserExists = await checkIfUserExists(data.user.id);
       if (isUserExists) {
-        router.push({
+        router.replace({
           pathname: "/(tabs)",
           params: {
             accessToken: data?.session.access_token,
@@ -40,7 +41,14 @@ export const useSocialLogin = () => {
           },
         });
       } else {
-        // TODO: 회원가입 프로세스
+        router.replace({
+          pathname: "/(auth)/phone-auth",
+          params: {
+            accessToken: data?.session.access_token,
+            refreshToken: data?.session.refresh_token,
+            platform: "kakao",
+          },
+        });
       }
     } catch (error) {
       console.error(error);
@@ -70,10 +78,10 @@ export const useSocialLogin = () => {
           );
 
           if (!signUpUser) {
-            // Toast.show({
-            //   type: "error",
-            //   text1: "이미 가입한 이메일입니다. 다른 방법으로 로그인 해주세요.",
-            // });
+            Toast.show({
+              type: "error",
+              text1: "이미 가입한 이메일입니다. 다른 방법으로 로그인 해주세요.",
+            });
 
             return;
           }
@@ -86,7 +94,7 @@ export const useSocialLogin = () => {
         const isUserExists = await checkIfUserExists(userId);
 
         if (isUserExists) {
-          router.push({
+          router.replace({
             pathname: "/(tabs)",
             params: {
               accessToken: successResponse!.accessToken,
@@ -94,7 +102,14 @@ export const useSocialLogin = () => {
             },
           });
         } else {
-          // TODO: 회원가입 프로세스
+          router.replace({
+            pathname: "/(auth)/phone-auth",
+            params: {
+              accessToken: successResponse!.accessToken,
+              refreshToken: successResponse!.refreshToken,
+              platform: "naver",
+            },
+          });
         }
       } else {
         console.error(failureResponse);
@@ -145,7 +160,7 @@ export const useSocialLogin = () => {
       const isUserExists = await checkIfUserExists(data.user.id);
 
       if (isUserExists) {
-        router.push({
+        router.replace({
           pathname: "/(tabs)",
           params: {
             accessToken: data?.session.access_token,
@@ -153,7 +168,14 @@ export const useSocialLogin = () => {
           },
         });
       } else {
-        // TODO: 회원가입 프로세스
+        router.replace({
+          pathname: "/(auth)/phone-auth",
+          params: {
+            accessToken: data?.session.access_token,
+            refreshToken: data?.session.refresh_token,
+            platform: "apple",
+          },
+        });
       }
     } catch (error) {
       console.error(error);
