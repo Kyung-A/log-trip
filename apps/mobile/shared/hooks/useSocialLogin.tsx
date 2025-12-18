@@ -33,7 +33,7 @@ export const useSocialLogin = () => {
       const isUserExists = await checkIfUserExists(data.user.id);
       if (isUserExists) {
         router.push({
-          pathname: "/(tabs)/diary",
+          pathname: "/(tabs)",
           params: {
             accessToken: data?.session.access_token,
             refreshToken: data?.session.refresh_token,
@@ -83,10 +83,19 @@ export const useSocialLogin = () => {
           userId = loginUser.id;
         }
 
-        // const isUserExists = await checkIfUserExists(userId);
-        // navigation.navigate(isUserExists ? "Home" : "PhoneAuth", {
-        //   platform: "naver",
-        // });
+        const isUserExists = await checkIfUserExists(userId);
+
+        if (isUserExists) {
+          router.push({
+            pathname: "/(tabs)",
+            params: {
+              accessToken: successResponse!.accessToken,
+              refreshToken: successResponse!.refreshToken,
+            },
+          });
+        } else {
+          // TODO: 회원가입 프로세스
+        }
       } else {
         console.error(failureResponse);
       }
@@ -137,7 +146,7 @@ export const useSocialLogin = () => {
 
       if (isUserExists) {
         router.push({
-          pathname: "/(tabs)/diary",
+          pathname: "/(tabs)",
           params: {
             accessToken: data?.session.access_token,
             refreshToken: data?.session.refresh_token,
