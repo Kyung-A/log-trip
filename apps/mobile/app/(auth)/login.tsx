@@ -4,6 +4,7 @@ import { View, Pressable, Text, TouchableOpacity } from "react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
 import NaverLogin from "@react-native-seoul/naver-login";
 import { useSocialLogin } from "@/shared";
+import { router } from "expo-router";
 
 export default function LoginScreen() {
   const { appleLogin, naverLogin, kakaoLogin } = useSocialLogin();
@@ -111,7 +112,7 @@ export default function LoginScreen() {
         />
 
         <TouchableOpacity
-          // onPress={() => navigation.navigate('EmailLogin')}
+          onPress={() => router.push("/(auth)/email-login")}
           style={{ justifyContent: "center", width: 240, marginTop: 24 }}
         >
           <Text style={{ fontSize: 16, textAlign: "center" }}>
