@@ -1,26 +1,38 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-beige: #f2eeec;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.mapboxgl-ctrl-logo {
+  display: none !important;
+}
+.mapbox-improve-map {
+  display: none !important;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body:has(dialog[open]) {
+  overflow: hidden;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.Toastify__toast-container {
+  left: 50%;
+  transform: translateX(-50%);
+  width: fit-content !important;
+  min-width: 240px !important;
+  max-width: 600px !important;
+  margin-top: 60px !important;
+}
+
+.Toastify__toast {
+  border-radius: 99px !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 20px !important;
+  min-height: 50px;
+  max-height: 50px;
+}
+
+.Toastify__close-button {
+  display: none;
 }
