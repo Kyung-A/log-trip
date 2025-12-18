@@ -62,8 +62,8 @@ function ComposeTabButton() {
               <View
                 style={{
                   position: "absolute",
-                  top: layout.y - 90,
-                  left: layout.x - 18,
+                  top: layout.y - 95,
+                  left: layout.x - 19,
                   padding: 16,
                   backgroundColor: "#d5b2a8",
                   borderRadius: 8,
@@ -91,7 +91,7 @@ function ComposeTabButton() {
                 >
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: 600,
                       textAlign: "center",
                       color: "#fff",
@@ -109,7 +109,7 @@ function ComposeTabButton() {
                 >
                   <Text
                     style={{
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: 600,
                       textAlign: "center",
                       color: "#fff",

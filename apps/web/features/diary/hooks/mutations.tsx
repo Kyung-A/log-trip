@@ -45,7 +45,7 @@ export const useDeleteDiary = () => {
 
       const prevData = qc.getQueriesData({
         queryKey: diaryKeys.list(user_id),
-      })[0];
+      });
 
       prevData.forEach(([key, list]) => {
         if (!Array.isArray(list)) return;
@@ -71,7 +71,7 @@ export const useDeleteDiary = () => {
       qc.invalidateQueries({
         queryKey: diaryRegionKeys.byUser(data.user_id),
         exact: true,
-        refetchType: "active",
+        refetchType: "all",
       });
     },
   });

@@ -1,4 +1,4 @@
-export function navigateNative(path: string, params?: any) {
+export function navigateNative(path: string, type = "NAVIGATE", params?: any) {
   if (typeof window === "undefined") return;
 
   if (!(window as any).ReactNativeWebView) {
@@ -7,7 +7,7 @@ export function navigateNative(path: string, params?: any) {
 
   (window as any).ReactNativeWebView.postMessage(
     JSON.stringify({
-      type: "NAVIGATE",
+      type: type,
       payload: {
         path,
         params,

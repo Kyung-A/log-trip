@@ -103,7 +103,7 @@ export default function ProfileUpdaten() {
     <>
       <header className="bg-white max-w-3xl fixed w-full py-2 border-b border-gray-200 flex items-center justify-between px-4">
         <button
-          onClick={() => navigateNative("/mypage")}
+          onClick={() => navigateNative("/mypage", "WINDOW_LOCATION")}
           className="flex items-center gap-x-1"
         >
           <ChevronLeft size={22} color="#646464" />
