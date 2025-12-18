@@ -12,6 +12,7 @@ import Image from "next/image";
 import { UserRound } from "lucide-react";
 import { useFetchMyCounter } from "@/features/my";
 import { navigateNative } from "@/shared";
+import { useRouter } from "next/navigation";
 
 export interface IProfile {
   year_of_birth: string;
@@ -29,6 +30,7 @@ export interface IProfile {
 }
 
 export default function MyPage() {
+  const router = useRouter();
   const qc = useQueryClient();
 
   const { data: userId } = useFetchUserId();
@@ -43,12 +45,14 @@ export default function MyPage() {
 
   // TODO: 데이터 모두 삭제할지 말지?
   const handleDeleteUser = useCallback(async () => {
+    if (!confirm("정말 계정을 삭제 하시겠습니까?")) return;
     await deleteUserProfile(userId);
     const params = new URLSearchParams({
       id: userId,
     });
     await fetch(`/api/deleteUser?${params.toString()}`);
     qc.clear();
+    navigateNative("/(auth)/login");
   }, [qc, userId]);
 
   return (
@@ -106,15 +110,7 @@ export default function MyPage() {
         </button>
       </div>
       <button
-        onClick={() =>
-          // navigation.navigate("ProfileUpdate", {
-          //   id: profile.id,
-          //   profile_image: profile.profile_image,
-          //   nickname: profile.nickname,
-          //   about: profile.about,
-          // })
-          console.log("profile update")
-        }
+        onClick={() => router.push("/mypage/update")}
         className="px-20 py-2 mt-14 border rounded-lg border-[#a38f86]"
       >
         <p className="text-[#a38f86]">프로필 수정</p>
