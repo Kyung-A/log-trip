@@ -1,21 +1,31 @@
-import { router } from "expo-router";
+import { useTabBarVisibility } from "@/shared";
+import { useRef } from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
 
 export default function MyPageScreen() {
+  const webViewRef = useRef<WebView>(null);
+  const { setTabBarVisible } = useTabBarVisibility();
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "#fff" }}
       edges={["top", "left", "right"]}
     >
       <WebView
-        source={{ uri: "http://localhost:3000/my" }}
+        ref={webViewRef}
+        source={{ uri: "http://localhost:3000/mypage" }}
         style={{ flex: 1 }}
         renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
         startInLoadingState={true}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}
+        onNavigationStateChange={(navState) => {
+          const url = navState.url;
+          const isMypage = /mypage\/.+/.test(url);
+          setTabBarVisible(isMypage ? false : true);
+        }}
         injectedJavaScriptBeforeContentLoaded={`
           (function () {
             window.ReactNativeWebView = window.ReactNativeWebView || {
@@ -29,13 +39,11 @@ export default function MyPageScreen() {
         onMessage={(event) => {
           try {
             const data = JSON.parse(event.nativeEvent.data);
-
             if (data.type === "NAVIGATE") {
-              const { path } = data.payload;
-
-              router.push({
-                pathname: path,
-              });
+              webViewRef.current?.injectJavaScript(`
+                window.location.href = '/mypage';
+                true;
+              `);
             }
           } catch (e) {
             console.warn("Invalid message from web", e);
