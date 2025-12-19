@@ -21,14 +21,15 @@ export default function CompanionApplyModal() {
 
     const result = await applyMutateAsync(body);
     if (result.status === 201 || result.status === 200) {
+      router.replace(`/companion/${postId}`);
     }
-  }, [applyMessage, applyMutateAsync, postId, userId]);
+  }, [applyMessage, applyMutateAsync, postId, router, userId]);
 
   return (
     <dialog
       open
       onClick={() => router.back()}
-      className="bg-[#00000076] max-w-3xl w-screen h-screen flex mx-auto items-center justify-center"
+      className="bg-[#00000076] fixed top-0 left-0 max-w-3xl w-screen h-screen flex mx-auto items-center justify-center"
     >
       <div onClick={(e) => e.stopPropagation()} className="w-[90%]">
         <main className="w-full p-6 bg-white rounded-lg">

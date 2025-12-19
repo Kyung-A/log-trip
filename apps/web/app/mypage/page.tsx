@@ -86,7 +86,7 @@ export default function MyPage() {
         <div className="h-10 w-px bg-gray-200"></div>
 
         <button
-          onClick={() => console.log("ApplyStatus")}
+          onClick={() => router.push("/mypage/apply-status")}
           className="flex items-center px-6 flex-col"
         >
           <p className="text-sm text-gray-500">동행 신청 현황</p>
@@ -98,7 +98,7 @@ export default function MyPage() {
         <div className="h-10 w-px bg-gray-200"></div>
 
         <button
-          onClick={() => console.log("RecruitStatus")}
+          onClick={() => router.push("/mypage/recruit-status")}
           className="flex flex-col items-center px-6"
         >
           <p className="text-sm text-gray-500">동행 모집 현황</p>

@@ -118,7 +118,7 @@ export default function ProfileUpdaten() {
         </button>
       </header>
 
-      <main className="items-center flex flex-col w-full bg-white">
+      <main className="items-center flex flex-col w-full bg-beige min-h-screen">
         <div className="relative w-32 h-32 mt-40 bg-[#d5b2a7] rounded-full">
           {profileImg ? (
             <button
