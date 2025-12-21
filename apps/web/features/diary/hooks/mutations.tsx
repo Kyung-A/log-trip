@@ -3,7 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { diaryKeys, diaryRegionKeys } from "./queryKeys";
+import { diaryInvalidateKeys, diaryKeys } from "./queryKeys";
 import { IDiary } from ".";
 import { createDiary, deleteDiary } from "../apis";
 
@@ -25,11 +25,12 @@ export const useCreateDiary = () => {
   return useMutation({
     ...diaryMutatins.create(),
     onSuccess: (_, data) => {
-      qc.invalidateQueries({ queryKey: ["myCounters"] });
-      qc.invalidateQueries({ queryKey: diaryKeys.list(data.user_id) });
-      qc.invalidateQueries({
-        queryKey: diaryRegionKeys.byUser(data.user_id),
-        exact: true,
+      diaryInvalidateKeys(data.user_id).forEach((key) => {
+        if (Array.isArray(key)) {
+          qc.invalidateQueries({ queryKey: key });
+        } else {
+          qc.invalidateQueries(key);
+        }
       });
     },
   });
@@ -63,15 +64,12 @@ export const useDeleteDiary = () => {
       ctx?.prevData?.forEach(([key, data]) => qc.setQueriesData(key, data));
     },
     onSuccess: (_, data) => {
-      qc.invalidateQueries({ queryKey: ["myCounters"] });
-      qc.invalidateQueries({
-        queryKey: diaryKeys.list(data.user_id),
-        refetchType: "active",
-      });
-      qc.invalidateQueries({
-        queryKey: diaryRegionKeys.byUser(data.user_id),
-        exact: true,
-        refetchType: "all",
+      diaryInvalidateKeys(data.user_id).forEach((key) => {
+        if (Array.isArray(key)) {
+          qc.invalidateQueries({ queryKey: key });
+        } else {
+          qc.invalidateQueries(key);
+        }
       });
     },
   });
