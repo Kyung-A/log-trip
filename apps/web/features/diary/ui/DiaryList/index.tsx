@@ -1,15 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { DiaryItem } from "./DiaryItem";
+import { IDiary, useDeleteDiary, useFetchDiaries } from "../..";
 
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/scrollbar";
-
-export const DiaryList = ({ data, handleDeleteDiary }) => {
+export const DiaryList = () => {
+  const { data } = useFetchDiaries();
+  const { mutateAsync } = useDeleteDiary();
   const [openId, setOpenId] = useState<string | null>(null);
+
+  const handleDeleteDiary = useCallback(
+    async (item: IDiary) => {
+      if (confirm("정말 삭제하시겠습니까?")) {
+        await mutateAsync(item);
+      }
+    },
+    [mutateAsync]
+  );
 
   return (
     <ul className="w-full bg-zinc-100">
