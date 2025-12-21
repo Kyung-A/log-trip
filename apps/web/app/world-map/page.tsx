@@ -1,8 +1,8 @@
 "use client";
 
+import { WorldMap } from "@/features/world-map";
 import { supabase } from "@/shared";
 import { useEffect } from "react";
-import WorldMap from "./WorldMap";
 
 export default function WorldMapPage() {
   useEffect(() => {

@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
 import mapboxgl from "mapbox-gl";
+import { useEffect, useMemo, useRef } from "react";
 import { IDiaryRegions, useFetchDiaryRegions } from "@/features/diary";
 import { useFetchUserId } from "@/features/auth";
 import { buildOr } from "@/shared";
 import { useFetchRegions, useFetchRegionsGeoJSON } from "@/features/region";
 import { useRouter } from "next/navigation";
-
-import "mapbox-gl/dist/mapbox-gl.css";
 import { RefreshCcw } from "lucide-react";
 
-export default function WorldMap() {
+import "mapbox-gl/dist/mapbox-gl.css";
+
+export function WorldMap() {
   const router = useRouter();
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -21,23 +21,25 @@ export default function WorldMap() {
 
   const uniqueByCountry = useMemo(
     () =>
-      Array.from(
-        new Map(
-          diaryRegions?.map((item: IDiaryRegions) => [
-            item.region_code,
-            item,
-          ]) ?? []
-        ).values()
-      ).map((v: IDiaryRegions) => ({
-        region_code: v.region_code,
-        shape_name: v.shape_name,
-        country_code: v.country_code,
-      })),
+      !diaryRegions
+        ? null
+        : Array.from(
+            new Map(
+              diaryRegions?.map((item: IDiaryRegions) => [
+                item.region_code,
+                item,
+              ]) ?? []
+            ).values()
+          )?.map((v: IDiaryRegions) => ({
+            region_code: v.region_code,
+            shape_name: v.shape_name,
+            country_code: v.country_code,
+          })),
     [diaryRegions]
   );
 
   const filters = useMemo(() => buildOr(uniqueByCountry), [uniqueByCountry]);
-  const { data: rowRegions } = useFetchRegions(filters);
+  const { data: rowRegions = null } = useFetchRegions(filters);
   const { geoJson } = useFetchRegionsGeoJSON(rowRegions, uniqueByCountry);
 
   useEffect(() => {
@@ -58,7 +60,7 @@ export default function WorldMap() {
   }, []);
 
   useEffect(() => {
-    if (!mapRef.current || !geoJson) return;
+    if (!mapRef.current || !geoJson || !geoJson.length) return;
     const map = mapRef.current;
 
     geoJson.forEach((feature) => {

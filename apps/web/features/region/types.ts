@@ -8,17 +8,19 @@ export interface IRegion {
   api_url: string;
 }
 
-export type BatchItem = {
-  country_code: string;
-  region_code?: string;
-  shape_name?: string;
-};
-
-export type Country = {
+export type ICountry = {
   country_code: string;
   region_code: string;
-  shape_name: string;
+  shape_name: string | null;
 };
+
+export interface IGeoJson {
+  id: string;
+  color: string;
+  type: "FeatureCollection";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  features: any;
+}
 
 export interface IOptionsParams extends IRegion {
   color: string;

@@ -1,7 +1,8 @@
-import { BatchItem } from "@/features/region";
+import { ICountry } from "@/features/region";
 
-export const buildOr = (batch: BatchItem[], opts = { loose: true }) => {
+export const buildOr = (batch: ICountry[] | null, opts = { loose: true }) => {
   const groups: string[] = [];
+  if (!batch) return null;
 
   for (const { country_code, region_code, shape_name } of batch) {
     if (region_code)
@@ -21,5 +22,6 @@ export const buildOr = (batch: BatchItem[], opts = { loose: true }) => {
       );
     }
   }
-  return groups.join(",");
+
+  return groups.length ? groups.join(",") : null;
 };

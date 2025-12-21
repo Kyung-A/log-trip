@@ -1,54 +1,68 @@
 import { queryOptions, useQueries, useQuery } from "@tanstack/react-query";
-import { Country, IOptionsParams, IRegion } from ".";
 import { getRegions } from "../apis";
 import { useMemo } from "react";
 import { COUNTRY_COLORS } from "@/shared";
+import { ICountry, IGeoJson, IOptionsParams, IRegion } from "..";
 
-export const useFetchRegions = (filters?: string) => {
-  return useQuery<IRegion[], Error>({
-    queryKey: ["regions", filters],
-    queryFn: () => getRegions(filters),
-    staleTime: 24 * 60 * 60 * 1000,
-  });
+const regionQueries = {
+  regions: (filters: string | null) =>
+    queryOptions<IRegion[] | null>({
+      queryKey: ["regions", filters],
+      queryFn: () => getRegions(filters),
+      staleTime: 24 * 60 * 60 * 1000,
+    }),
+  geojson: (regionParams: IOptionsParams) => {
+    const { api_url, region_code, shape_name, color } = regionParams;
+
+    return queryOptions<IGeoJson>({
+      queryKey: ["regionGeo", api_url, region_code, shape_name],
+      queryFn: async () => {
+        const params = new URLSearchParams({
+          api_url,
+          region_code,
+          shape_name,
+        });
+
+        const resp = await fetch(`/api/geojson?${params.toString()}`);
+        if (!resp.ok) throw new Error("Geo fetch failed");
+        const features = await resp.json();
+
+        return {
+          id: region_code,
+          color: color,
+          type: "FeatureCollection",
+          features: features,
+        };
+      },
+      staleTime: 24 * 60 * 60 * 1000,
+    });
+  },
 };
 
-const regionGeoQueryOptions = (params: IOptionsParams) => {
-  const { api_url, region_code, shape_name, color } = params;
-
-  return queryOptions({
-    queryKey: ["regionGeo", api_url, region_code, shape_name],
-    queryFn: async () => {
-      const params = new URLSearchParams({
-        api_url,
-        region_code,
-        shape_name,
-      });
-
-      const resp = await fetch(`/api/geojson?${params.toString()}`);
-      if (!resp.ok) throw new Error("Geo fetch failed");
-      const features = await resp.json();
-
-      return {
-        id: region_code,
-        color: color,
-        type: "FeatureCollection",
-        features: features,
-      };
-    },
-    staleTime: 24 * 60 * 60 * 1000,
+export const useFetchRegions = (filters: string | null) => {
+  return useQuery({
+    ...regionQueries.regions(filters),
   });
 };
 
 export const useFetchRegionsGeoJSON = (
-  rowRegions: IRegion[] = [],
-  uniqueByCountry: Country[] = []
+  rowRegions: IRegion[] | null,
+  uniqueByCountry: ICountry[] | null
 ) => {
   const coloredParams = useMemo(() => {
-    const allowed = rowRegions?.filter((c) =>
+    if (
+      !rowRegions ||
+      !rowRegions.length ||
+      !uniqueByCountry ||
+      !uniqueByCountry.length
+    )
+      return [];
+
+    const allowed = rowRegions.filter((c) =>
       uniqueByCountry.some((reg) => c.region_code === reg.region_code)
     );
 
-    return allowed?.reduce((acc, c) => {
+    return allowed.reduce((acc, c): IOptionsParams[] => {
       const matched = COUNTRY_COLORS.find(
         (color) => color.country_code === c.country_code
       );
@@ -60,19 +74,23 @@ export const useFetchRegionsGeoJSON = (
   }, [rowRegions, uniqueByCountry]);
 
   const result = useQueries({
-    queries: coloredParams?.map((p) => regionGeoQueryOptions(p)),
+    queries: coloredParams?.map((p) => regionQueries.geojson(p)),
   });
 
   const geoJson = useMemo(() => {
-    const dedup = new Map();
+    const dedup = new Map<string, IGeoJson>();
 
-    for (const r of result) {
-      const value = r.data;
-      if (value) dedup.set(value.id, value);
+    for (let i = 0; i < result.length; i++) {
+      const data = result[i].data;
+      const color = coloredParams[i]?.color;
+
+      if (data && color) {
+        dedup.set(data.id, { ...data, color });
+      }
     }
 
-    return Array.from(dedup.values());
-  }, [result]);
+    return [...dedup.values()];
+  }, [result, coloredParams]);
 
   const isFetching = result.some((r) => r.isFetching);
   const isError = result.some((r) => r.isError);
