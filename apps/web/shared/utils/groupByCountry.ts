@@ -1,4 +1,13 @@
-export const groupByCountry = (regions) => {
+import { IDiaryRegionsRender } from "@/features/diary";
+
+interface IGroupedResult {
+  [key: string]: {
+    country_name: string;
+    regions: string[];
+  };
+}
+
+export const groupByCountry = (regions: IDiaryRegionsRender[]) => {
   return regions.reduce((acc, region) => {
     const key = region.country_code;
     if (!acc[key]) {
@@ -9,5 +18,5 @@ export const groupByCountry = (regions) => {
     }
     acc[key].regions.push(region.region_name);
     return acc;
-  }, {});
+  }, {} as IGroupedResult);
 };

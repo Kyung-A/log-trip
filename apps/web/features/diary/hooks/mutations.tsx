@@ -4,8 +4,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { diaryInvalidateKeys, diaryKeys } from "./queryKeys";
-import { IDiary } from ".";
 import { createDiary, deleteDiary } from "../apis";
+import { IDiary } from "..";
 
 const diaryMutatins = {
   create: () =>
@@ -26,11 +26,7 @@ export const useCreateDiary = () => {
     ...diaryMutatins.create(),
     onSuccess: (_, data) => {
       diaryInvalidateKeys(data.user_id).forEach((key) => {
-        if (Array.isArray(key)) {
-          qc.invalidateQueries({ queryKey: key });
-        } else {
-          qc.invalidateQueries(key);
-        }
+        qc.invalidateQueries(key);
       });
     },
   });
@@ -41,11 +37,11 @@ export const useDeleteDiary = () => {
 
   return useMutation({
     ...diaryMutatins.remove(),
-    onMutate: async ({ id, user_id }) => {
-      await qc.cancelQueries({ queryKey: diaryKeys.list(user_id) });
+    onMutate: async ({ id }) => {
+      await qc.cancelQueries({ queryKey: diaryKeys.list() });
 
       const prevData = qc.getQueriesData({
-        queryKey: diaryKeys.list(user_id),
+        queryKey: diaryKeys.list(),
       });
 
       prevData.forEach(([key, list]) => {
@@ -56,20 +52,18 @@ export const useDeleteDiary = () => {
         );
       });
 
-      qc.removeQueries({ queryKey: diaryKeys.detail(id), exact: true });
+      qc.removeQueries({ queryKey: diaryKeys.detail(id!), exact: true });
 
       return { prevData };
     },
     onError: (_error, _data, ctx) => {
-      ctx?.prevData?.forEach(([key, data]) => qc.setQueriesData(key, data));
+      ctx?.prevData?.forEach(([key, data]) => {
+        qc.setQueriesData({ queryKey: key }, data);
+      });
     },
     onSuccess: (_, data) => {
       diaryInvalidateKeys(data.user_id).forEach((key) => {
-        if (Array.isArray(key)) {
-          qc.invalidateQueries({ queryKey: key });
-        } else {
-          qc.invalidateQueries(key);
-        }
+        qc.invalidateQueries(key);
       });
     },
   });

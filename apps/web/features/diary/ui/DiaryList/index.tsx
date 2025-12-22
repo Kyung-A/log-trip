@@ -20,13 +20,15 @@ export const DiaryList = () => {
 
   return (
     <ul className="w-full bg-zinc-100">
-      {data?.map((item) => (
+      {data.map((item) => (
         <DiaryItem
           key={item.id}
           item={item}
           isOpen={openId === item.id}
           onToggle={() =>
-            setOpenId((prev) => (prev === item.id ? null : item.id))
+            setOpenId(
+              (prev) => (prev === item.id ? null : item.id) as string | null
+            )
           }
           onClose={() => setOpenId(null)}
           handleDeleteDiary={handleDeleteDiary}
