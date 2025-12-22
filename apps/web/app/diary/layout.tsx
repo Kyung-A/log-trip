@@ -1,8 +1,10 @@
-export default function DiaryLayout({ children, modal }) {
-  return (
-    <>
-      {children}
-      {modal}
-    </>
-  );
+import { Suspense } from "react";
+import Loading from "./loading";
+
+export default function DiaryLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <Suspense fallback={<Loading />}>{children}</Suspense>;
 }
