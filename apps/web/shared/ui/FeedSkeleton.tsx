@@ -1,4 +1,4 @@
-export default function FeedSkeleton() {
+export const FeedSkeleton = () => {
   return Array.from({ length: 10 }, (_, i) => (
     <div
       key={`feed-${i}`}
@@ -29,4 +29,4 @@ export default function FeedSkeleton() {
       </div>
     </div>
   ));
-}
+};

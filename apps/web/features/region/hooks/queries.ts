@@ -5,7 +5,7 @@ import { COUNTRY_COLORS } from "@/shared";
 import { ICountry, IGeoJson, IOptionsParams, IRegion } from "..";
 
 const regionQueries = {
-  regions: (filters: string | null) =>
+  regions: (filters?: string | null) =>
     queryOptions<IRegion[] | null>({
       queryKey: ["regions", filters],
       queryFn: () => getRegions(filters),
@@ -39,7 +39,7 @@ const regionQueries = {
   },
 };
 
-export const useFetchRegions = (filters: string | null) => {
+export const useFetchRegions = (filters?: string | null) => {
   return useQuery({
     ...regionQueries.regions(filters),
   });

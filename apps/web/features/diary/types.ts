@@ -9,7 +9,7 @@ export interface IDiary {
   user_id: string;
   title: string | null;
   text_content: string | null;
-  drawing_content: string;
+  drawing_content: string | null;
   is_drawing: boolean;
   travel_date: Date | null;
   diary_images: { id: string; url: string }[];

@@ -1,5 +1,5 @@
 export * from "./BottomSheet";
-export * from "./CitySelectField";
+export { CitySelectField } from "./CitySelectField";
 export * from "./Switch";
 export * from "./EmptyView";
 export * from "./GroupByCountryLabel";
