@@ -1,12 +1,20 @@
-import { Controller } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 import Image from "next/image";
+import { IDiary } from "../../types";
+
+interface IContentEditor {
+  isDrawing: boolean;
+  capturedDrawingImage: string | null;
+  imageSize: { width: number; height: number };
+  control: Control<IDiary>;
+}
 
 export const ContentEditor = ({
   isDrawing,
   capturedDrawingImage,
   imageSize,
   control,
-}) => {
+}: IContentEditor) => {
   return (
     <>
       {!isDrawing ? (

@@ -1,11 +1,19 @@
 import { Eraser } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
+
+interface IDrawingController {
+  currentTool: "eraser" | "pen";
+  setCurrentTool: Dispatch<SetStateAction<"eraser" | "pen">>;
+  handleAllClear: () => void;
+  handleDone: () => void;
+}
 
 export const DrawingController = ({
   currentTool,
   setCurrentTool,
   handleAllClear,
   handleDone,
-}) => {
+}: IDrawingController) => {
   return (
     <section className="flex items-center gap-x-2 mb-2">
       <button

@@ -1,4 +1,10 @@
 import Image from "next/image";
+import { Dispatch, SetStateAction } from "react";
+
+interface IDrawingBackground {
+  bgImageSrc: string;
+  setBgImageSrc: Dispatch<SetStateAction<string>>;
+}
 
 const DRAWING_IMAGES = {
   drawing1: "/images/drawing/drawing1.jpg",
@@ -8,11 +14,14 @@ const DRAWING_IMAGES = {
   drawing5: "/images/drawing/drawing5.jpg",
 };
 
-export const DrawingBackground = ({ bgImageSrc, setBgImageSrc }) => {
+export const DrawingBackground = ({
+  bgImageSrc,
+  setBgImageSrc,
+}: IDrawingBackground) => {
   return (
     <div className="flex items-center gap-x-2">
       <button
-        onClick={() => setBgImageSrc(null)}
+        onClick={() => setBgImageSrc("")}
         className="flex items-center justify-center w-20 h-20 border border-gray-300 shrink-0 text-sm"
       >
         배경없음

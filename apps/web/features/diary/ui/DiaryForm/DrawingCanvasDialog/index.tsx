@@ -1,36 +1,55 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { DrawingBackground } from "./DrawingBackground";
 import { DrawingCanvas } from "./DrawingCanvas";
 import { DrawingColors } from "./DrawingColors";
 import { DrawingController } from "./DrawingController";
 
-interface IColoredPath {
+type ColoredPath = {
   points: { x: number; y: number }[];
   color: string;
   lineWidth: number;
-}
+};
 
-interface IPoint {
+type Point = {
   x: number;
   y: number;
+};
+
+interface IDrawingCanvasDialog {
+  isOpenDrawing: boolean;
+  setOpenDrawing: Dispatch<SetStateAction<boolean>>;
+  handleDrawingImageCapture: (
+    imageDataUrl: string,
+    canvasSize: {
+      width: number;
+      height: number;
+    }
+  ) => void;
 }
 
 export const DrawingCanvasDialog = ({
   isOpenDrawing,
   setOpenDrawing,
   handleDrawingImageCapture,
-}) => {
+}: IDrawingCanvasDialog) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const isDrawing = useRef(false);
-  const currentPath = useRef<IPoint[]>([]);
+  const currentPath = useRef<Point[]>([]);
   const parentRef = useRef<HTMLDialogElement>(null);
 
-  const [paths, setPaths] = useState<IColoredPath[]>([]);
+  const [paths, setPaths] = useState<ColoredPath[]>([]);
   const [currentColor, setCurrentColor] = useState("#000");
   const [currentTool, setCurrentTool] = useState<"pen" | "eraser">("pen");
-  const [bgImageSrc, setBgImageSrc] = useState<string | null>(null);
+  const [bgImageSrc, setBgImageSrc] = useState<string>("");
   const [loadedBgImage, setLoadedBgImage] = useState<HTMLImageElement | null>(
     null
   );
@@ -80,7 +99,7 @@ export const DrawingCanvasDialog = ({
   }, [paths, currentTool, currentColor, loadedBgImage]);
 
   // 이벤트 핸들러 (마우스 + 터치 통합)
-  const getCanvasCoords = (e: MouseEvent | Touch) => {
+  const getCanvasCoords = (e: { clientX: number; clientY: number }) => {
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return { x: 0, y: 0 };
 
@@ -205,26 +224,21 @@ export const DrawingCanvasDialog = ({
   useEffect(() => {
     drawPaths();
   }, [drawPaths, paths, loadedBgImage]);
-  //
-  useEffect(() => {
-    if (!bgImageSrc) {
-      setLoadedBgImage(null);
-      return;
-    }
 
+  useEffect(() => {
     const img = new Image();
     img.crossOrigin = "Anonymous";
     img.src = bgImageSrc;
 
     img.onload = () => {
       setLoadedBgImage(img);
+      requestAnimationFrame(drawPaths);
     };
 
     img.onerror = () => {
-      console.error("Failed to load background image:", bgImageSrc);
       setLoadedBgImage(null);
     };
-  }, [bgImageSrc]);
+  }, [bgImageSrc, drawPaths]);
 
   return (
     <dialog

@@ -1,3 +1,8 @@
+interface IDrawingColors {
+  handleChangeColor: (color: string) => void;
+  currentColor: string;
+}
+
 const COLORS = {
   red: "#ef4444",
   yellow: "#facc15",
@@ -10,7 +15,10 @@ const COLORS = {
   black: "#000",
 };
 
-export const DrawingColors = ({ handleChangeColor, currentColor }) => {
+export const DrawingColors = ({
+  handleChangeColor,
+  currentColor,
+}: IDrawingColors) => {
   return Object.entries(COLORS).map(([key, color]) => (
     <button
       key={key}

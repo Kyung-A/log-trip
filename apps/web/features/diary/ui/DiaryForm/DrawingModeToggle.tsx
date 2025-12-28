@@ -1,6 +1,16 @@
 import { Switch } from "@/shared";
 
-export const DrawingModeToggle = ({ isDrawing, onToggle, onOpen }) => {
+interface IDrawingModeToggle {
+  isDrawing: boolean;
+  onToggle: (state: boolean) => void;
+  onOpen: () => void;
+}
+
+export const DrawingModeToggle = ({
+  isDrawing,
+  onToggle,
+  onOpen,
+}: IDrawingModeToggle) => {
   return (
     <div className="flex flex-wrap items-center justify-between w-full px-4 py-2 border-b border-gray-300">
       <p className="mr-4 text-lg">드로잉 모드</p>

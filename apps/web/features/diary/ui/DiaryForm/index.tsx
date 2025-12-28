@@ -145,7 +145,7 @@ export const DiaryForm = () => {
       const path = `diary-images/${userId}/${uuidv4()}.jpg`;
 
       await imageUpload("log-trip-images", path, buffer);
-      const result = await getImageUrl("log-trip-images", path);
+      const result = getImageUrl("log-trip-images", path);
 
       return result.publicUrl;
     } catch (error) {
@@ -170,15 +170,22 @@ export const DiaryForm = () => {
       };
 
       if (imgs && imgs.length > 0) {
-        const diaryImagesUrls = await Promise.all(
+        const results = await Promise.all(
           imgs.map((v) => uploadAndGetUrlImage(v.modified))
         );
+
+        const diaryImagesUrls = results
+          .filter((url): url is string => url !== null)
+          .map((url) => ({
+            url: url,
+          }));
+
         body = { ...body, diary_images: diaryImagesUrls };
       }
 
       if (formData.is_drawing) {
         const drawingContentUrl = await uploadAndGetUrlImage(
-          capturedDrawingImage
+          capturedDrawingImage!
         );
         body = { ...body, drawing_content: drawingContentUrl };
       }
@@ -255,7 +262,7 @@ export const DiaryForm = () => {
 
       <DrawingModeToggle
         isDrawing={watch("is_drawing")}
-        onToggle={(state) => handleChangeMode(state)}
+        onToggle={(state: boolean) => handleChangeMode(state)}
         onOpen={() => setOpenDrawing(true)}
       />
 

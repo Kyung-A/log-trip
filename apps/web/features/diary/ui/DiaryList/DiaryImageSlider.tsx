@@ -8,7 +8,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 
 interface IDiaryImageSlider {
-  images: { id: string; url: string }[];
+  images: { id?: string; url: string }[];
 }
 
 export const DiaryImageSlider = memo(({ images }: IDiaryImageSlider) => {

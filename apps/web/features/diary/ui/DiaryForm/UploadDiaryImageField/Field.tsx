@@ -1,9 +1,13 @@
 "use client";
 
 import { ImagePlus } from "lucide-react";
-import { useRef } from "react";
+import { ChangeEvent, useRef } from "react";
 
-export const Field = ({ onChange }) => {
+export const Field = ({
+  onChange,
+}: {
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (

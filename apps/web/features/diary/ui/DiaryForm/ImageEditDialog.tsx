@@ -4,6 +4,13 @@ import { X } from "lucide-react";
 import NextImage from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+interface IImageEditDialog {
+  isOpenEditMode: boolean;
+  editImage: string | null;
+  handleCloseEditMode: () => void;
+  handleSaveEditMode: (url: string) => void;
+}
+
 const FRAMES = {
   frame1: "/images/frame/frame1.png",
   frame2: "/images/frame/frame2.png",
@@ -15,7 +22,7 @@ export const ImageEditDialog = ({
   editImage,
   handleCloseEditMode,
   handleSaveEditMode,
-}) => {
+}: IImageEditDialog) => {
   const [canvasSize, setCanvasSize] = useState(0);
   const [frameImage, setFrameImage] = useState<string | null>(null);
 
@@ -27,7 +34,7 @@ export const ImageEditDialog = ({
     if (!container) return;
 
     const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) {
+      for (const entry of entries) {
         const size = Math.floor(entry.contentRect.width);
         setCanvasSize(Math.max(size, 10));
       }

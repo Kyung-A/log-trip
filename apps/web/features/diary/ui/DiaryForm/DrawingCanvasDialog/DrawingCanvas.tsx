@@ -1,7 +1,25 @@
 // components/DrawingCanvas.tsx
 "use client";
 
-import { useEffect } from "react";
+import { Dispatch, RefObject, SetStateAction, useEffect } from "react";
+
+interface IDrawingCanvas {
+  parentRef: RefObject<HTMLDialogElement | null>;
+  canvasRef: RefObject<HTMLCanvasElement | null>;
+  startDrawing: (
+    e: React.TouchEvent<HTMLCanvasElement> | React.MouseEvent<HTMLCanvasElement>
+  ) => void;
+  canvasSize: {
+    width: number;
+    height: number;
+  };
+  setCanvasSize: Dispatch<
+    SetStateAction<{
+      width: number;
+      height: number;
+    }>
+  >;
+}
 
 export const DrawingCanvas = ({
   parentRef,
@@ -9,7 +27,7 @@ export const DrawingCanvas = ({
   startDrawing,
   canvasSize,
   setCanvasSize,
-}) => {
+}: IDrawingCanvas) => {
   useEffect(() => {
     const parent = parentRef.current;
     const canvas = canvasRef.current;

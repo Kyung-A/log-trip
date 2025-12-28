@@ -1,13 +1,20 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import Image from "next/image";
 import { X } from "lucide-react";
+import { ImageResult } from ".";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 
-export const ImageSlider = ({ images, onEditMode, onDelete }) => {
+interface IImageSlider {
+  images: ImageResult[];
+  onEditMode: (url: string) => void;
+  onDelete: (url: string) => void;
+}
+
+export const ImageSlider = ({ images, onEditMode, onDelete }: IImageSlider) => {
   return (
     <Swiper key={images.map((i) => i.origin).join("|")} loop>
       {images.map((img) => (

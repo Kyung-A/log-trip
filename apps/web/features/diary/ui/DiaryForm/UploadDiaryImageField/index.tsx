@@ -5,7 +5,7 @@ import { Image as ImageIcon } from "lucide-react";
 import { ImageSlider } from "./ImageSlider";
 import { Field } from "./Field";
 
-interface ImageResult {
+export interface ImageResult {
   origin: string;
   modified: string;
 }
@@ -14,7 +14,7 @@ interface IUploadImagesProps {
   imgs: ImageResult[];
   setImgs: React.Dispatch<React.SetStateAction<ImageResult[]>>;
   setOpenEditMode: React.Dispatch<React.SetStateAction<boolean>>;
-  setCurrentEditImage: React.Dispatch<React.SetStateAction<string>>;
+  setCurrentEditImage: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const UploadDiaryImageField = ({
