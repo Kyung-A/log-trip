@@ -3,7 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { ICompanionRequest } from "./types";
+import { ICompanionRequest } from "../types";
 import { companionsKeys } from "./queryKeys";
 import { createCompanions, updateCompanions, deleteCompanion } from "..";
 
