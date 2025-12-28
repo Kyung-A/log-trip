@@ -1,2 +1,2 @@
-export * from "./CompanionCard";
+export * from "./CompanionList";
 export * from "./CompanionForm";

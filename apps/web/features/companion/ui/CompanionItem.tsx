@@ -2,26 +2,11 @@ import React from "react";
 import Image from "next/image";
 import dayjs from "dayjs";
 import Link from "next/link";
-import { useMemo } from "react";
-import { groupByCountry, GroupByCountryLabel } from "@/shared";
 import { CalendarDays } from "lucide-react";
+import { GroupByCountryLabel } from "@/shared";
+import { ICompanion } from "../types";
 
-export const CompanionCard = React.memo(({ item }) => {
-  const groupedRegions = useMemo(
-    () => groupByCountry(item.companion_regions),
-    [item]
-  );
-
-  const regionItems = useMemo(() => {
-    return Object.entries(groupedRegions).map(
-      ([countryCode, { country_name, regions }]: any) => ({
-        key: countryCode,
-        countryName: country_name,
-        regions: regions.join(", "),
-      })
-    );
-  }, [groupedRegions]);
-
+export const CompanionItem = React.memo(({ item }: { item: ICompanion }) => {
   return (
     <Link
       href={`/companion/${item.id}`}
@@ -30,13 +15,7 @@ export const CompanionCard = React.memo(({ item }) => {
     >
       <div className="flex flex-col p-4">
         <div className="flex gap-x-4">
-          {regionItems.map((item) => (
-            <GroupByCountryLabel
-              key={item.key}
-              countryName={item.countryName}
-              regions={item.regions}
-            />
-          ))}
+          <GroupByCountryLabel regions={item.companion_regions} />
         </div>
         <p className="mt-3 font-semibold line-clamp-1">{item.title}</p>
         <p className="mt-1 text-slate-600 line-clamp-2">{item.content}</p>
@@ -84,4 +63,4 @@ export const CompanionCard = React.memo(({ item }) => {
   );
 });
 
-CompanionCard.displayName = "CompanionCard";
+CompanionItem.displayName = "CompanionItem";
