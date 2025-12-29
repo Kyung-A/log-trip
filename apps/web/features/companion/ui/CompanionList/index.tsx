@@ -1,7 +1,7 @@
 "use client";
 
 import { EmptyView } from "@/shared";
-import { useFetchCompanions } from "..";
+import { useFetchCompanions } from "../..";
 import { CompanionItem } from "./CompanionItem";
 
 export const CompanionList = () => {

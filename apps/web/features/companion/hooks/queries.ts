@@ -15,7 +15,6 @@ const companionQueries = {
     queryOptions({
       queryKey: companionsKeys.detail(postId),
       queryFn: () => getCompanionDetail(postId),
-      // enabled: !!postId,
       refetchOnWindowFocus: true,
     }),
 };
