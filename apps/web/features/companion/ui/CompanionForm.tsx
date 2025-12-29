@@ -9,11 +9,11 @@ import {
   useCreateCompanion,
   useFetchCompanionDetail,
 } from "..";
-import { CitySelectField } from "@/shared";
+import { CitySelectField, navigateNative } from "@/shared";
 import Picker from "react-mobile-picker";
 import { ChevronLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 export function CompanionForm() {
   const router = useRouter();
@@ -62,7 +62,9 @@ export function CompanionForm() {
       <header className="sticky h-10 top-0 z-30 w-full bg-white border-b border-gray-300 flex items-center px-2">
         <button
           onClick={() =>
-            id ? router.push(`/companion/${id}`) : router.push("/companion")
+            id
+              ? router.push(`/companion/${id}`)
+              : navigateNative("/companion", "NAVIGATE")
           }
         >
           <ChevronLeft size={30} color="#646464" />
@@ -311,6 +313,13 @@ export function CompanionForm() {
           />
         </div>
       </main>
+
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar
+        theme="colored"
+      />
     </>
   );
 }

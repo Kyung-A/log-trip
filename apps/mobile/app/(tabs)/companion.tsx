@@ -1,4 +1,5 @@
 import { useTabBarVisibility } from "@/shared";
+import { router } from "expo-router";
 import { useRef } from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -45,6 +46,9 @@ export default function TabTwoScreen() {
                 window.location.href = '/companion';
                 true;
               `);
+            }
+            if (data.type === "NAVIGATE") {
+              router.replace("/(tabs)/companion");
             }
           } catch (e) {
             console.warn("Invalid message from web", e);
