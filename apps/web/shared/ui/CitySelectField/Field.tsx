@@ -1,6 +1,19 @@
-import { Controller } from "react-hook-form";
+import { IRegion } from "@/features/region";
+import { Control, Controller, FieldValues, Path } from "react-hook-form";
 
-export const Field = ({ onOpen, value, fieldName, control }) => {
+interface IFieldProps<T extends FieldValues> {
+  onOpen: () => void;
+  value: IRegion[];
+  fieldName: Path<T>;
+  control: Control<T>;
+}
+
+export const Field = <T extends FieldValues>({
+  onOpen,
+  value,
+  fieldName,
+  control,
+}: IFieldProps<T>) => {
   return (
     <>
       <button

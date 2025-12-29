@@ -39,6 +39,7 @@ export default function TabTwoScreen() {
         onMessage={(event) => {
           try {
             const data = JSON.parse(event.nativeEvent.data);
+
             if (data.type === "WINDOW_LOCATION") {
               webViewRef.current?.injectJavaScript(`
                 window.location.href = '/companion';

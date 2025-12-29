@@ -30,7 +30,7 @@ export interface ICompanion {
   }[];
   applications: {
     id: string;
-    status: 'pending' | 'accepted' | 'rejected' | 'cancelled';
+    status: "pending" | "accepted" | "rejected" | "cancelled";
     message: string;
     created_at: string;
     applicant_id: string;
@@ -38,7 +38,7 @@ export interface ICompanion {
 }
 
 export interface ICompanionRequest {
-  id?: string;
+  id: string;
   user_id: string;
   title: string;
   content: string;

@@ -1,4 +1,8 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useQuery,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { companionsKeys } from "./queryKeys";
 import { getCompanionDetail, getCompanions, ICompanion } from "..";
 
@@ -15,6 +19,7 @@ const companionQueries = {
     queryOptions({
       queryKey: companionsKeys.detail(postId),
       queryFn: () => getCompanionDetail(postId),
+      enabled: !!postId,
       refetchOnWindowFocus: true,
     }),
 };
@@ -26,7 +31,7 @@ export const useFetchCompanions = () => {
 };
 
 export const useFetchCompanionDetail = (postId: string) => {
-  return useSuspenseQuery({
+  return useQuery({
     ...companionQueries.detail(postId),
   });
 };
