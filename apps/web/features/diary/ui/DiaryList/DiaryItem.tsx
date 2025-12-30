@@ -1,44 +1,27 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useState } from "react";
 import { IDiary } from "../../types";
 import { DiaryPopoverMenu } from "./DiaryPopoverMenu";
 import { DiaryItemHeader } from "./DiaryItemHeader";
 import { DiaryImageSlider } from "./DiaryImageSlider";
 import { DiaryItemContent } from "./DiaryItemContent";
+import { useClickOutside } from "@/shared";
 
 interface IDiaryItem {
   item: IDiary;
-  isOpen: boolean;
-  onClose: () => void;
-  onToggle: () => void;
   handleDeleteDiary: (item: IDiary) => void;
 }
 
-export const DiaryItem = ({
-  item,
-  isOpen,
-  onClose,
-  onToggle,
-  handleDeleteDiary,
-}: IDiaryItem) => {
-  const popoverRef = useRef<HTMLDivElement>(null);
+export const DiaryItem = ({ item, handleDeleteDiary }: IDiaryItem) => {
+  const [openId, setOpenId] = useState<string | null>(null);
+  const popoverRef = useClickOutside<HTMLDivElement>(() => {
+    setOpenId(null);
+  });
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(e.target as Node)
-      ) {
-        onClose();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen, onClose]);
+  const onToggle = () => {
+    setOpenId((prev) => (prev === item.id ? null : item.id) as string | null);
+  };
 
   return (
     <li>
@@ -64,7 +47,7 @@ export const DiaryItem = ({
           regions={item.diary_regions}
         />
 
-        {isOpen && (
+        {openId === item.id && (
           <DiaryPopoverMenu
             onDelete={() => handleDeleteDiary(item)}
             ref={popoverRef}

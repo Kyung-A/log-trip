@@ -1,13 +1,12 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { DiaryItem } from "./DiaryItem";
 import { IDiary, useDeleteDiary, useFetchDiaries } from "../..";
 
 export const DiaryList = () => {
   const { data } = useFetchDiaries();
   const { mutateAsync } = useDeleteDiary();
-  const [openId, setOpenId] = useState<string | null>(null);
 
   const handleDeleteDiary = useCallback(
     async (item: IDiary) => {
@@ -24,13 +23,6 @@ export const DiaryList = () => {
         <DiaryItem
           key={item.id}
           item={item}
-          isOpen={openId === item.id}
-          onToggle={() =>
-            setOpenId(
-              (prev) => (prev === item.id ? null : item.id) as string | null
-            )
-          }
-          onClose={() => setOpenId(null)}
           handleDeleteDiary={handleDeleteDiary}
         />
       ))}
