@@ -18,7 +18,8 @@ const companionMutations = {
     }),
   delete: () =>
     mutationOptions({
-      mutationFn: (id: string) => deleteCompanion(id),
+      mutationFn: async (postId: string): Promise<number> =>
+        deleteCompanion(postId),
     }),
 };
 
@@ -40,12 +41,12 @@ export const useUpdateCompanion = () => {
     ...companionMutations.update(),
     onSuccess: (_, data) => {
       qc.invalidateQueries({
-        queryKey: companionsKeys.detail(data.id),
+        queryKey: companionsKeys.detail(data.id!),
         exact: true,
         refetchType: "active",
       });
       qc.invalidateQueries({
-        queryKey: companionsKeys.list(data.id),
+        queryKey: companionsKeys.list(data.id!),
         refetchType: "active",
       });
     },
@@ -55,17 +56,15 @@ export const useUpdateCompanion = () => {
 export const useDeleteCompanion = () => {
   const qc = useQueryClient();
 
-  return useMutation({
+  return useMutation<number, Error, string>({
     ...companionMutations.delete(),
     onSuccess: (_, postId) => {
       qc.invalidateQueries({
         queryKey: ["myCounters"],
         refetchType: "active",
       });
-      qc.invalidateQueries({
-        queryKey: companionsKeys.list(postId),
-        refetchType: "active",
-      });
+      qc.invalidateQueries({ queryKey: companionsKeys.lists() });
+      qc.removeQueries({ queryKey: companionsKeys.detail(postId) });
     },
   });
 };

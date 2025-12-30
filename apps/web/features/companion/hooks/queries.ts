@@ -6,7 +6,7 @@ import {
 import { companionsKeys } from "./queryKeys";
 import { getCompanionDetail, getCompanions, ICompanion } from "..";
 
-const companionQueries = {
+export const companionQueries = {
   list: () =>
     queryOptions<ICompanion[]>({
       queryKey: companionsKeys.lists(),
@@ -15,12 +15,18 @@ const companionQueries = {
       refetchIntervalInBackground: false,
     }),
 
-  detail: (postId: string) =>
-    queryOptions({
+  detailClient: (postId: string) =>
+    queryOptions<ICompanion>({
       queryKey: companionsKeys.detail(postId),
       queryFn: () => getCompanionDetail(postId),
       enabled: !!postId,
       refetchOnWindowFocus: true,
+    }),
+
+  detailServer: (postId: string) =>
+    queryOptions<ICompanion>({
+      queryKey: companionsKeys.detail(postId),
+      queryFn: () => getCompanionDetail(postId),
     }),
 };
 
@@ -32,6 +38,6 @@ export const useFetchCompanions = () => {
 
 export const useFetchCompanionDetail = (postId: string) => {
   return useQuery({
-    ...companionQueries.detail(postId),
+    ...companionQueries.detailClient(postId),
   });
 };

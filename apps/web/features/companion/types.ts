@@ -38,15 +38,15 @@ export interface ICompanion {
 }
 
 export interface ICompanionRequest {
-  id: string;
-  user_id: string;
+  id?: string | null;
+  user_id?: string | null;
   title: string;
   content: string;
   companion_count: number;
   gender_preference: string;
   deadline_at: Date;
   start_date: Date;
-  end_date: Date;
+  end_date?: Date | null;
   place: string;
   companion_regions: {
     region_code: string;

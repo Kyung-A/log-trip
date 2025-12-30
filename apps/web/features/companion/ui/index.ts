@@ -1,2 +1,3 @@
-export * from "./CompanionList";
+export { CompanionList } from "./CompanionList";
 export * from "./CompanionForm";
+export * from "./CompanionDetailContent";

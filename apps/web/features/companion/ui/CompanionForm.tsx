@@ -23,13 +23,15 @@ export function CompanionForm() {
   const { mutateAsync } = useCreateCompanion();
   const { data: detailData } = useFetchCompanionDetail(id as string);
 
-  const { control, watch, setValue, handleSubmit } = useForm({
+  const { control, watch, setValue, handleSubmit } = useForm<
+    Partial<ICompanionRequest>
+  >({
     defaultValues: { ...detailData },
   });
   const [cities, setCities] = useState<IRegion[]>([]);
 
   const handleCreateCompanion = handleSubmit(
-    async (formData: ICompanionRequest) => {
+    async (formData) => {
       const body = {
         ...formData,
         companion_regions: cities.map((v) => ({
@@ -39,7 +41,7 @@ export function CompanionForm() {
           country_code: v.country_code,
           country_name: v.country_name,
         })),
-      };
+      } as ICompanionRequest;
 
       const resp = await mutateAsync(body);
       if (resp.status === 201) {
