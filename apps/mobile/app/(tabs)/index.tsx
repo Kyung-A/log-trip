@@ -25,7 +25,7 @@ export default function HomeScreen() {
       ref={webviewRef}
       source={{ uri: "http://localhost:3000/world-map" }}
       onLoadEnd={() => {
-        setTimeout(injectSession, 300);
+        setTimeout(injectSession, 0);
       }}
       style={{ flex: 1 }}
       renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}

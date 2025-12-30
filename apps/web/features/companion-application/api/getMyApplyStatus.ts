@@ -1,24 +1,22 @@
 import { supabase } from "@/shared";
-import { status } from "../hooks";
+import { status } from "../types";
 
-export const getMyApplyStatus = async (userId: string, status?: status) => {
-  try {
-    let q = supabase
-      .from("companion_applications")
-      .select("*, companion:companions(title)")
-      .eq("applicant_id", userId)
-      .order("status", { ascending: true })
-      .order("created_at", { ascending: false });
+export const getMyApplyStatus = async (userId?: string, status?: status) => {
+  if (!userId) throw new Error("id가 없습니다");
 
-    if (status) {
-      q = q.eq("status", status);
-    }
+  let q = supabase
+    .from("companion_applications")
+    .select("*, companion:companions(title)")
+    .eq("applicant_id", userId)
+    .order("status", { ascending: true })
+    .order("created_at", { ascending: false });
 
-    const { data } = await q;
-
-    return data;
-  } catch (e) {
-    console.error(e);
-    return e;
+  if (status) {
+    q = q.eq("status", status);
   }
+
+  const { data, error } = await q;
+
+  if (error) throw new Error(error.message);
+  return data;
 };

@@ -9,7 +9,7 @@ import {
   IApply,
   IApplyStatus,
   IRejectCompanion,
-} from "./types";
+} from "../types";
 import { applicationKeys } from "./queryKeys";
 import { companionsKeys } from "@/features/companion";
 

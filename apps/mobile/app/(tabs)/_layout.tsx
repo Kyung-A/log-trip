@@ -12,6 +12,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacityProps,
 } from "react-native";
+import Entypo from "@expo/vector-icons/Entypo";
 import { useTabBarVisibility } from "@/shared";
 
 function ComposeTabButton() {
@@ -62,7 +63,7 @@ function ComposeTabButton() {
               <View
                 style={{
                   position: "absolute",
-                  top: layout.y - 86,
+                  top: layout.y - 60,
                   left: layout.x - 14,
                   padding: 16,
                   backgroundColor: "#d5b2a8",
@@ -100,6 +101,7 @@ function ComposeTabButton() {
                     일기 쓰기
                   </Text>
                 </TouchableOpacity>
+                {/* // TODO: 추후 추가 예정 서비스
                 <TouchableOpacity
                   onPress={() => {
                     setVisible(false);
@@ -117,7 +119,7 @@ function ComposeTabButton() {
                   >
                     동행 모집
                   </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             )}
           </View>
@@ -154,18 +156,28 @@ export default function TabLayout() {
               />
             );
           } else if (route.name === "companion") {
-            return (
-              <Ionicons
-                name="people"
-                size={20}
-                color={focused ? "#a38f86" : "#A9A9A9"}
-              />
-            );
+            // TODO: 추후 추가 예정 서비스
+            return;
+            // return (
+            //   <Ionicons
+            //     name="people"
+            //     size={20}
+            //     color={focused ? "#a38f86" : "#A9A9A9"}
+            //   />
+            // );
           } else if (route.name === "diary") {
             return (
               <FontAwesome
                 name="suitcase"
                 size={18}
+                color={focused ? "#a38f86" : "#A9A9A9"}
+              />
+            );
+          } else if (route.name === "openDiary") {
+            return (
+              <Entypo
+                name="slideshare"
+                size={19}
                 color={focused ? "#a38f86" : "#A9A9A9"}
               />
             );
@@ -202,16 +214,25 @@ export default function TabLayout() {
           title: "내여행",
         }}
       />
+
       <Tabs.Screen
         name="write"
         options={{
           tabBarLabel: "",
         }}
       />
+      {/* // TODO: 추후 추가 예정 서비스
       <Tabs.Screen
         name="companion"
         options={{
           title: "동행",
+        }}
+      /> */}
+
+      <Tabs.Screen
+        name="openDiary"
+        options={{
+          title: "일기숲",
         }}
       />
       <Tabs.Screen

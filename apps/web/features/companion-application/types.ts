@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 export interface IApply {
   companion_id: string;
@@ -6,7 +6,7 @@ export interface IApply {
   message?: string;
 }
 
-export type status = 'pending' | 'accepted' | 'rejected' | 'cancelled';
+export type status = "pending" | "accepted" | "rejected" | "cancelled";
 
 export interface IApplyStatus {
   id: string;
@@ -52,7 +52,7 @@ export interface IAcceptCompanion {
 
 export interface IRejectCompanion {
   id: string;
-  decided_by: string;
+  decided_by?: string;
   decided_at: dayjs.Dayjs;
   companion_id: string;
 }

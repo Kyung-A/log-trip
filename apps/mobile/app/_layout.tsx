@@ -78,7 +78,7 @@ export default function RootLayout() {
         />
         <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
         <Stack.Screen name="createDiary" options={{ headerShown: false }} />
-        <Stack.Screen name="createCompanion" options={{ headerShown: false }} />
+        {/* <Stack.Screen name="createCompanion" options={{ headerShown: false }} /> // TODO: 추후 추가 예정 서비스 */}
       </Stack>
       <Toast config={toastConfig} topOffset={80} />
     </TabBarProvider>

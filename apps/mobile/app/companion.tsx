@@ -5,6 +5,7 @@ import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 
+// TODO: 추후 추가 예정 서비스
 export default function TabTwoScreen() {
   const webViewRef = useRef<WebView>(null);
   const { setTabBarVisible } = useTabBarVisibility();

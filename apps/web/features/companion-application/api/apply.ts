@@ -1,5 +1,5 @@
 import { supabase } from "@/shared";
-import { IApply } from "../hooks";
+import { IApply } from "../types";
 
 export const apply = async (data: IApply) => {
   try {
