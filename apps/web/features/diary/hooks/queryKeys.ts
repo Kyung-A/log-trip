@@ -10,7 +10,7 @@ export const diaryKeys = {
 
 export const diaryRegionKeys = {
   all: ["diaryRegions"] as const,
-  byUser: (id: string) => [...diaryRegionKeys.all, id] as const,
+  byUser: (id?: string | null) => [...diaryRegionKeys.all, id] as const,
 };
 
 export const diaryInvalidateKeys = (

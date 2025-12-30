@@ -29,8 +29,9 @@ const statusLabel = {
   ),
 };
 
+// TODO: 추후 추가 예정 서비스
 const StatusCard = React.memo(
-  ({ item, userId }: { item: IApplicantsForMyPost; userId: string }) => {
+  ({ item, userId }: { item: IApplicantsForMyPost; userId?: string }) => {
     const { mutate: rejectMutate } = useRejectCompanion();
 
     return (

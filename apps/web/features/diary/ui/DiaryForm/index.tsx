@@ -190,7 +190,7 @@ export const DiaryForm = () => {
         body = { ...body, drawing_content: drawingContentUrl };
       }
 
-      const result = await mutateAsync(body);
+      const result = await mutateAsync(body as IDiary);
       if (result) {
         navigateNative("/diary");
       }

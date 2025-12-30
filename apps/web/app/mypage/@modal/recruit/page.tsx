@@ -24,15 +24,15 @@ export default function CompanionApplyModal() {
     }
 
     const body = {
-      id: postId,
-      decided_by: userId,
+      id: postId!,
+      decided_by: userId!,
+      companion_id: companionId!,
       decision_message: applyMessage,
       decided_at: dayjs(),
-      companion_id: companionId,
     };
 
-    const result = await acceptMutateAsync(body);
-    if (result.status === 204) {
+    const status = await acceptMutateAsync(body);
+    if (status === 204) {
       navigateNative("/mypage", "WINDOW_LOCATION");
     }
   }, [acceptMutateAsync, applyMessage, companionId, postId, userId]);

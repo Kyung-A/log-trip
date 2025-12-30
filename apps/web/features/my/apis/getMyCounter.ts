@@ -1,14 +1,13 @@
-import { supabase } from '@/shared';
+import { supabase } from "@/shared";
 
-export const getMyCounter = async (userId: string) => {
-  try {
-    const { data } = await supabase.rpc('get_user_counters', {
-      p_user_id: userId,
-    });
+export const getMyCounter = async (userId?: string | null) => {
+  if (!userId) throw new Error("id가 없습니다");
 
-    return data[0];
-  } catch (error) {
-    console.error(error);
-    return error;
-  }
+  const { data, error } = await supabase.rpc("get_user_counters", {
+    p_user_id: userId,
+  });
+
+  if (error) throw new Error(error.message);
+
+  return data[0];
 };

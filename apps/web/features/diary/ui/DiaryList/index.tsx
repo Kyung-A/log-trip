@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import { DiaryItem } from "./DiaryItem";
 import { IDiary, useDeleteDiary, useFetchDiaries } from "../..";
+import { EmptyView } from "@/shared";
 
 export const DiaryList = () => {
   const { data } = useFetchDiaries();
@@ -16,6 +17,10 @@ export const DiaryList = () => {
     },
     [mutateAsync]
   );
+
+  if (!data || data?.length === 0) {
+    return <EmptyView message="지금 바로 여행 일기를 작성해보세요!" />;
+  }
 
   return (
     <ul className="w-full bg-zinc-100">

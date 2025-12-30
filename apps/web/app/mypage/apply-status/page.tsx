@@ -9,7 +9,6 @@ import {
 import { EmptyView, navigateNative } from "@/shared";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React from "react";
 
 const statusLabel = {
@@ -19,8 +18,8 @@ const statusLabel = {
   cancelled: <p className="text-sm font-semibold text-slate-300">● 신청취소</p>,
 };
 
+// TODO: 추후 추가 예정 서비스
 const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
-  const router = useRouter();
   const { mutate } = useCancelApply();
 
   return (
@@ -31,12 +30,11 @@ const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
             <p className="w-full mb-1 text-left text-lg font-semibold line-clamp-1">
               {item.companion.title}
             </p>
-            {/* // TODO: 추후 추가 */}
-            {/* {item.status === 'accepted' && !item.decision_read_at && (
-            <View className="px-2 py-0.5 rounded-md bg-blue-100">
-              <Text className="text-xs font-semibold text-blue-600">NEW</Text>
-            </View>
-          )} */}
+            {item.status === "accepted" && !item.decision_read_at && (
+              <div className="px-2 py-0.5 rounded-md bg-blue-100">
+                <p className="text-xs font-semibold text-blue-600">NEW</p>
+              </div>
+            )}
           </div>
 
           {statusLabel[item.status]}

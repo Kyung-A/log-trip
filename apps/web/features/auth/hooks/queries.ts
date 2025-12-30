@@ -5,8 +5,8 @@ import { IProfile } from "./types";
 export const useFetchUserId = () => {
   return useQuery({
     queryKey: ["userId"],
-    queryFn: getUser,
-    select: (user) => user?.id ?? null,
+    queryFn: () => getUser(),
+    select: (id) => id,
     staleTime: Infinity,
     gcTime: Infinity,
     refetchOnWindowFocus: false,
@@ -15,7 +15,7 @@ export const useFetchUserId = () => {
   });
 };
 
-export const useFetchUserProfile = (userId: string) => {
+export const useFetchUserProfile = (userId?: string | null) => {
   return useQuery<IProfile>({
     queryKey: ["profile"],
     queryFn: () => getUserProfile(userId),

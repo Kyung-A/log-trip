@@ -1,12 +1,10 @@
-import { supabase } from '@/shared';
+import { supabase } from "@/shared";
 
-export const deleteUserProfile = async (id: string) => {
-  try {
-    const { data } = await supabase.from('users').delete().eq('id', id);
+export const deleteUserProfile = async (id?: string | null) => {
+  if (!id) throw new Error("id가 없습니다");
 
-    return data;
-  } catch (e) {
-    console.error(e);
-    return e;
-  }
+  const { status, error } = await supabase.from("users").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  return status;
 };
