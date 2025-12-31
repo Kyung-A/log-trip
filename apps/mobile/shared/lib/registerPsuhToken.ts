@@ -3,7 +3,7 @@ import Constants from "expo-constants";
 import * as Device from "expo-device";
 import { supabase } from "./supabase";
 
-export async function registerPushToken(userId: string) {
+export async function registerPushToken(userId?: string | null) {
   if (!Device.isDevice) {
     // console.error('실기기에서만 사용 가능');
     return;

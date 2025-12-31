@@ -1,6 +1,10 @@
 import { TabBarProvider } from "@/shared";
 import { Stack } from "expo-router";
-import Toast, { ErrorToast, SuccessToast } from "react-native-toast-message";
+import Toast, {
+  BaseToastProps,
+  ErrorToast,
+  SuccessToast,
+} from "react-native-toast-message";
 import "react-native-reanimated";
 
 export const unstable_settings = {
@@ -8,7 +12,7 @@ export const unstable_settings = {
 };
 
 const toastConfig = {
-  error: (props) => (
+  error: (props: BaseToastProps) => (
     <ErrorToast
       {...props}
       contentContainerStyle={{
@@ -29,7 +33,7 @@ const toastConfig = {
       }}
     />
   ),
-  success: (props) => (
+  success: (props: BaseToastProps) => (
     <SuccessToast
       {...props}
       contentContainerStyle={{ paddingHorizontal: 12, height: 50 }}

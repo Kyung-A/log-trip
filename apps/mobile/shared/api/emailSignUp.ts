@@ -8,22 +8,20 @@ export const emailSignUp = async (
 ) => {
   const redirectTo = Linking.createURL("/auth/callback");
 
-  try {
-    const response = await supabase.auth.signUp({
-      email: email,
-      password: password,
-      options: {
-        data: {
-          name: name,
-          email_verified: true,
-          email: email,
-        },
-        emailRedirectTo: redirectTo,
+  const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: password,
+    options: {
+      data: {
+        name: name,
+        email_verified: true,
+        email: email,
       },
-    });
-    return response;
-  } catch (error) {
-    console.error(error);
-    return error;
-  }
+      emailRedirectTo: redirectTo,
+    },
+  });
+
+  if (error) throw new Error(error.message);
+
+  return data;
 };

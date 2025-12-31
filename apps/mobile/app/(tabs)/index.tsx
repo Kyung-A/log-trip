@@ -4,7 +4,7 @@ import { ActivityIndicator } from "react-native";
 import WebView from "react-native-webview";
 
 export default function HomeScreen() {
-  const webviewRef = useRef(null);
+  const webviewRef = useRef<WebView>(null);
   const params = useLocalSearchParams();
   const { accessToken, refreshToken } = params;
 

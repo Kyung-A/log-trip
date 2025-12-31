@@ -42,10 +42,10 @@ export default function PhoneAuthScreen() {
     const formData = getValues();
 
     await supabase.from("users").insert({
-      id: user.id,
-      email: user.email,
+      id: user?.id,
+      email: user?.email,
       nickname: formData.nickname,
-      name: user.user_metadata?.name ?? formData.nickname,
+      name: user?.user_metadata?.name ?? formData.nickname,
       year_of_birth: formData.year_of_birth,
       gender: formData.gender,
       platform: platform,
@@ -53,7 +53,7 @@ export default function PhoneAuthScreen() {
       // mobile_carrier: formData.mobileCarrier,
     });
 
-    await registerPushToken(user.id);
+    await registerPushToken(user?.id);
     router.replace({
       pathname: "/(tabs)",
       params: {

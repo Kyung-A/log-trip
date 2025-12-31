@@ -49,7 +49,8 @@ export default function TabTwoScreen() {
               `);
             }
             if (data.type === "NAVIGATE") {
-              router.replace("/(tabs)/companion");
+              // TODO: 추후 추가 기능
+              // router.replace("/(tabs)/companion");
             }
           } catch (e) {
             console.warn("Invalid message from web", e);

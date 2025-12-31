@@ -66,7 +66,7 @@ export default function EmailSignUpScreen() {
     (error) => {
       Toast.show({
         type: "error",
-        text1: Object.values(error)[0].message as string,
+        text1: Object.values(error)[0]?.message as string,
       });
     }
   );

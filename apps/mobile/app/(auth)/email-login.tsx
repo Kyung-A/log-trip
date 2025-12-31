@@ -28,9 +28,14 @@ export default function EmailLoginScreen() {
 
   const handleLogin = handleSubmit(
     async (formData) => {
-      const result = await login(formData.email, formData.password);
-
-      if (result?.includes("Invalid login credentials")) {
+      await login(formData.email, formData.password);
+    },
+    (error) => {
+      if (
+        Object.values(error)[0]
+          ?.message?.toString()
+          .includes("Invalid login credentials")
+      ) {
         Toast.show({
           type: "error",
           text1: "잘못된 이메일 또는 비밀번호 입니다.",
@@ -38,7 +43,11 @@ export default function EmailLoginScreen() {
         return;
       }
 
-      if (result?.includes("Email not confirmed")) {
+      if (
+        Object.values(error)[0]
+          ?.message?.toString()
+          .includes("Email not confirmed")
+      ) {
         Toast.show({
           type: "error",
           text1: "이메일 인증을 완료해주세요.",
@@ -46,11 +55,10 @@ export default function EmailLoginScreen() {
         setResendMail(true);
         return;
       }
-    },
-    (error) => {
+
       Toast.show({
         type: "error",
-        text1: Object.values(error)[0].message as string,
+        text1: Object.values(error)[0]?.message as string,
       });
     }
   );
