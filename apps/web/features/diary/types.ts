@@ -5,6 +5,7 @@ export interface IDiary {
     nickname: string;
     email: string;
     profile_image: string;
+    about: string;
   };
   user_id: string;
   title: string | null;

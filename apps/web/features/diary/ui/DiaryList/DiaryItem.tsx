@@ -12,12 +12,14 @@ interface IDiaryItem {
   item: IDiary;
   handleDeleteDiary: (item: IDiary) => void;
   handleIsPublicDiaryChange: (id: string, state: boolean) => boolean;
+  isNotFeed: boolean;
 }
 
 export const DiaryItem = ({
   item,
   handleDeleteDiary,
   handleIsPublicDiaryChange,
+  isNotFeed,
 }: IDiaryItem) => {
   const [openId, setOpenId] = useState<string | null>(null);
   const popoverRef = useClickOutside<HTMLDivElement>(() => {
@@ -35,10 +37,12 @@ export const DiaryItem = ({
           profileImage={item.user_info.profile_image}
           name={item.user_info.name}
           isPublic={item.is_public}
+          about={item.user_info.about}
           handleIsPublicDiaryChange={() =>
             handleIsPublicDiaryChange(item.id!, !item.is_public)
           }
           onToggle={onToggle}
+          isNotFeed={isNotFeed}
         />
 
         {item.diary_images && item.diary_images.length > 0 && (

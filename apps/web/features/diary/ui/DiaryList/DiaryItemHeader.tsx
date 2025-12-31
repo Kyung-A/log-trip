@@ -9,6 +9,8 @@ interface IDiaryITemHeader {
   isPublic: boolean;
   handleIsPublicDiaryChange: (state: boolean) => boolean;
   onToggle: () => void;
+  isNotFeed: boolean;
+  about: string;
 }
 
 export const DiaryItemHeader = memo(
@@ -18,6 +20,8 @@ export const DiaryItemHeader = memo(
     isPublic,
     handleIsPublicDiaryChange,
     onToggle,
+    isNotFeed,
+    about,
   }: IDiaryITemHeader) => {
     return (
       <div className="flex w-full items-center justify-between p-4">
@@ -37,21 +41,30 @@ export const DiaryItemHeader = memo(
               alt="profile image"
             />
           </div>
-          <p className="font-semibold">{name}</p>
+          <div>
+            <p className="font-semibold text-left line-clamp-1">{name}</p>
+            {!isNotFeed && (
+              <p className="text-sm text-zinc-600 line-clamp-1 text-left">
+                {about}
+              </p>
+            )}
+          </div>
         </button>
 
-        <div className="flex items-center gap-x-4">
-          <div className="flex items-center gap-x-2">
-            <p className="text-sm text-zinc-600">공개</p>
-            <Switch
-              initialChecked={isPublic}
-              onToggle={handleIsPublicDiaryChange}
-            />
+        {isNotFeed && (
+          <div className="flex items-center gap-x-4">
+            <div className="flex items-center gap-x-2">
+              <p className="text-sm text-zinc-600">공개</p>
+              <Switch
+                initialChecked={isPublic}
+                onToggle={handleIsPublicDiaryChange}
+              />
+            </div>
+            <button onClick={() => onToggle()}>
+              <EllipsisVertical size={24} color="#303030" />
+            </button>
           </div>
-          <button onClick={() => onToggle()}>
-            <EllipsisVertical size={24} color="#303030" />
-          </button>
-        </div>
+        )}
       </div>
     );
   }

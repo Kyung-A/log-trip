@@ -1,19 +1,19 @@
 import { supabase } from "@/shared";
 
-export const getDiaries = async () => {
+export const getPublicDiaries = async () => {
   const { data, error } = await supabase
     .from("diaries")
     .select(
       `
-      *,
-      user_info:user_id ( email, name, nickname, profile_image, about ),
-      diary_images (id, url),
-      diary_regions ( * )
+        *,
+        user_info:user_id ( email, name, nickname, profile_image, about ),
+        diary_images (id, url),
+        diary_regions ( * )
     `
     )
+    .eq("is_public", true)
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
-
   return data;
 };

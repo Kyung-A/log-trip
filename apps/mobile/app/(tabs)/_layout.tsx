@@ -173,7 +173,7 @@ export default function TabLayout() {
                 color={focused ? "#a38f86" : "#A9A9A9"}
               />
             );
-          } else if (route.name === "openDiary") {
+          } else if (route.name === "publicDiary") {
             return (
               <Entypo
                 name="slideshare"
@@ -230,7 +230,7 @@ export default function TabLayout() {
       /> */}
 
       <Tabs.Screen
-        name="openDiary"
+        name="publicDiary"
         options={{
           title: "일기숲",
         }}

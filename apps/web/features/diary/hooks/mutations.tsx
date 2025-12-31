@@ -45,7 +45,7 @@ export const useUpdateIsPublicDiary = () => {
   return useMutation({
     ...diaryMutatins.update(),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: diaryKeys.list() });
+      qc.invalidateQueries({ queryKey: diaryKeys.mine() });
     },
   });
 };
@@ -56,10 +56,10 @@ export const useDeleteDiary = () => {
   return useMutation({
     ...diaryMutatins.remove(),
     onMutate: async ({ id }) => {
-      await qc.cancelQueries({ queryKey: diaryKeys.list() });
+      await qc.cancelQueries({ queryKey: diaryKeys.mine() });
 
       const prevData = qc.getQueriesData({
-        queryKey: diaryKeys.list(),
+        queryKey: diaryKeys.mine(),
       });
 
       prevData.forEach(([key, list]) => {

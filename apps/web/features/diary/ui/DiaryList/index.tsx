@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { DiaryItem } from "./DiaryItem";
 import {
   IDiary,
@@ -10,8 +10,8 @@ import {
 } from "../..";
 import { EmptyView } from "@/shared";
 
-export const DiaryList = () => {
-  const { data } = useFetchDiaries();
+export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
+  const { data } = useFetchDiaries(queryKey);
   const { mutateAsync: deleteMutateAsync } = useDeleteDiary();
   const { mutate: updateMutate } = useUpdateIsPublicDiary();
 
@@ -44,6 +44,7 @@ export const DiaryList = () => {
           item={item}
           handleDeleteDiary={handleDeleteDiary}
           handleIsPublicDiaryChange={handleIsPublicDiaryChange}
+          isNotFeed={queryKey[1] !== "feed"}
         />
       ))}
     </ul>

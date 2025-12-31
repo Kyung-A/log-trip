@@ -5,9 +5,9 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-export default async function Diary() {
+export default async function PublicDiary() {
   const queryClient = new QueryClient();
-  const options = diaryQueries.mineList();
+  const options = diaryQueries.feedList();
 
   await queryClient.prefetchQuery(options);
 
