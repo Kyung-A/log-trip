@@ -1,7 +1,8 @@
 import { memo } from "react";
 import Image from "next/image";
 import { EllipsisVertical } from "lucide-react";
-import { Switch } from "@/shared";
+import { navigateNative, Switch } from "@/shared";
+import { useRouter } from "next/navigation";
 
 interface IDiaryITemHeader {
   profileImage: string;
@@ -11,6 +12,7 @@ interface IDiaryITemHeader {
   onToggle: () => void;
   isNotFeed: boolean;
   about: string;
+  userId: string;
 }
 
 export const DiaryItemHeader = memo(
@@ -22,14 +24,15 @@ export const DiaryItemHeader = memo(
     onToggle,
     isNotFeed,
     about,
+    userId,
   }: IDiaryITemHeader) => {
+    const router = useRouter();
+
     return (
       <div className="flex w-full items-center justify-between p-4">
         <button
-          onClick={() => {
-            // TODO: 추후 공개 다이어리 기능 추가시 페이지 이동 필요
-          }}
           className="flex items-center gap-x-3"
+          onClick={() => !isNotFeed && router.push(`/profile/${userId}`)}
         >
           <div className="overflow-hidden rounded-full w-14 h-14">
             <Image

@@ -38,6 +38,7 @@ export const DiaryItem = ({
           name={item.user_info.name}
           isPublic={item.is_public}
           about={item.user_info.about}
+          userId={item.user_id}
           handleIsPublicDiaryChange={() =>
             handleIsPublicDiaryChange(item.id!, !item.is_public)
           }
