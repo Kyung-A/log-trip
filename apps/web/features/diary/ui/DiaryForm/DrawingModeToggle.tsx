@@ -2,7 +2,7 @@ import { Switch } from "@/shared";
 
 interface IDrawingModeToggle {
   isDrawing: boolean;
-  onToggle: (state: boolean) => void;
+  onToggle: (state: boolean) => boolean;
   onOpen: () => void;
 }
 

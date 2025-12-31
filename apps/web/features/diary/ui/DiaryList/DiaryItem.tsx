@@ -11,9 +11,14 @@ import { useClickOutside } from "@/shared";
 interface IDiaryItem {
   item: IDiary;
   handleDeleteDiary: (item: IDiary) => void;
+  handleIsPublicDiaryChange: (id: string, state: boolean) => boolean;
 }
 
-export const DiaryItem = ({ item, handleDeleteDiary }: IDiaryItem) => {
+export const DiaryItem = ({
+  item,
+  handleDeleteDiary,
+  handleIsPublicDiaryChange,
+}: IDiaryItem) => {
   const [openId, setOpenId] = useState<string | null>(null);
   const popoverRef = useClickOutside<HTMLDivElement>(() => {
     setOpenId(null);
@@ -29,6 +34,10 @@ export const DiaryItem = ({ item, handleDeleteDiary }: IDiaryItem) => {
         <DiaryItemHeader
           profileImage={item.user_info.profile_image}
           name={item.user_info.name}
+          isPublic={item.is_public}
+          handleIsPublicDiaryChange={() =>
+            handleIsPublicDiaryChange(item.id!, !item.is_public)
+          }
           onToggle={onToggle}
         />
 

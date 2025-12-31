@@ -2,20 +2,34 @@
 
 import { useCallback } from "react";
 import { DiaryItem } from "./DiaryItem";
-import { IDiary, useDeleteDiary, useFetchDiaries } from "../..";
+import {
+  IDiary,
+  useDeleteDiary,
+  useFetchDiaries,
+  useUpdateIsPublicDiary,
+} from "../..";
 import { EmptyView } from "@/shared";
 
 export const DiaryList = () => {
   const { data } = useFetchDiaries();
-  const { mutateAsync } = useDeleteDiary();
+  const { mutateAsync: deleteMutateAsync } = useDeleteDiary();
+  const { mutate: updateMutate } = useUpdateIsPublicDiary();
 
   const handleDeleteDiary = useCallback(
     async (item: IDiary) => {
       if (confirm("정말 삭제하시겠습니까?")) {
-        await mutateAsync(item);
+        await deleteMutateAsync(item);
       }
     },
-    [mutateAsync]
+    [deleteMutateAsync]
+  );
+
+  const handleIsPublicDiaryChange = useCallback(
+    (id: string, state: boolean) => {
+      updateMutate({ id, state });
+      return state;
+    },
+    [updateMutate]
   );
 
   if (!data || data?.length === 0) {
@@ -29,6 +43,7 @@ export const DiaryList = () => {
           key={item.id}
           item={item}
           handleDeleteDiary={handleDeleteDiary}
+          handleIsPublicDiaryChange={handleIsPublicDiaryChange}
         />
       ))}
     </ul>

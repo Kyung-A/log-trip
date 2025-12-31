@@ -14,6 +14,7 @@ export interface IDiary {
   travel_date: Date | null;
   diary_images: { id?: string; url: string }[];
   diary_regions: IDiaryRegionsRender[];
+  is_public: boolean;
 }
 
 export interface IDiaryRegionsRender {

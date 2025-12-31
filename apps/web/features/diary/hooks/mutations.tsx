@@ -6,11 +6,18 @@ import {
 import { diaryInvalidateKeys, diaryKeys } from "./queryKeys";
 import { createDiary, deleteDiary } from "../apis";
 import { IDiary } from "..";
+import { updateIsPublicDiary } from "../apis/updateIsPublicDiary";
 
 const diaryMutatins = {
   create: () =>
     mutationOptions({
       mutationFn: (data: IDiary) => createDiary(data),
+    }),
+
+  update: () =>
+    mutationOptions({
+      mutationFn: ({ id, state }: { id: string; state: boolean }) =>
+        updateIsPublicDiary(id, state),
     }),
 
   remove: () =>
@@ -28,6 +35,17 @@ export const useCreateDiary = () => {
       diaryInvalidateKeys(data.user_id).forEach((key) => {
         qc.invalidateQueries(key);
       });
+    },
+  });
+};
+
+export const useUpdateIsPublicDiary = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    ...diaryMutatins.update(),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: diaryKeys.list() });
     },
   });
 };

@@ -2,7 +2,12 @@
 
 import { useState, useCallback } from "react";
 
-export const Switch = ({ initialChecked = false, onToggle }) => {
+interface ISwitch {
+  initialChecked: boolean;
+  onToggle: (state: boolean) => boolean;
+}
+
+export const Switch = ({ initialChecked = false, onToggle }: ISwitch) => {
   const [isChecked, setIsChecked] = useState(initialChecked);
 
   const handleToggle = useCallback(() => {

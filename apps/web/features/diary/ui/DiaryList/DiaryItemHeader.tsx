@@ -1,15 +1,24 @@
 import { memo } from "react";
 import Image from "next/image";
 import { EllipsisVertical } from "lucide-react";
+import { Switch } from "@/shared";
 
 interface IDiaryITemHeader {
   profileImage: string;
   name: string;
+  isPublic: boolean;
+  handleIsPublicDiaryChange: (state: boolean) => boolean;
   onToggle: () => void;
 }
 
 export const DiaryItemHeader = memo(
-  ({ profileImage, name, onToggle }: IDiaryITemHeader) => {
+  ({
+    profileImage,
+    name,
+    isPublic,
+    handleIsPublicDiaryChange,
+    onToggle,
+  }: IDiaryITemHeader) => {
     return (
       <div className="flex w-full items-center justify-between p-4">
         <button
@@ -30,9 +39,19 @@ export const DiaryItemHeader = memo(
           </div>
           <p className="font-semibold">{name}</p>
         </button>
-        <button onClick={() => onToggle()}>
-          <EllipsisVertical size={24} color="#303030" />
-        </button>
+
+        <div className="flex items-center gap-x-4">
+          <div className="flex items-center gap-x-2">
+            <p className="text-sm text-zinc-600">공개</p>
+            <Switch
+              initialChecked={isPublic}
+              onToggle={handleIsPublicDiaryChange}
+            />
+          </div>
+          <button onClick={() => onToggle()}>
+            <EllipsisVertical size={24} color="#303030" />
+          </button>
+        </div>
       </div>
     );
   }
