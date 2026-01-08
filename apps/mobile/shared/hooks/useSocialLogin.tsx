@@ -56,66 +56,62 @@ export const useSocialLogin = () => {
   }, []);
 
   const naverLogin = useCallback(async () => {
-    try {
-      const { failureResponse, successResponse } = await NaverLogin.login();
-      if (successResponse) {
-        let userId = "";
+    const { failureResponse, successResponse } = await NaverLogin.login();
+    if (failureResponse) throw new Error(failureResponse.message);
 
-        const profileResult = await NaverLogin.getProfile(
-          successResponse!.accessToken
-        );
+    if (successResponse) {
+      let userId = "";
 
-        const { user: loginUser } = await emailLogin(
+      const profileResult = await NaverLogin.getProfile(
+        successResponse!.accessToken
+      );
+
+      const { user: loginUser } = await emailLogin(
+        profileResult.response.email,
+        `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`
+      );
+
+      if (!loginUser) {
+        const { user: signUpUser } = await emailSignUp(
           profileResult.response.email,
-          `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`
+          `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
+          profileResult.response.name
         );
 
-        if (!loginUser) {
-          const { user: signUpUser } = await emailSignUp(
-            profileResult.response.email,
-            `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
-            profileResult.response.name
-          );
+        if (!signUpUser) {
+          Toast.show({
+            type: "error",
+            text1: "이미 가입한 이메일입니다. 다른 방법으로 로그인 해주세요.",
+          });
 
-          if (!signUpUser) {
-            Toast.show({
-              type: "error",
-              text1: "이미 가입한 이메일입니다. 다른 방법으로 로그인 해주세요.",
-            });
-
-            return;
-          }
-
-          userId = signUpUser.id;
-        } else {
-          userId = loginUser.id;
+          return;
         }
 
-        const isUserExists = await checkIfUserExists(userId);
-
-        if (isUserExists) {
-          router.replace({
-            pathname: "/(tabs)",
-            params: {
-              accessToken: successResponse!.accessToken,
-              refreshToken: successResponse!.refreshToken,
-            },
-          });
-        } else {
-          router.replace({
-            pathname: "/(auth)/phone-auth",
-            params: {
-              accessToken: successResponse!.accessToken,
-              refreshToken: successResponse!.refreshToken,
-              platform: "naver",
-            },
-          });
-        }
+        userId = signUpUser.id;
       } else {
-        console.error(failureResponse);
+        userId = loginUser.id;
       }
-    } catch (error) {
-      console.log(error);
+
+      const isUserExists = await checkIfUserExists(userId);
+
+      if (isUserExists) {
+        router.replace({
+          pathname: "/(tabs)",
+          params: {
+            accessToken: successResponse!.accessToken,
+            refreshToken: successResponse!.refreshToken,
+          },
+        });
+      } else {
+        router.replace({
+          pathname: "/(auth)/phone-auth",
+          params: {
+            accessToken: successResponse!.accessToken,
+            refreshToken: successResponse!.refreshToken,
+            platform: "naver",
+          },
+        });
+      }
     }
   }, []);
 
