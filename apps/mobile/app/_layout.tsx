@@ -1,15 +1,18 @@
-import { TabBarProvider } from "@/shared";
-import { Stack } from "expo-router";
+import { supabase, TabBarProvider } from "@/shared";
+import { router, SplashScreen, Stack } from "expo-router";
 import Toast, {
   BaseToastProps,
   ErrorToast,
   SuccessToast,
 } from "react-native-toast-message";
 import "react-native-reanimated";
+import { useEffect } from "react";
 
 export const unstable_settings = {
-  anchor: "(tabs)",
+  initialRouteName: "(auth)/login",
 };
+
+SplashScreen.preventAutoHideAsync();
 
 const toastConfig = {
   error: (props: BaseToastProps) => (
@@ -54,6 +57,28 @@ const toastConfig = {
 };
 
 export default function RootLayout() {
+  useEffect(() => {
+    const bootstrap = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (session) {
+          router.replace("/(tabs)");
+        } else {
+          router.replace("/(auth)/login");
+        }
+      } catch {
+        router.replace("/(auth)/login");
+      } finally {
+        await SplashScreen.hideAsync();
+      }
+    };
+
+    bootstrap();
+  }, []);
+
   return (
     <TabBarProvider>
       <Stack>
@@ -82,6 +107,10 @@ export default function RootLayout() {
         />
         <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
         <Stack.Screen name="createDiary" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="thirdPartyLoginResult"
+          options={{ headerShown: false }}
+        />
         {/* <Stack.Screen name="createCompanion" options={{ headerShown: false }} /> // TODO: 추후 추가 예정 서비스 */}
       </Stack>
       <Toast config={toastConfig} topOffset={80} />
