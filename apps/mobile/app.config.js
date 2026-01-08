@@ -1,6 +1,6 @@
 export default ({ config }) => ({
   expo: {
-    name: "mobile",
+    name: "로그트립",
     slug: "mobile",
     version: "1.0.0",
     orientation: "portrait",
