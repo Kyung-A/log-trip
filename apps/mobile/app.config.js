@@ -8,11 +8,12 @@ export default ({ config }) => ({
     icon: "./assets/images/icon.png",
     scheme: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
     userInterfaceStyle: "automatic",
-    newArchEnabled: true,
+    newArchEnabled: false,
     ios: {
       supportsTablet: true,
       usesAppleSignIn: true,
-      bundleIdentifier: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
+      // bundleIdentifier: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
+      bundleIdentifier: "com.nek777.mytripapp",
       buildNumber: "10",
       infoPlist: {
         CFBundleDisplayName: "로그트립",
@@ -36,9 +37,11 @@ export default ({ config }) => ({
       output: "static",
       favicon: "./assets/images/favicon.png",
     },
-
     plugins: [
       "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      "expo-web-browser",
       [
         "expo-splash-screen",
         {
