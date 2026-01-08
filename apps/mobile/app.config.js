@@ -1,4 +1,5 @@
 export default ({ config }) => ({
+  ...config,
   expo: {
     name: "logtrip",
     slug: "mobile",
@@ -16,6 +17,11 @@ export default ({ config }) => ({
       infoPlist: {
         CFBundleDisplayName: "로그트립",
         CFBundleName: "로그트립",
+        UIApplicationSceneManifest: {
+          UIApplicationSupportsMultipleScenes: false,
+          UISceneConfigurations: {},
+        },
+        ITSAppUsesNonExemptEncryption: false,
       },
     },
     android: {
