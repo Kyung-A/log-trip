@@ -14,13 +14,13 @@ export default function CompanionApplyModal() {
 
   const handleCompanionApplication = useCallback(async () => {
     const body = {
-      companion_id: postId,
-      applicant_id: userId,
+      companion_id: postId!,
+      applicant_id: userId!,
       message: applyMessage,
     };
 
-    const result = await applyMutateAsync(body);
-    if (result.status === 201 || result.status === 200) {
+    const status = await applyMutateAsync(body);
+    if (status === 201 || status === 200) {
       router.replace(`/companion/${postId}`);
     }
   }, [applyMessage, applyMutateAsync, postId, router, userId]);
