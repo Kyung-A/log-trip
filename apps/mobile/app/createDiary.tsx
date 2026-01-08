@@ -10,7 +10,7 @@ export default function CreateDiary() {
       edges={["top", "left", "right"]}
     >
       <WebView
-        source={{ uri: "http://localhost:3000/diary/new" }}
+        source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/diary/new` }}
         style={{ flex: 1 }}
         renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
         startInLoadingState={true}

@@ -23,7 +23,7 @@ export default function HomeScreen() {
   return (
     <WebView
       ref={webviewRef}
-      source={{ uri: "http://localhost:3000/world-map" }}
+      source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/world-map` }}
       onLoadEnd={() => {
         setTimeout(injectSession, 0);
       }}

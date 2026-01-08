@@ -15,7 +15,7 @@ export default function PublicDiaryScreen() {
     >
       <WebView
         ref={webViewRef}
-        source={{ uri: "http://localhost:3000/public-diary" }}
+        source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/public-diary` }}
         style={{ flex: 1 }}
         renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
         startInLoadingState={true}

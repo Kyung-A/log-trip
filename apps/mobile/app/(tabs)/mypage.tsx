@@ -16,7 +16,7 @@ export default function MyPageScreen() {
     >
       <WebView
         ref={webViewRef}
-        source={{ uri: "http://localhost:3000/mypage" }}
+        source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/mypage` }}
         style={{ flex: 1 }}
         renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
         startInLoadingState={true}

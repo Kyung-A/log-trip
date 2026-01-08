@@ -15,7 +15,7 @@ export default function CreateCompanion() {
     >
       <WebView
         ref={webViewRef}
-        source={{ uri: "http://localhost:3000/companion/new" }}
+        source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/companion/new` }}
         style={{ flex: 1 }}
         renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
         startInLoadingState={true}

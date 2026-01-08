@@ -17,7 +17,7 @@ export default function TabTwoScreen() {
     >
       <WebView
         ref={webViewRef}
-        source={{ uri: "http://localhost:3000/companion" }}
+        source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/companion` }}
         style={{ flex: 1 }}
         renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
         onNavigationStateChange={(navState) => {
