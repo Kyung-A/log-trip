@@ -6,9 +6,13 @@ import { supabase } from ".";
 
 const queryClient = new QueryClient();
 
-export default function RootProvider({ children }) {
+export default function RootProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   useEffect(() => {
-    const handleMessage = (event) => {
+    const handleMessage = (event: { data: string }) => {
       try {
         const data = JSON.parse(event.data);
 
