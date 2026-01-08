@@ -1,6 +1,6 @@
 export default ({ config }) => ({
   expo: {
-    name: "로그트립",
+    name: "logtrip",
     slug: "mobile",
     version: "1.1.0",
     orientation: "portrait",
@@ -12,7 +12,11 @@ export default ({ config }) => ({
       supportsTablet: true,
       usesAppleSignIn: true,
       bundleIdentifier: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
-      buildNumber: "9",
+      buildNumber: "10",
+      infoPlist: {
+        CFBundleDisplayName: "로그트립",
+        CFBundleName: "로그트립",
+      },
     },
     android: {
       package: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
