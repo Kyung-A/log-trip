@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
     const features = geoRes?.features ?? [];
 
     const filtered = features.filter(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (f: any) =>
         f.properties?.shapeISO === regionCode ||
         f.properties?.shapeName === shapeName
@@ -36,7 +37,11 @@ export async function GET(req: NextRequest) {
         "Access-Control-Allow-Origin": "*",
       },
     });
-  } catch (err: any) {
-    return new Response(err.message || "Server Error", { status: 500 });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 에러가 발생했습니다.";
+    return Response.json({ message: errorMessage }, { status: 500 });
   }
 }

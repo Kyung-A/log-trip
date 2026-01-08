@@ -22,6 +22,10 @@ export const POST = async (req: NextRequest) => {
       },
     });
   } catch (error) {
-    return new Response(error.message || "Server Error", { status: 500 });
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 에러가 발생했습니다.";
+    return Response.json({ message: errorMessage }, { status: 500 });
   }
 };

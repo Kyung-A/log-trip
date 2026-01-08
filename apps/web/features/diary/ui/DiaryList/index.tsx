@@ -33,7 +33,7 @@ export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
   );
 
   if (!data || data?.length === 0) {
-    return <EmptyView message="지금 바로 여행 일기를 작성해보세요!" />;
+    return <EmptyView message="공개된 다이어리가 없습니다" />;
   }
 
   return (
