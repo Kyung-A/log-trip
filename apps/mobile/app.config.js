@@ -2,7 +2,7 @@ export default ({ config }) => ({
   expo: {
     name: "로그트립",
     slug: "mobile",
-    version: "1.0.0",
+    version: "1.1.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
@@ -12,6 +12,7 @@ export default ({ config }) => ({
       supportsTablet: true,
       usesAppleSignIn: true,
       bundleIdentifier: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
+      buildNumber: "9",
     },
     android: {
       package: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
@@ -50,6 +51,11 @@ export default ({ config }) => ({
     experiments: {
       typedRoutes: true,
       reactCompiler: true,
+    },
+    extra: {
+      eas: {
+        projectId: "90f89366-a47b-40be-aa4f-55216964efd1",
+      },
     },
   },
 });
