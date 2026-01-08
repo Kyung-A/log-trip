@@ -1,5 +1,5 @@
 import { CompanionDetailContent, companionQueries } from "@/features/companion";
-import { ApplyFloatingButton } from "@/features/companion-application/ui";
+import { ApplyFloatingButton } from "@/features/companion-application";
 import {
   dehydrate,
   HydrationBoundary,
