@@ -60,6 +60,7 @@ export default function RootLayout() {
   useEffect(() => {
     const bootstrap = async () => {
       try {
+        // TODO: 세션이 있어도 users 테이블에 유저가 없다면 로그인으로 이동
         const {
           data: { session },
         } = await supabase.auth.getSession();
@@ -99,7 +100,7 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="(auth)/phone-auth"
+          name="(auth)/user-info"
           options={{
             title: "프로필 입력",
             headerBackTitle: "",

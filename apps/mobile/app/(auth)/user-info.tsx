@@ -14,7 +14,7 @@ const DEFAULT_VALUES = {
   phone: "",
 };
 
-export default function PhoneAuthScreen() {
+export default function UserInfoScreen() {
   const params = useLocalSearchParams();
   const { platform, accessToken, refreshToken } = params;
 

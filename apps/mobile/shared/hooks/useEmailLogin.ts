@@ -18,7 +18,7 @@ export const useEmailLogin = () => {
       });
     } else {
       router.replace({
-        pathname: "/(auth)/phone-auth",
+        pathname: "/(auth)/user-info",
         params: {
           accessToken: session?.access_token,
           refreshToken: session?.refresh_token,

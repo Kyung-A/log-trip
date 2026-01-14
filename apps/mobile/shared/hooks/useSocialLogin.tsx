@@ -36,7 +36,7 @@ export const useSocialLogin = () => {
         });
       } else {
         router.replace({
-          pathname: "/(auth)/phone-auth",
+          pathname: "/(auth)/user-info",
           params: {
             accessToken: data?.session.access_token,
             refreshToken: data?.session.refresh_token,
@@ -86,7 +86,7 @@ export const useSocialLogin = () => {
 
     if (nextPhoneAuth) {
       router.replace({
-        pathname: "/(auth)/phone-auth",
+        pathname: "/(auth)/user-info",
         params: {
           accessToken: session.access_token,
           refreshToken: session.refresh_token,
@@ -169,7 +169,7 @@ export const useSocialLogin = () => {
       }
 
       router.replace({
-        pathname: "/(auth)/phone-auth",
+        pathname: "/(auth)/user-info",
         params: {
           accessToken: data?.session.access_token,
           refreshToken: data?.session.refresh_token,
