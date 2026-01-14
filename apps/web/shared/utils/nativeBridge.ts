@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function navigateNative(path: string, type = "NAVIGATE", params?: any) {
   if (typeof window === "undefined") return;
 

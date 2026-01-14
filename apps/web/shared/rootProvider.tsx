@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,7 +15,7 @@ export default function RootProvider({
   const isSettingSession = useRef(false);
 
   useEffect(() => {
-    const handleMessage = async (event: any) => {
+    const handleMessage = async (event: { data: string }) => {
       try {
         const data =
           typeof event.data === "string" ? JSON.parse(event.data) : event.data;
@@ -30,7 +31,7 @@ export default function RootProvider({
 
           if (error) {
             console.error("세션 설정 오류:", error.message);
-            window.ReactNativeWebView?.postMessage(
+            (window as any).ReactNativeWebView?.postMessage(
               JSON.stringify({ type: "LOGOUT_REQUIRED" })
             );
           }
@@ -47,11 +48,9 @@ export default function RootProvider({
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (isSettingSession.current) return;
 
-      if (
-        event === "SIGNED_OUT" ||
-        (event === "TOKEN_REFRESH_FAILED" && !session)
-      ) {
-        window.ReactNativeWebView?.postMessage(
+      const isLoggedOut = event === "SIGNED_OUT" || !session;
+      if (isLoggedOut) {
+        (window as any).ReactNativeWebView?.postMessage(
           JSON.stringify({ type: "LOGOUT_REQUIRED" })
         );
         return;
@@ -63,7 +62,7 @@ export default function RootProvider({
           error,
         } = await supabase.auth.getUser();
         if (error || !user) {
-          window.ReactNativeWebView?.postMessage(
+          (window as any).ReactNativeWebView?.postMessage(
             JSON.stringify({ type: "LOGOUT_REQUIRED" })
           );
         }
@@ -71,11 +70,9 @@ export default function RootProvider({
     });
 
     window.addEventListener("message", handleMessage);
-    document.addEventListener("message", handleMessage);
 
     return () => {
       window.removeEventListener("message", handleMessage);
-      document.removeEventListener("message", handleMessage);
       subscription.unsubscribe();
     };
   }, []);
