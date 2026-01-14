@@ -104,6 +104,8 @@ export default function RootLayout() {
           options={{
             title: "프로필 입력",
             headerBackTitle: "",
+            headerLeft: () => null,
+            headerBackVisible: false,
           }}
         />
         <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
