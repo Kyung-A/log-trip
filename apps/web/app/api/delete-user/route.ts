@@ -2,24 +2,24 @@ import { NextRequest } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const id = req.nextUrl.searchParams.get("id");
+    const { id, platform } = await req.json();
 
     const resp = await fetch(
-      `${process.env.SUPABASE_API_ENDPOINT}/delete-user`,
+      `${process.env.NEXT_PUBLIC_SUPABASE_API_ENDPOINT}/delete-user`,
       {
         method: "POST",
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ id, platform }),
         headers: {
-          Authorization: `Bearer ${process.env.SUPABASE_API_KEY}`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_API_KEY}`,
         },
       }
     );
-    return new Response(JSON.stringify(resp), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
+
+    const result = await resp.json();
+
+    return new Response(JSON.stringify(result), {
+      status: resp.status,
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
     const errorMessage =

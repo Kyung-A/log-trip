@@ -1,33 +1,52 @@
 "use client";
 
-import { deleteUserProfile } from "@/features/auth";
 import { useCallback } from "react";
 import { navigateNative } from "@/shared";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
-export const AccountSettings = ({ userId }: { userId?: string }) => {
+export const AccountSettings = ({
+  userId,
+  platform,
+}: {
+  userId?: string;
+  platform?: string;
+}) => {
   const router = useRouter();
   const qc = useQueryClient();
 
   const handleLogout = useCallback(async () => {
     qc.clear();
-    navigateNative("/mypage", "LOGOUT");
+    navigateNative("/mypage", "LOGOUT"); // * 로그아웃 처리는 RN 쪽에서 처리
   }, [qc]);
 
   const handleDeleteUser = useCallback(async () => {
-    if (!confirm("정말 계정을 삭제 하시겠습니까?")) return;
-    const status = await deleteUserProfile(userId);
+    if (
+      !confirm(
+        "탈퇴 할 경우 모든 데이터가 삭제되며,\n소셜 로그인 연동도 해제됩니다.\n정말 탈퇴 하시겠습니까?"
+      )
+    )
+      return;
 
-    if (status) {
-      const params = new URLSearchParams({
-        id: userId!,
-      });
-      await fetch(`/api/deleteUser?${params.toString()}`);
+    try {
       qc.clear();
-      navigateNative("/(auth)/login");
+      navigateNative("/mypage", "DELETE-USER");
+
+      const response = await fetch("/api/delete-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: userId,
+          platform: platform,
+        }),
+      });
+
+      if (!response.ok) throw new Error("탈퇴 처리 중 에러 발생");
+    } catch (error) {
+      alert("탈퇴 처리에 실패했습니다.");
+      console.error(error);
     }
-  }, [qc, userId]);
+  }, [qc, userId, platform]);
 
   return (
     <>

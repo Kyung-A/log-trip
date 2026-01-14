@@ -12,7 +12,7 @@ export const MyPageClient = () => {
   const { data: counters } = useFetchMyCounter(userId);
 
   return (
-    <div className="items-center w-full flex flex-col bg-white">
+    <div className="items-center w-full flex flex-col">
       <div className="w-32 h-32 mt-20 bg-[#d5b2a7] rounded-full">
         {profile?.profile_image ? (
           <Image
@@ -72,7 +72,7 @@ export const MyPageClient = () => {
           </p>
         </button> */}
       </div>
-      <AccountSettings userId={userId} />
+      <AccountSettings userId={userId} platform={profile?.platform} />
     </div>
   );
 };
