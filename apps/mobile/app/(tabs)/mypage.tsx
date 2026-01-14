@@ -16,7 +16,9 @@ export default function MyPageScreen() {
     >
       <WebView
         ref={webViewRef}
-        source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/mypage` }}
+        source={{
+          uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/mypage`,
+        }}
         style={{ flex: 1 }}
         renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
         startInLoadingState={true}
@@ -40,7 +42,7 @@ export default function MyPageScreen() {
         onMessage={async (event) => {
           try {
             const data = JSON.parse(event.nativeEvent.data);
-            if (data.type === "LOGOUT") {
+            if (data.type === "LOGOUT" || data.type === "DELETE-USER") {
               await supabase.auth.signOut();
               router.replace("/(auth)/login");
             }

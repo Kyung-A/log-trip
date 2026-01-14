@@ -2,18 +2,12 @@ import { useCallback } from "react";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { login } from "@react-native-seoul/kakao-login";
 import NaverLogin from "@react-native-seoul/naver-login";
-import {
-  emailLogin,
-  emailSignUp,
-  generateRawNonce,
-  sha256Hex,
-  supabase,
-} from "@/shared";
+import { generateRawNonce, sha256Hex, supabase } from "@/shared";
 import { checkIfUserExists } from "../lib/checkIfUserExists";
 import { router } from "expo-router";
-import Toast from "react-native-toast-message";
 
 export const useSocialLogin = () => {
+  // * 카카오 로그인
   const kakaoLogin = useCallback(async () => {
     try {
       const { idToken } = await login();
@@ -55,66 +49,62 @@ export const useSocialLogin = () => {
     }
   }, []);
 
+  // * 네이버 로그인
   const naverLogin = useCallback(async () => {
     const { failureResponse, successResponse } = await NaverLogin.login();
+
     if (failureResponse) throw new Error(failureResponse.message);
+    if (!successResponse) throw new Error("네이버 로그인 실패");
 
-    if (successResponse) {
-      let userId = "";
+    const profileResult = await NaverLogin.getProfile(
+      successResponse!.accessToken
+    );
+    const { email, id, name } = profileResult.response;
 
-      const profileResult = await NaverLogin.getProfile(
-        successResponse!.accessToken
-      );
-
-      const { user: loginUser } = await emailLogin(
-        profileResult.response.email,
-        `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`
-      );
-
-      if (!loginUser) {
-        const { user: signUpUser } = await emailSignUp(
-          profileResult.response.email,
-          `${process.env.NAVER_USER_PASSWORD}${profileResult.response.id}`,
-          profileResult.response.name
-        );
-
-        if (!signUpUser) {
-          Toast.show({
-            type: "error",
-            text1: "이미 가입한 이메일입니다. 다른 방법으로 로그인 해주세요.",
-          });
-
-          return;
-        }
-
-        userId = signUpUser.id;
-      } else {
-        userId = loginUser.id;
+    const response = await fetch(
+      `${process.env.EXPO_PUBLIC_SUPABASE_API_ENDPOINT}/naver-auth`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.EXPO_PUBLIC_SUPABASE_API_KEY}`,
+        },
+        body: JSON.stringify({
+          id,
+          email,
+          name,
+          refreshToken: successResponse.refreshToken,
+        }),
       }
+    );
 
-      const isUserExists = await checkIfUserExists(userId);
+    const { nextPhoneAuth, session } = await response.json();
+    await supabase.auth.setSession({
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+    });
 
-      if (isUserExists) {
-        router.replace({
-          pathname: "/(tabs)",
-          params: {
-            accessToken: successResponse!.accessToken,
-            refreshToken: successResponse!.refreshToken,
-          },
-        });
-      } else {
-        router.replace({
-          pathname: "/(auth)/phone-auth",
-          params: {
-            accessToken: successResponse!.accessToken,
-            refreshToken: successResponse!.refreshToken,
-            platform: "naver",
-          },
-        });
-      }
+    if (nextPhoneAuth) {
+      router.replace({
+        pathname: "/(auth)/phone-auth",
+        params: {
+          accessToken: session.access_token,
+          refreshToken: session.refresh_token,
+          platform: "naver",
+        },
+      });
+    } else {
+      router.replace({
+        pathname: "/(tabs)",
+        params: {
+          accessToken: session.access_token,
+          refreshToken: session.refresh_token,
+        },
+      });
     }
   }, []);
 
+  // * 애플 로그인
   const appleLogin = useCallback(async () => {
     const rawNonce = generateRawNonce();
     const hashedNonce = await sha256Hex(rawNonce);
@@ -128,7 +118,7 @@ export const useSocialLogin = () => {
         nonce: hashedNonce,
       });
 
-      const { identityToken, fullName } = credential;
+      const { identityToken, authorizationCode, fullName, email } = credential;
       if (!identityToken) throw new Error("identityToken is null");
 
       const { data, error } = await supabase.auth.signInWithIdToken({
@@ -146,6 +136,7 @@ export const useSocialLogin = () => {
 
         const { error: updateError } = await supabase.auth.updateUser({
           data: {
+            email: email,
             name: displayName,
           },
         });
@@ -153,8 +144,8 @@ export const useSocialLogin = () => {
         if (updateError) throw new Error("error update full name");
       }
 
+      // * users 테이블에 이미 있다면 메인으로 이동
       const isUserExists = await checkIfUserExists(data.user.id);
-
       if (isUserExists) {
         router.replace({
           pathname: "/(tabs)",
@@ -163,16 +154,28 @@ export const useSocialLogin = () => {
             refreshToken: data?.session.refresh_token,
           },
         });
-      } else {
-        router.replace({
-          pathname: "/(auth)/phone-auth",
-          params: {
-            accessToken: data?.session.access_token,
-            refreshToken: data?.session.refresh_token,
-            platform: "apple",
-          },
-        });
+        return;
       }
+
+      // * users 테이블에 없다면 추가 회원가입 로직 실행
+      if (authorizationCode) {
+        try {
+          await supabase.functions.invoke("apple-auth", {
+            body: { code: authorizationCode, userId: data.user.id, email },
+          });
+        } catch (funcError) {
+          console.error("애플 토큰 교환 실패:", funcError);
+        }
+      }
+
+      router.replace({
+        pathname: "/(auth)/phone-auth",
+        params: {
+          accessToken: data?.session.access_token,
+          refreshToken: data?.session.refresh_token,
+          platform: "apple",
+        },
+      });
     } catch (error) {
       console.error(error);
     }
