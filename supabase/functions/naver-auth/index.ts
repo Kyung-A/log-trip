@@ -26,11 +26,14 @@ Deno.serve(async (req) => {
     const {
       data: { users },
     } = await supabase.auth.admin.listUsers();
-    const existingUser = users.find((u) => u.email === email);
+    let user = users.find((u) => u.email === email);
 
     // * auth 테이블에 유저가 없다면 => 회원가입으로 간주
-    if (!existingUser) {
-      const { error: createError } = await supabase.auth.admin.createUser({
+    if (!user) {
+      const {
+        data: { user: newUser },
+        error: createError,
+      } = await supabase.auth.admin.createUser({
         email,
         password,
         email_confirm: true,
@@ -42,6 +45,8 @@ Deno.serve(async (req) => {
           },
         },
         user_metadata: {
+          sub: id,
+          provider_id: id,
           full_name: name,
           provider: "naver",
           naver_refresh_token: refreshToken,
@@ -49,19 +54,23 @@ Deno.serve(async (req) => {
       });
 
       if (createError) throw createError;
+      user = newUser;
     } else {
-      await supabase.auth.admin.updateUserById(existingUser.id, {
+      // * 기존 유저라면 리프레시 토큰 업데이트
+      await supabase.auth.admin.updateUserById(user.id, {
         user_metadata: {
           naver_refresh_token: refreshToken,
         },
       });
     }
 
+    if (!user) throw new Error("유저 정보를 처리할 수 없습니다.");
+
     // * users 테이블에 유저가 있는지 조회
     const { data: dbUser } = await supabase
       .from("users")
       .select("id")
-      .eq("id", existingUser.id)
+      .eq("id", user.id)
       .single();
 
     // * 세션 생성

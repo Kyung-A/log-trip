@@ -51,6 +51,7 @@ export const useSocialLogin = () => {
 
   // * 네이버 로그인
   const naverLogin = useCallback(async () => {
+    await NaverLogin.logout(); // 라이브러리측 토큰 삭제 버그 대응
     const { failureResponse, successResponse } = await NaverLogin.login();
 
     if (failureResponse) throw new Error(failureResponse.message);
@@ -79,6 +80,8 @@ export const useSocialLogin = () => {
     );
 
     const { nextPhoneAuth, session } = await response.json();
+    if (!session) throw new Error("세션 정보가 없습니다.");
+
     await supabase.auth.setSession({
       access_token: session.access_token,
       refresh_token: session.refresh_token,
