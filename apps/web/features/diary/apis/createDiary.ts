@@ -18,7 +18,7 @@ export const createDiary = async (data: IDiary) => {
     if (diary_images && diary_images.length > 0) {
       const imageRows = diary_images.map((v) => ({
         diary_id: diaryId,
-        url: v,
+        url: v.url,
       }));
 
       const { error: imagesError } = await supabase
