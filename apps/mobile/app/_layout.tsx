@@ -130,7 +130,13 @@ export default function RootLayout() {
           data: { session },
         } = await supabase.auth.getSession();
         if (session) {
-          router.replace("/(tabs)");
+          router.replace({
+            pathname: "/(tabs)",
+            params: {
+              accessToken: session.access_token,
+              refreshToken: session.refresh_token,
+            },
+          });
         } else {
           router.replace("/(auth)/login");
         }

@@ -19,6 +19,7 @@ export default function HomeScreen() {
       webviewRef.current.postMessage(message);
     }
   };
+
   return (
     <WebView
       ref={webviewRef}

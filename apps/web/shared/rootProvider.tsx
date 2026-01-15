@@ -24,6 +24,8 @@ export default function RootProvider({
           isSettingSession.current = true;
           const { accessToken, refreshToken } = data;
 
+          queryClient.clear();
+
           const { error } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
@@ -34,6 +36,10 @@ export default function RootProvider({
             (window as any).ReactNativeWebView?.postMessage(
               JSON.stringify({ type: "LOGOUT_REQUIRED" })
             );
+          }
+
+          if (!error) {
+            queryClient.invalidateQueries();
           }
           isSettingSession.current = false;
         }
