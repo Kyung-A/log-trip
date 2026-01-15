@@ -1,6 +1,9 @@
 import { supabase } from "@/shared";
 
 export const getDiaries = async () => {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const { data, error } = await supabase
     .from("diaries")
     .select(
@@ -11,6 +14,7 @@ export const getDiaries = async () => {
       diary_regions ( * )
     `
     )
+    .eq("user_id", session?.user.id)
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
