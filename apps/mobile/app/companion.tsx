@@ -1,6 +1,5 @@
 import { useTabBarVisibility } from "@/shared";
 import { useRef } from "react";
-import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 
@@ -18,7 +17,6 @@ export default function TabTwoScreen() {
         ref={webViewRef}
         source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/companion` }}
         style={{ flex: 1 }}
-        renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
         onNavigationStateChange={(navState) => {
           const url = navState.url;
           const isCompanion = /companion\/.+/.test(url);

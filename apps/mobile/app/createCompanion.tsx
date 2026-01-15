@@ -1,6 +1,4 @@
-import { router } from "expo-router";
 import { useRef } from "react";
-import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
 
@@ -17,7 +15,6 @@ export default function CreateCompanion() {
         ref={webViewRef}
         source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/companion/new` }}
         style={{ flex: 1 }}
-        renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
         startInLoadingState={true}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}

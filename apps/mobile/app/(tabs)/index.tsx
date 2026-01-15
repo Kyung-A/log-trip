@@ -1,7 +1,6 @@
 import { supabase } from "@/shared";
 import { router, useLocalSearchParams } from "expo-router";
 import { useRef } from "react";
-import { ActivityIndicator } from "react-native";
 import WebView from "react-native-webview";
 
 export default function HomeScreen() {
@@ -20,7 +19,6 @@ export default function HomeScreen() {
       webviewRef.current.postMessage(message);
     }
   };
-
   return (
     <WebView
       ref={webviewRef}
@@ -29,7 +27,6 @@ export default function HomeScreen() {
         setTimeout(injectSession, 0);
       }}
       style={{ flex: 1 }}
-      renderLoading={() => <ActivityIndicator style={{ marginTop: 20 }} />}
       startInLoadingState={true}
       webviewDebuggingEnabled={true}
       onMessage={(event) => {
