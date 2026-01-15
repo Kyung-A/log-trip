@@ -2,8 +2,12 @@ import { useCallback } from "react";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { login } from "@react-native-seoul/kakao-login";
 import NaverLogin from "@react-native-seoul/naver-login";
-import { generateRawNonce, sha256Hex, supabase } from "@/shared";
-import { checkIfUserExists } from "../lib/checkIfUserExists";
+import {
+  checkIfUserExists,
+  generateRawNonce,
+  sha256Hex,
+  supabase,
+} from "@/shared";
 import { router } from "expo-router";
 
 export const useSocialLogin = () => {
@@ -11,7 +15,6 @@ export const useSocialLogin = () => {
   const kakaoLogin = useCallback(async () => {
     try {
       const { idToken } = await login();
-
       if (!idToken) {
         throw new Error("Failed to login with Kakao.");
       }
@@ -20,7 +23,6 @@ export const useSocialLogin = () => {
         provider: "kakao",
         token: idToken,
       });
-
       if (error) {
         throw new Error(error?.message);
       }

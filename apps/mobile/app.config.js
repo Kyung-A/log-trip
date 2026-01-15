@@ -18,6 +18,9 @@ export default ({ config }) => ({
         CFBundleName: "로그트립",
         CFBundleURLTypes: [
           {
+            CFBundleURLSchemes: [process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME],
+          },
+          {
             CFBundleURLSchemes: [
               `kakao${process.env.EXPO_PUBLIC_KAKAO_API_KEY}`,
             ],

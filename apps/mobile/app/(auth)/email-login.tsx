@@ -1,4 +1,4 @@
-import { resendEmail, useEmailLogin } from "@/shared";
+import { checkIfUserExists, emailLogin, resendEmail } from "@/shared";
 import { router } from "expo-router";
 import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -14,7 +14,6 @@ import Toast from "react-native-toast-message";
 export default function EmailLoginScreen() {
   const [resendMail, setResendMail] = useState<boolean>(false);
   const { control, handleSubmit, getValues } = useForm();
-  const login = useEmailLogin();
 
   const handleResendMail = useCallback(async () => {
     const email = getValues("email");
@@ -28,7 +27,30 @@ export default function EmailLoginScreen() {
 
   const handleLogin = handleSubmit(
     async (formData) => {
-      await login(formData.email, formData.password);
+      const { session, user } = await emailLogin(
+        formData.email,
+        formData.password
+      );
+      const isUserExists = await checkIfUserExists(user?.id);
+
+      if (isUserExists) {
+        router.replace({
+          pathname: "/(tabs)",
+          params: {
+            accessToken: session?.access_token,
+            refreshToken: session?.refresh_token,
+          },
+        });
+      } else {
+        router.replace({
+          pathname: "/(auth)/user-info",
+          params: {
+            accessToken: session?.access_token,
+            refreshToken: session?.refresh_token,
+            platform: "email",
+          },
+        });
+      }
     },
     (error) => {
       if (
@@ -87,7 +109,7 @@ export default function EmailLoginScreen() {
           <View>
             <Text
               style={{
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: "600",
               }}
             >
@@ -100,7 +122,7 @@ export default function EmailLoginScreen() {
               style={{
                 paddingHorizontal: 12,
                 paddingVertical: 16,
-                fontSize: 18,
+                fontSize: 16,
                 lineHeight: 24,
                 marginTop: 6,
                 borderWidth: 1,
@@ -122,7 +144,7 @@ export default function EmailLoginScreen() {
           <View>
             <Text
               style={{
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: "600",
               }}
             >
@@ -136,7 +158,7 @@ export default function EmailLoginScreen() {
               style={{
                 paddingHorizontal: 12,
                 paddingVertical: 16,
-                fontSize: 18,
+                fontSize: 16,
                 lineHeight: 24,
                 marginTop: 6,
                 borderWidth: 1,
@@ -183,7 +205,7 @@ export default function EmailLoginScreen() {
         <Text
           style={{
             paddingVertical: 18,
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: "600",
             textAlign: "center",
             color: "#3b82f6",

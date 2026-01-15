@@ -1,4 +1,4 @@
-import { supabase, useEmailSignUp } from "@/shared";
+import { emailSignUp, supabase } from "@/shared";
 import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -9,17 +9,28 @@ import {
   Linking,
   Alert,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Toast from "react-native-toast-message";
+import WebView from "react-native-webview";
 
-// TODO: 현재 이메일 인증 하기도 전에 회원 가입이 먼저됨, 이메일의 링크를 클릭했을대 회원가입 되게 변경
 export default function EmailSignUpScreen() {
   const { control, handleSubmit, getValues } = useForm();
-  const signUp = useEmailSignUp();
 
   const [selected, setSelected] = useState<boolean>(false);
   const [duplicateCheck, setDuplicateCheck] = useState<boolean>(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [showCaptcha, setShowCaptcha] = useState<boolean>(false);
+
+  const handleMessage = (event: { nativeEvent: { data: string } }) => {
+    const data = JSON.parse(event.nativeEvent.data);
+    if (data.token) {
+      setCaptchaToken(data.token);
+      setShowCaptcha(false);
+      Alert.alert("인증 완료", "회원가입 버튼을 눌러주세요.");
+    }
+  };
 
   const handleDuplicateCheck = useCallback(async () => {
     try {
@@ -43,7 +54,7 @@ export default function EmailSignUpScreen() {
     }
   }, [getValues]);
 
-  const handleLogin = handleSubmit(
+  const handleSignUp = handleSubmit(
     async (formData) => {
       if (!duplicateCheck) {
         Toast.show({
@@ -61,9 +72,17 @@ export default function EmailSignUpScreen() {
         return;
       }
 
-      await signUp(formData.email, formData.password);
+      const result = await emailSignUp(formData.email, formData.password);
+
+      if (result) {
+        Toast.show({
+          type: "success",
+          text1: "입력하신 이메일의 메일함을 확인해주세요.",
+        });
+      }
     },
     (error) => {
+      setCaptchaToken(null);
       Toast.show({
         type: "error",
         text1: Object.values(error)[0]?.message as string,
@@ -106,7 +125,7 @@ export default function EmailSignUpScreen() {
           <View>
             <Text
               style={{
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: "600",
               }}
             >
@@ -127,7 +146,7 @@ export default function EmailSignUpScreen() {
                   flex: 1,
                   paddingHorizontal: 12,
                   paddingVertical: 16,
-                  fontSize: 18,
+                  fontSize: 16,
                   lineHeight: 24,
                   borderWidth: 1,
                   borderColor: "#d1d5db",
@@ -179,7 +198,7 @@ export default function EmailSignUpScreen() {
           <View>
             <Text
               style={{
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: "600",
               }}
             >
@@ -190,7 +209,7 @@ export default function EmailSignUpScreen() {
               style={{
                 paddingHorizontal: 12,
                 paddingVertical: 16,
-                fontSize: 18,
+                fontSize: 16,
                 lineHeight: 24,
                 marginTop: 6,
                 borderWidth: 1,
@@ -219,7 +238,7 @@ export default function EmailSignUpScreen() {
           <View>
             <Text
               style={{
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: "600",
               }}
             >
@@ -230,7 +249,7 @@ export default function EmailSignUpScreen() {
               style={{
                 paddingHorizontal: 12,
                 paddingVertical: 16,
-                fontSize: 18,
+                fontSize: 16,
                 lineHeight: 24,
                 marginTop: 6,
                 borderWidth: 1,
@@ -274,27 +293,100 @@ export default function EmailSignUpScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* 회원가입 버튼 */}
-      <Pressable
-        onPress={handleLogin}
-        style={{
-          justifyContent: "center",
-          backgroundColor: "#bfdbfe",
-          borderRadius: 6,
-        }}
-      >
-        <Text
+      {!captchaToken && (
+        <Pressable
+          onPress={() => {
+            if (!captchaToken) {
+              setShowCaptcha(true);
+            }
+          }}
           style={{
-            paddingVertical: 18,
-            fontSize: 18,
-            fontWeight: "600",
-            textAlign: "center",
-            color: "#3b82f6",
+            justifyContent: "center",
+            backgroundColor: "#bfdbfe",
+            borderRadius: 6,
           }}
         >
-          회원가입
-        </Text>
-      </Pressable>
+          <Text
+            style={{
+              paddingVertical: 18,
+              fontSize: 16,
+              fontWeight: "600",
+              textAlign: "center",
+              color: "#3b82f6",
+            }}
+          >
+            확인
+          </Text>
+        </Pressable>
+      )}
+
+      {/* 회원가입 버튼 */}
+      {captchaToken && (
+        <Pressable
+          onPress={handleSignUp}
+          style={{
+            justifyContent: "center",
+            backgroundColor: "#bfdbfe",
+            borderRadius: 6,
+          }}
+        >
+          <Text
+            style={{
+              paddingVertical: 18,
+              fontSize: 16,
+              fontWeight: "600",
+              textAlign: "center",
+              color: "#3b82f6",
+            }}
+          >
+            회원가입
+          </Text>
+        </Pressable>
+      )}
+
+      <Modal
+        style={{
+          flex: 1,
+          backgroundColor: "#fff",
+        }}
+        visible={showCaptcha}
+        animationType="slide"
+        onRequestClose={() => setShowCaptcha(false)}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            paddingTop: 70,
+            paddingBottom: 12,
+            paddingHorizontal: 16,
+            borderBottomWidth: 1,
+            borderBottomColor: "#eee",
+          }}
+        >
+          <TouchableOpacity onPress={() => setShowCaptcha(false)}>
+            <Text style={{ fontSize: 16, color: "#155dfc", fontWeight: "500" }}>
+              닫기
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <WebView
+          source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/captcha` }}
+          onMessage={handleMessage}
+          injectedJavaScriptBeforeContentLoaded={`
+              (function () {
+                window.ReactNativeWebView = window.ReactNativeWebView || {
+                  postMessage: function (data) {
+                    window.postMessage(data);
+                  }
+                };
+              })();
+              true;
+            `}
+          style={{ flex: 1 }}
+        />
+      </Modal>
     </View>
   );
 }

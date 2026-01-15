@@ -1,5 +1,4 @@
 import { useTabBarVisibility } from "@/shared";
-import { router } from "expo-router";
 import { useRef } from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

@@ -7,6 +7,7 @@ import Toast, {
 } from "react-native-toast-message";
 import "react-native-reanimated";
 import { useEffect } from "react";
+import * as Linking from "expo-linking";
 
 export const unstable_settings = {
   initialRouteName: "(auth)/login",
@@ -30,7 +31,7 @@ const toastConfig = {
       }}
       text1Style={{
         color: "#a43336",
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 600,
         textAlign: "center",
       }}
@@ -48,7 +49,7 @@ const toastConfig = {
       }}
       text1Style={{
         color: "#596e50",
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 600,
         textAlign: "center",
       }}
@@ -59,22 +60,49 @@ const toastConfig = {
 export default function RootLayout() {
   useEffect(() => {
     const bootstrap = async () => {
+      // * 딥링크 감지
+      const sub = Linking.addEventListener("url", async ({ url }) => {
+        // TODO: 회원가입 성공시 이메일 로그인 페이지로 리다이랙트
+        if (url.includes("access_token") && url.includes("type=signup")) {
+          router.replace("/(auth)/login");
+          setTimeout(() => {
+            Toast.show({
+              type: "success",
+              text1: "회원가입이 완료되었습니다. 로그인 해주세요.",
+            });
+          }, 500);
+          await SplashScreen.hideAsync();
+        } else {
+          router.replace("/(auth)/login");
+          setTimeout(() => {
+            Toast.show({
+              type: "error",
+              text1: "회원가입에 실패했습니다. 다시 시도해주세요.",
+            });
+          }, 500);
+          await SplashScreen.hideAsync();
+        }
+      });
+
+      await new Promise((res) => setTimeout(res, 300));
+
+      // * 세션 여부 검사
       try {
-        // TODO: 세션이 있어도 users 테이블에 유저가 없다면 로그인으로 이동
         const {
           data: { session },
         } = await supabase.auth.getSession();
-
         if (session) {
           router.replace("/(tabs)");
         } else {
           router.replace("/(auth)/login");
         }
-      } catch {
+      } catch (e) {
         router.replace("/(auth)/login");
       } finally {
         await SplashScreen.hideAsync();
       }
+
+      return () => sub.remove();
     };
 
     bootstrap();
@@ -108,7 +136,6 @@ export default function RootLayout() {
             headerBackVisible: false,
           }}
         />
-        <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
         <Stack.Screen name="createDiary" options={{ headerShown: false }} />
         <Stack.Screen
           name="thirdPartyLoginResult"
