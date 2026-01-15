@@ -1,7 +1,7 @@
 import { memo } from "react";
 import Image from "next/image";
-import { EllipsisVertical } from "lucide-react";
-import { navigateNative, Switch } from "@/shared";
+import { EllipsisVertical, UserRound } from "lucide-react";
+import { Switch } from "@/shared";
 import { useRouter } from "next/navigation";
 
 interface IDiaryITemHeader {
@@ -34,15 +34,21 @@ export const DiaryItemHeader = memo(
           className="flex items-center gap-x-3"
           onClick={() => !isNotFeed && router.push(`/profile/${userId}`)}
         >
-          <div className="overflow-hidden rounded-full w-14 h-14">
-            <Image
-              src={profileImage}
-              className="object-cover w-full h-full"
-              width={0}
-              height={0}
-              sizes="100vw"
-              alt="profile image"
-            />
+          <div className="overflow-hidden rounded-full w-12 h-12">
+            {profileImage ? (
+              <Image
+                src={profileImage}
+                className="object-cover w-full h-full"
+                width={0}
+                height={0}
+                sizes="100vw"
+                alt="profile image"
+              />
+            ) : (
+              <div className="items-center flex justify-center w-full h-full bg-zinc-200">
+                <UserRound size={30} color="#fff" />
+              </div>
+            )}
           </div>
           <div>
             <p className="font-semibold text-left line-clamp-1">{name}</p>
@@ -53,7 +59,6 @@ export const DiaryItemHeader = memo(
             )}
           </div>
         </button>
-
         {isNotFeed && (
           <div className="flex items-center gap-x-4">
             <div className="flex items-center gap-x-2">
