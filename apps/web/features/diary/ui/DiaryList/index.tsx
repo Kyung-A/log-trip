@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DiaryItem } from "./DiaryItem";
 import {
   IDiary,
@@ -11,9 +11,15 @@ import {
 import { EmptyView } from "@/shared";
 
 export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
+  const [isMounted, setIsMounted] = useState(false);
   const { data } = useFetchDiaries(queryKey);
   const { mutateAsync: deleteMutateAsync } = useDeleteDiary();
   const { mutate: updateMutate } = useUpdateIsPublicDiary();
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMounted(true);
+  }, []);
 
   const handleDeleteDiary = useCallback(
     async (item: IDiary) => {
@@ -31,6 +37,10 @@ export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
     },
     [updateMutate]
   );
+
+  if (!isMounted) {
+    return <div className="w-full min-h-dvh bg-zinc-100" />;
+  }
 
   if (!data || data?.length === 0) {
     return <EmptyView message="공개된 다이어리가 없습니다" />;

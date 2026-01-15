@@ -1,23 +1,29 @@
 import { supabase } from "@/shared";
 
 export const getDiaries = async () => {
+  let result = [];
+
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const { data, error } = await supabase
-    .from("diaries")
-    .select(
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user?.id) {
+    const { data, error } = await supabase
+      .from("diaries")
+      .select(
+        `
+        *,
+        user_info:user_id ( email, name, nickname, profile_image, about ),
+        diary_images (id, url),
+        diary_regions ( * )
       `
-      *,
-      user_info:user_id ( email, name, nickname, profile_image, about ),
-      diary_images (id, url),
-      diary_regions ( * )
-    `
-    )
-    .eq("user_id", session?.user.id)
-    .order("created_at", { ascending: false });
+      )
+      .eq("user_id", user?.id)
+      .order("created_at", { ascending: false });
 
-  if (error) throw new Error(error.message);
+    if (error) throw new Error(error.message);
+    result = data;
+  }
 
-  return data;
+  return result;
 };
