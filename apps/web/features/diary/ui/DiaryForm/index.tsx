@@ -247,16 +247,33 @@ export const DiaryForm = () => {
           required: "여행일은 필수입니다.",
         }}
         render={({ field: { onChange, value } }) => (
-          <>
-            <label className="flex flex-wrap items-start justify-between w-full px-4 py-3 border-b border-gray-300">
-              <p className="mr-4 text-lg">여행일</p>
-              {/* <input
-                type="date"
-                value={value}
-                onChange={(date) => onChange(date)}
-              /> */}
+          <label className="flex flex-wrap items-start justify-between w-full px-4 py-3 border-b border-gray-300">
+            <p className="text-lg">여행일</p>
+            <input
+              type="date"
+              value={value as unknown as string}
+              onChange={(date) => onChange(date)}
+            />
+          </label>
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="is_public"
+        render={({ field: { onChange, value } }) => (
+          <div className="flex items-center justify-between w-full px-4 py-3 border-b border-gray-300">
+            <label htmlFor="custom-check" className="text-lg">
+              공개
             </label>
-          </>
+            <input
+              id="custom-check"
+              type="checkbox"
+              onChange={onChange}
+              defaultChecked={value}
+              className="pure-checkbox"
+            />
+          </div>
         )}
       />
 

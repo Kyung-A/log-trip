@@ -4,6 +4,11 @@
   --color-beige: #f2eeec;
 }
 
+html,
+body {
+  background-color: #f4f4f5;
+}
+
 .mapboxgl-ctrl-logo {
   display: none !important;
 }
@@ -13,6 +18,10 @@
 
 body:has(dialog[open]) {
   overflow: hidden;
+}
+
+.swiper-scrollbar {
+  background-color: transparent !important;
 }
 
 .Toastify__toast-container {
@@ -65,4 +74,33 @@ body:has(dialog[open]) {
     transparent
   );
   animation: shimmer 1.5s infinite;
+}
+.pure-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.pure-checkbox:checked {
+  background-color: #d5b2a8;
+  border-color: #d5b2a8;
+}
+
+.pure-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 11px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
