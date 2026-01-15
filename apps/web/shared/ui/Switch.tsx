@@ -28,7 +28,7 @@ export const Switch = ({ initialChecked = false, onToggle }: ISwitch) => {
       <div
         className={`
           relative w-12 h-6 rounded-full transition-colors duration-300 ease-in-out 
-          ${isChecked ? "bg-green-500" : "bg-gray-300"}
+          ${isChecked ? "bg-[#d5b2a8]" : "bg-gray-300"}
         `}
         aria-hidden="true"
       >

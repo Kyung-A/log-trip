@@ -13,13 +13,7 @@ interface IDiaryImageSlider {
 
 export const DiaryImageSlider = memo(({ images }: IDiaryImageSlider) => {
   return (
-    <Swiper
-      spaceBetween={50}
-      slidesPerView={1}
-      pagination={{ clickable: true }}
-      scrollbar={{ draggable: true }}
-      className="h-[400px]"
-    >
+    <Swiper scrollbar={{ draggable: true }} className="h-100">
       {images.map((img) => (
         <SwiperSlide key={img.id}>
           <Image

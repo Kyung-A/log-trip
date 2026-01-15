@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export const EmptyView = ({ message }: { message: string }) => {
   return (
-    <div className="flex flex-col items-center justify-center gap-6 w-full h-screen bg-beige">
+    <div className="flex flex-col items-center justify-center gap-6 w-full min-h-screen h-ull bg-beige">
       <Image
         src="/images/logo/logo.png"
         className="object-cover w-32 h-32"

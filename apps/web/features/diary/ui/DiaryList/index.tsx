@@ -37,7 +37,7 @@ export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
   }
 
   return (
-    <ul className="w-full bg-zinc-100">
+    <ul className="w-full min-h-dvh bg-zinc-100">
       {data.map((item) => (
         <DiaryItem
           key={item.id}
