@@ -21,6 +21,7 @@ export default ({ config }) => ({
             CFBundleURLSchemes: [process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME],
           },
           {
+            CFBundleTypeRole: "Editor",
             CFBundleURLSchemes: [
               `kakao${process.env.EXPO_PUBLIC_KAKAO_API_KEY}`,
             ],

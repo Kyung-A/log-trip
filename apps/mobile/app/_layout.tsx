@@ -57,36 +57,74 @@ const toastConfig = {
   ),
 };
 
-export default function RootLayout() {
+function parseAuthParams(url: string) {
+  const fragment = url.split("#")[1];
+  if (!fragment) return {};
+
+  return Object.fromEntries(
+    fragment.split("&").map((param) => {
+      const [key, value] = param.split("=");
+      return [key, decodeURIComponent(value)];
+    })
+  );
+}
+
+function useSupabaseEmailLinking() {
   useEffect(() => {
-    const bootstrap = async () => {
-      // * 딥링크 감지
-      const sub = Linking.addEventListener("url", async ({ url }) => {
-        // TODO: 회원가입 성공시 이메일 로그인 페이지로 리다이랙트
-        if (url.includes("access_token") && url.includes("type=signup")) {
-          router.replace("/(auth)/login");
+    const sub = Linking.addEventListener("url", async ({ url }) => {
+      if (url.includes("access_denied")) {
+        router.replace("/(auth)/login");
+        setTimeout(() => {
+          Toast.show({
+            type: "error",
+            text1: "잘못된 접근 및 링크가 만료 되었습니다.",
+          });
+        }, 300);
+        return;
+      }
+
+      if (url.includes("access_token") && url.includes("type=signup")) {
+        const params = parseAuthParams(url);
+
+        const accessToken = params?.access_token;
+        const refreshToken = params?.refresh_token;
+        if (!accessToken || !refreshToken) return;
+
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+
+        if (error) {
+          console.error("setSession error:", error.message);
+          return;
+        }
+
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user?.email_confirmed_at) {
+          router.replace("/(auth)/email-login");
           setTimeout(() => {
             Toast.show({
               type: "success",
               text1: "회원가입이 완료되었습니다. 로그인 해주세요.",
             });
-          }, 500);
-          await SplashScreen.hideAsync();
-        } else {
-          router.replace("/(auth)/login");
-          setTimeout(() => {
-            Toast.show({
-              type: "error",
-              text1: "회원가입에 실패했습니다. 다시 시도해주세요.",
-            });
-          }, 500);
-          await SplashScreen.hideAsync();
+          }, 300);
         }
-      });
+      }
+    });
 
-      await new Promise((res) => setTimeout(res, 300));
+    return () => sub.remove();
+  }, []);
+}
 
-      // * 세션 여부 검사
+export default function RootLayout() {
+  useSupabaseEmailLinking();
+
+  // * 세션 여부 검사
+  useEffect(() => {
+    const bootstrap = async () => {
       try {
         const {
           data: { session },
@@ -101,8 +139,6 @@ export default function RootLayout() {
       } finally {
         await SplashScreen.hideAsync();
       }
-
-      return () => sub.remove();
     };
 
     bootstrap();
