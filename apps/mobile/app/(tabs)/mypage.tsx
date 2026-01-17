@@ -63,6 +63,8 @@ export default function MyPageScreen() {
             console.warn("Invalid message from web", e);
           }
         }}
+        allowsInlineMediaPlayback={true}
+        allowFileAccess={true}
       />
     </SafeAreaView>
   );

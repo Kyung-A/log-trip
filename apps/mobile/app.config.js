@@ -5,20 +5,20 @@ export default ({ config }) => ({
     version: "1.1.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
+    scheme: "com.nek777.mytripapp",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
       usesAppleSignIn: true,
-      bundleIdentifier: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
-      buildNumber: "14",
+      bundleIdentifier: "com.nek777.mytripapp",
+      buildNumber: "17",
       infoPlist: {
         CFBundleDisplayName: "로그트립",
         CFBundleName: "로그트립",
         CFBundleURLTypes: [
           {
-            CFBundleURLSchemes: [process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME],
+            CFBundleURLSchemes: ["com.nek777.mytripapp"],
           },
           {
             CFBundleTypeRole: "Editor",
@@ -32,10 +32,15 @@ export default ({ config }) => ({
           "storykompassauth",
           "kakaolink",
         ],
+        NSCameraUsageDescription: "사진 촬영을 위해 카메라 권한이 필요합니다.",
+        NSPhotoLibraryUsageDescription:
+          "사진 업로드를 위해 앨범 접근 권한이 필요합니다.",
+        NSPhotoLibraryAddUsageDescription:
+          "사진 저장을 위해 앨범 접근 권한이 필요합니다.",
       },
     },
     android: {
-      package: process.env.EXPO_PUBLIC_SERVICE_URL_SCHEME,
+      package: "com.nek777.mytripapp",
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
       },

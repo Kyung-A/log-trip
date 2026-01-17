@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
 
 export default function DiaryScreen() {
-  const webviewRef = useRef(null);
+  const webviewRef = useRef<WebView>(null);
 
   return (
     <SafeAreaView
@@ -17,6 +17,8 @@ export default function DiaryScreen() {
         startInLoadingState={true}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}
+        allowsInlineMediaPlayback={true}
+        allowFileAccess={true}
       />
     </SafeAreaView>
   );
