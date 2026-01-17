@@ -35,7 +35,7 @@ export const DiaryItem = ({
       <article className="w-full h-auto mb-2 bg-white relative">
         <DiaryItemHeader
           profileImage={item.user_info.profile_image}
-          name={item.user_info.name}
+          nickname={item.user_info.nickname}
           isPublic={item.is_public}
           about={item.user_info.about}
           userId={item.user_id}

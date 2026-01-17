@@ -83,7 +83,7 @@ export const ProfileUpdateClient = () => {
           refetchType: "active",
           exact: true,
         });
-        navigateNative("/mypage");
+        navigateNative("/mypage", "WINDOW_LOCATION");
       }
     } catch (error) {
       console.error(error);
@@ -162,7 +162,7 @@ export const ProfileUpdateClient = () => {
           render={({ field: { onChange, value } }) => (
             <input
               className="w-40 mt-6 text-xl font-semibold text-center outline-0"
-              placeholder="이름을 작성해주세요"
+              placeholder="낙네임을 작성해주세요"
               onChange={onChange}
               value={value}
             />

@@ -251,8 +251,10 @@ export const DiaryForm = () => {
             <p className="text-lg">여행일</p>
             <input
               type="date"
-              value={value as unknown as string}
-              onChange={(date) => onChange(date)}
+              value={
+                value instanceof Date ? value.toISOString().split("T")[0] : ""
+              }
+              onChange={(date) => onChange(new Date(date.target.value))}
             />
           </label>
         )}

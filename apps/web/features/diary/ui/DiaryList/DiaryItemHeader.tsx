@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 interface IDiaryITemHeader {
   profileImage: string;
-  name: string;
+  nickname: string;
   isPublic: boolean;
   handleIsPublicDiaryChange: (state: boolean) => boolean;
   onToggle: () => void;
@@ -18,7 +18,7 @@ interface IDiaryITemHeader {
 export const DiaryItemHeader = memo(
   ({
     profileImage,
-    name,
+    nickname,
     isPublic,
     handleIsPublicDiaryChange,
     onToggle,
@@ -51,7 +51,7 @@ export const DiaryItemHeader = memo(
             )}
           </div>
           <div>
-            <p className="font-semibold text-left line-clamp-1">{name}</p>
+            <p className="font-semibold text-left line-clamp-1">{nickname}</p>
             {!isNotFeed && (
               <p className="text-sm text-zinc-600 line-clamp-1 text-left">
                 {about}

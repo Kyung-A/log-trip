@@ -29,9 +29,7 @@ export const MyPageClient = () => {
           </div>
         )}
       </div>
-      <p className="mt-4 text-xl font-semibold">
-        {profile?.nickname ? profile.nickname : profile?.name}
-      </p>
+      <p className="mt-4 text-xl font-semibold">{profile?.nickname}</p>
       <p className="mt-3">
         {profile?.about ?? "간단한 자기소개를 작성해 주세요!"}
       </p>
