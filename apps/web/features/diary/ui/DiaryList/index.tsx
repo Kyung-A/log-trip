@@ -9,8 +9,10 @@ import {
   useUpdateIsPublicDiary,
 } from "../..";
 import { EmptyView } from "@/shared";
+import { usePathname } from "next/navigation";
 
 export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
+  const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const { data } = useFetchDiaries(queryKey);
   const { mutateAsync: deleteMutateAsync } = useDeleteDiary();
@@ -43,7 +45,15 @@ export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
   }
 
   if (!data || data?.length === 0) {
-    return <EmptyView message="공개된 다이어리가 없습니다" />;
+    return (
+      <EmptyView
+        message={
+          pathname.includes("public")
+            ? "공개된 일기가 없습니다\n가장 먼저 내 일기를 공개 해보세요!"
+            : "작성된 일기가 없습니다"
+        }
+      />
+    );
   }
 
   return (

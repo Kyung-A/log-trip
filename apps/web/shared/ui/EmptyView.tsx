@@ -13,7 +13,9 @@ export const EmptyView = ({ message }: { message: string }) => {
         height={0}
         sizes="100vw"
       />
-      <p className="text-lg">{message}</p>
+      <p className="text-base whitespace-pre-wrap text-center text-zinc-700">
+        {message}
+      </p>
     </div>
   );
 };
