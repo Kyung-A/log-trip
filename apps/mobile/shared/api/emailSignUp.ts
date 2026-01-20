@@ -16,7 +16,5 @@ export const emailSignUp = async (email: string, password: string) => {
     },
   });
 
-  if (error) throw new Error(error.message);
-
-  return data;
+  return { data, error };
 };

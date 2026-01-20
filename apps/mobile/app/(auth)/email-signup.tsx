@@ -10,13 +10,20 @@ import {
   Alert,
   TouchableOpacity,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Toast from "react-native-toast-message";
 import WebView from "react-native-webview";
+import { router } from "expo-router";
 
 export default function EmailSignUpScreen() {
-  const { control, handleSubmit, getValues } = useForm();
+  const {
+    control,
+    handleSubmit,
+    getValues,
+    formState: { isSubmitting },
+  } = useForm();
 
   const [selected, setSelected] = useState<boolean>(false);
   const [duplicateCheck, setDuplicateCheck] = useState<boolean>(false);
@@ -72,12 +79,24 @@ export default function EmailSignUpScreen() {
         return;
       }
 
-      const result = await emailSignUp(formData.email, formData.password);
+      const { data, error } = await emailSignUp(
+        formData.email,
+        formData.password,
+      );
 
-      if (result) {
+      if (data) {
+        router.replace({
+          pathname: "/auth/callback",
+          params: {
+            email: formData.email,
+          },
+        });
+      }
+
+      if (error) {
         Toast.show({
-          type: "success",
-          text1: "입력하신 이메일의 메일함을 확인해주세요.",
+          type: "error",
+          text1: "문제가 발생했습니다. 다시 시도해주세요.",
         });
       }
     },
@@ -87,13 +106,13 @@ export default function EmailSignUpScreen() {
         type: "error",
         text1: Object.values(error)[0]?.message as string,
       });
-    }
+    },
   );
 
   const openExternal = useCallback(async () => {
     try {
       await Linking.openURL(
-        "https://useful-shield-356.notion.site/2636f7963e8d80f994c6c32a77d53e6a"
+        "https://useful-shield-356.notion.site/2636f7963e8d80f994c6c32a77d53e6a",
       );
     } catch (e) {
       Alert.alert("링크 열기에 실패했어요.", String(e));
@@ -145,16 +164,18 @@ export default function EmailSignUpScreen() {
                 style={{
                   flex: 1,
                   paddingHorizontal: 12,
-                  paddingVertical: 16,
+                  height: 50,
                   fontSize: 16,
                   lineHeight: 24,
                   borderWidth: 1,
                   borderColor: "#d1d5db",
                   borderRadius: 6,
+                  backgroundColor: duplicateCheck ? "#e5e7eb" : "transparent",
                 }}
                 placeholder="이메일 입력"
                 onChangeText={onChange}
                 value={value}
+                editable={!duplicateCheck}
               />
 
               <Pressable
@@ -178,7 +199,7 @@ export default function EmailSignUpScreen() {
                     color: duplicateCheck ? "#9ca3af" : "#3b82f6",
                   }}
                 >
-                  중복 확인
+                  {duplicateCheck ? "확인 완료" : "중복 확인"}
                 </Text>
               </Pressable>
             </View>
@@ -208,7 +229,7 @@ export default function EmailSignUpScreen() {
             <TextInput
               style={{
                 paddingHorizontal: 12,
-                paddingVertical: 16,
+                height: 50,
                 fontSize: 16,
                 lineHeight: 24,
                 marginTop: 6,
@@ -248,7 +269,7 @@ export default function EmailSignUpScreen() {
             <TextInput
               style={{
                 paddingHorizontal: 12,
-                paddingVertical: 16,
+                height: 50,
                 fontSize: 16,
                 lineHeight: 24,
                 marginTop: 6,
@@ -326,21 +347,30 @@ export default function EmailSignUpScreen() {
           onPress={handleSignUp}
           style={{
             justifyContent: "center",
-            backgroundColor: "#bfdbfe",
+            backgroundColor: isSubmitting ? "#ccc" : "#bfdbfe",
             borderRadius: 6,
           }}
+          disabled={isSubmitting}
         >
-          <Text
-            style={{
-              paddingVertical: 18,
-              fontSize: 16,
-              fontWeight: "600",
-              textAlign: "center",
-              color: "#3b82f6",
-            }}
-          >
-            회원가입
-          </Text>
+          {isSubmitting ? (
+            <ActivityIndicator
+              style={{ paddingVertical: 15 }}
+              size="small"
+              color="#4b5563"
+            />
+          ) : (
+            <Text
+              style={{
+                paddingVertical: 18,
+                fontSize: 16,
+                fontWeight: "600",
+                textAlign: "center",
+                color: "#3b82f6",
+              }}
+            >
+              회원가입
+            </Text>
+          )}
         </Pressable>
       )}
 
