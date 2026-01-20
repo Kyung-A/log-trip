@@ -59,8 +59,8 @@ export const DiaryItemHeader = memo(
             )}
           </div>
         </button>
-        {isNotFeed && (
-          <div className="flex items-center gap-x-4">
+        <div className="flex items-center gap-x-4">
+          {isNotFeed && (
             <div className="flex items-center gap-x-2">
               <p className="text-sm text-zinc-600">공개</p>
               <Switch
@@ -68,14 +68,14 @@ export const DiaryItemHeader = memo(
                 onToggle={handleIsPublicDiaryChange}
               />
             </div>
-            <button onClick={() => onToggle()}>
-              <EllipsisVertical size={24} color="#303030" />
-            </button>
-          </div>
-        )}
+          )}
+          <button onClick={() => onToggle()}>
+            <EllipsisVertical size={24} color="#303030" />
+          </button>
+        </div>
       </div>
     );
-  }
+  },
 );
 
 DiaryItemHeader.displayName = "DiaryItemHeader";

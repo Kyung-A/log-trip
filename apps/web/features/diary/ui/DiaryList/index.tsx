@@ -6,22 +6,37 @@ import {
   IDiary,
   useDeleteDiary,
   useFetchDiaries,
-  useUpdateIsPublicDiary,
+  useUpdateIsReport,
+  useUpdateIsPublic,
 } from "../..";
 import { EmptyView } from "@/shared";
 import { usePathname } from "next/navigation";
+import { toast } from "react-toastify";
 
 export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const { data } = useFetchDiaries(queryKey);
   const { mutateAsync: deleteMutateAsync } = useDeleteDiary();
-  const { mutate: updateMutate } = useUpdateIsPublicDiary();
+  const { mutate: updateIsPublicMutate } = useUpdateIsPublic();
+  const { mutateAsync: updateIsReportMutate } = useUpdateIsReport();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
+
+  const handleReportDiary = useCallback(
+    async (id: string) => {
+      if (confirm("정말 신고하시겠습니까?")) {
+        const status = await updateIsReportMutate(id);
+        if (status === 204) {
+          toast.success("신고 처리 되었습니다.");
+        }
+      }
+    },
+    [updateIsReportMutate],
+  );
 
   const handleDeleteDiary = useCallback(
     async (item: IDiary) => {
@@ -29,15 +44,15 @@ export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
         await deleteMutateAsync(item);
       }
     },
-    [deleteMutateAsync]
+    [deleteMutateAsync],
   );
 
   const handleIsPublicDiaryChange = useCallback(
     (id: string, state: boolean) => {
-      updateMutate({ id, state });
+      updateIsPublicMutate({ id, state });
       return state;
     },
-    [updateMutate]
+    [updateIsPublicMutate],
   );
 
   if (!isMounted) {
@@ -62,6 +77,7 @@ export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
         <DiaryItem
           key={item.id}
           item={item}
+          handleReportDiary={handleReportDiary}
           handleDeleteDiary={handleDeleteDiary}
           handleIsPublicDiaryChange={handleIsPublicDiaryChange}
           isNotFeed={queryKey[1] !== "feed"}

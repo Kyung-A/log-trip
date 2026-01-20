@@ -4,9 +4,9 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { diaryInvalidateKeys, diaryKeys } from "./queryKeys";
-import { createDiary, deleteDiary } from "../apis";
+import { createDiary, deleteDiary, updateIsReport } from "../apis";
 import { IDiary } from "..";
-import { updateIsPublicDiary } from "../apis/updateIsPublicDiary";
+import { updateIsPublic } from "../apis/updateIsPublic";
 
 const diaryMutatins = {
   create: () =>
@@ -17,12 +17,17 @@ const diaryMutatins = {
   update: () =>
     mutationOptions({
       mutationFn: ({ id, state }: { id: string; state: boolean }) =>
-        updateIsPublicDiary(id, state),
+        updateIsPublic(id, state),
     }),
 
   remove: () =>
     mutationOptions({
       mutationFn: (data: IDiary) => deleteDiary(data),
+    }),
+
+  report: () =>
+    mutationOptions({
+      mutationFn: (id: string) => updateIsReport(id),
     }),
 };
 
@@ -39,7 +44,7 @@ export const useCreateDiary = () => {
   });
 };
 
-export const useUpdateIsPublicDiary = () => {
+export const useUpdateIsPublic = () => {
   const qc = useQueryClient();
 
   return useMutation({
@@ -66,7 +71,7 @@ export const useDeleteDiary = () => {
         if (!Array.isArray(list)) return;
         qc.setQueryData(
           key,
-          list.filter((d) => d.id !== id)
+          list.filter((d) => d.id !== id),
         );
       });
 
@@ -83,6 +88,40 @@ export const useDeleteDiary = () => {
       diaryInvalidateKeys(data.user_id).forEach((key) => {
         qc.invalidateQueries(key);
       });
+    },
+  });
+};
+
+export const useUpdateIsReport = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    ...diaryMutatins.report(),
+    onMutate: async (id) => {
+      await qc.cancelQueries({ queryKey: diaryKeys.feed() });
+
+      const prevData = qc.getQueriesData({
+        queryKey: diaryKeys.feed(),
+      });
+
+      prevData.forEach(([key, list]) => {
+        if (!Array.isArray(list)) return;
+        qc.setQueryData(
+          key,
+          list.filter((d) => d.id !== id),
+        );
+      });
+
+      qc.removeQueries({ queryKey: diaryKeys.detail(id!), exact: true });
+
+      return { prevData };
+    },
+    onError: (_error) => {
+      console.error("삭제 중 서버 에러 발생:", _error);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: diaryKeys.mine() });
+      qc.invalidateQueries({ queryKey: diaryKeys.feed() });
     },
   });
 };
