@@ -15,6 +15,7 @@ export interface IDiary {
   diary_images: { id?: string; url: string }[];
   diary_regions: IDiaryRegionsRender[];
   is_public: boolean;
+  is_report: boolean;
 }
 
 export interface IDiaryRegionsRender {

@@ -12,6 +12,7 @@ export const getPublicDiaries = async () => {
     `,
     )
     .eq("is_public", true)
+    .eq("is_report", false)
     .order("updated_at", { ascending: false });
 
   if (error) throw new Error(error.message);
