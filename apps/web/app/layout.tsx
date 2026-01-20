@@ -3,6 +3,7 @@ import RootProvider from "@/shared/rootProvider";
 
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -31,6 +32,12 @@ export default function RootLayout({
           </main>
         </body>
       </html>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar
+        theme="colored"
+      />
     </RootProvider>
   );
 }

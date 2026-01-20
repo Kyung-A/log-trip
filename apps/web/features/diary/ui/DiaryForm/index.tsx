@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ChevronLeft } from "lucide-react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { UploadDiaryImageField } from "./UploadDiaryImageField";
 import { DrawingModeToggle } from "./DrawingModeToggle";
 import { ContentEditor } from "./ContentEditor";
@@ -59,7 +59,7 @@ export const DiaryForm = () => {
       if (state) {
         if (
           confirm(
-            "드로잉 모드로 전환 하시겠습니까?\n드로잉 모드 전환시 작성한 텍스트는 사라집니다."
+            "드로잉 모드로 전환 하시겠습니까?\n드로잉 모드 전환시 작성한 텍스트는 사라집니다.",
           )
         ) {
           setValue("is_drawing", true);
@@ -69,7 +69,7 @@ export const DiaryForm = () => {
       } else {
         if (
           confirm(
-            "텍스트 모드로 전환 하시겠습니까?\n텍스트 모드 전환시 작성한 그림은 사라집니다."
+            "텍스트 모드로 전환 하시겠습니까?\n텍스트 모드 전환시 작성한 그림은 사라집니다.",
           )
         ) {
           setValue("is_drawing", false);
@@ -81,13 +81,13 @@ export const DiaryForm = () => {
 
       return returnState;
     },
-    [setValue]
+    [setValue],
   );
 
   // 드로잉 이미지 캡쳐 핸들러
   const handleDrawingImageCapture = (
     imageDataUrl: string,
-    canvasSize: { width: number; height: number }
+    canvasSize: { width: number; height: number },
   ) => {
     setCapturedDrawingImage(imageDataUrl);
     setCanvasSize(canvasSize);
@@ -104,13 +104,13 @@ export const DiaryForm = () => {
     (imageDataUrl: string) => {
       setImgs((prev) =>
         prev.map((i) =>
-          i.origin === currentEditImage ? { ...i, modified: imageDataUrl } : i
-        )
+          i.origin === currentEditImage ? { ...i, modified: imageDataUrl } : i,
+        ),
       );
 
       handleCloseEditMode();
     },
-    [currentEditImage, handleCloseEditMode]
+    [currentEditImage, handleCloseEditMode],
   );
 
   // supabase 이미지 업로드 및 URL 반환
@@ -171,7 +171,7 @@ export const DiaryForm = () => {
 
       if (imgs && imgs.length > 0) {
         const results = await Promise.all(
-          imgs.map((v) => uploadAndGetUrlImage(v.modified))
+          imgs.map((v) => uploadAndGetUrlImage(v.modified)),
         );
 
         const diaryImagesUrls = results
@@ -185,7 +185,7 @@ export const DiaryForm = () => {
 
       if (formData.is_drawing) {
         const drawingContentUrl = await uploadAndGetUrlImage(
-          capturedDrawingImage!
+          capturedDrawingImage!,
         );
         body = { ...body, drawing_content: drawingContentUrl };
       }
@@ -197,7 +197,7 @@ export const DiaryForm = () => {
     },
     (error) => {
       toast.error(Object.values(error)[0].message);
-    }
+    },
   );
 
   useEffect(() => {
@@ -303,13 +303,6 @@ export const DiaryForm = () => {
         editImage={currentEditImage}
         handleCloseEditMode={handleCloseEditMode}
         handleSaveEditMode={handleSaveEditMode}
-      />
-
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar
-        theme="colored"
       />
     </>
   );

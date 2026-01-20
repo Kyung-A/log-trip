@@ -13,7 +13,7 @@ import { CitySelectField, navigateNative } from "@/shared";
 import Picker from "react-mobile-picker";
 import { ChevronLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 export function CompanionForm() {
   const router = useRouter();
@@ -50,7 +50,7 @@ export function CompanionForm() {
     },
     (error) => {
       toast.error(Object.values(error)[0]?.message?.toString());
-    }
+    },
   );
 
   useEffect(() => {
@@ -118,7 +118,7 @@ export function CompanionForm() {
                           >
                             {detailData.companion_count + i}
                           </Picker.Item>
-                        )
+                        ),
                       )
                     : Array.from({ length: 6 }, (_, i) => (
                         <Picker.Item
@@ -315,13 +315,6 @@ export function CompanionForm() {
           />
         </div>
       </main>
-
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar
-        theme="colored"
-      />
     </>
   );
 }

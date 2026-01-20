@@ -11,7 +11,6 @@ import dayjs from "dayjs";
 import { ChevronLeft, User } from "lucide-react";
 import React from "react";
 import Image from "next/image";
-import { ToastContainer } from "react-toastify";
 import Link from "next/link";
 
 const statusLabel = {
@@ -103,7 +102,7 @@ const StatusCard = React.memo(
         </div>
       </>
     );
-  }
+  },
 );
 
 StatusCard.displayName = "StatusCard";
@@ -136,12 +135,6 @@ export default function RecruitStatus() {
       ) : (
         <EmptyView message="아쉽게도 아직 동행 신청자가 없습니다" />
       )}
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar
-        theme="colored"
-      />
     </div>
   );
 }
