@@ -2,10 +2,8 @@ export interface IProfile {
   id: string;
   name: string;
   year_of_birth: string;
-  gender: 'female' | 'male';
-  phone: string;
+  gender: "female" | "male";
   platform: string;
-  mobile_carrier: string;
   created_at: string;
   about: string | null;
   profile_image: string | null;
