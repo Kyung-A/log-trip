@@ -14,7 +14,7 @@ export const diaryRegionKeys = {
 };
 
 export const diaryInvalidateKeys = (
-  userId: string
+  userId: string,
 ): InvalidateQueryFilters[] => [
   { queryKey: ["myCounters"] },
   { queryKey: diaryKeys.mine() },

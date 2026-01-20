@@ -74,7 +74,7 @@ export default function EmailSignUpScreen() {
       if (!selected) {
         Toast.show({
           type: "error",
-          text1: "개인정보보호 및 이용약관 동의는 필수입니다.",
+          text1: "개인정보처리방침 및 이용약관 동의는 필수입니다.",
         });
         return;
       }
@@ -302,7 +302,7 @@ export default function EmailSignUpScreen() {
               color: "#4b5563",
             }}
           >
-            개인정보보호 및 이용약관 동의 (필수)
+            개인정보처리방침 및 이용약관 동의 (필수)
           </Text>
         </Pressable>
         <TouchableOpacity onPress={() => setSelected((prev) => !prev)}>

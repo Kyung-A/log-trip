@@ -16,7 +16,7 @@ interface IImageSlider {
 
 export const ImageSlider = ({ images, onEditMode, onDelete }: IImageSlider) => {
   return (
-    <Swiper key={images.map((i) => i.origin).join("|")} loop>
+    <Swiper key={images.map((i) => i.origin).join("|")} loop id="upload-slide">
       {images.map((img) => (
         <SwiperSlide key={img.origin}>
           <button
