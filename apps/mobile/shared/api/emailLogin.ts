@@ -6,7 +6,7 @@ export const emailLogin = async (email: string, password: string) => {
     password: password,
   });
 
-  if (error) throw new Error(error.message);
+  if (error) throw error.message;
 
   return data;
 };

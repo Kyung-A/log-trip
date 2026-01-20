@@ -1,6 +1,5 @@
-import { checkIfUserExists, emailLogin, resendEmail } from "@/shared";
+import { checkIfUserExists, emailLogin } from "@/shared";
 import { router } from "expo-router";
-import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   View,
@@ -12,77 +11,68 @@ import {
 import Toast from "react-native-toast-message";
 
 export default function EmailLoginScreen() {
-  const [resendMail, setResendMail] = useState<boolean>(false);
-  const { control, handleSubmit, getValues } = useForm();
-
-  const handleResendMail = useCallback(async () => {
-    const email = getValues("email");
-    await resendEmail(email);
-
-    Toast.show({
-      type: "success",
-      text1: "메일을 확인해주세요.",
-    });
-  }, [getValues]);
+  const { control, handleSubmit } = useForm();
 
   const handleLogin = handleSubmit(
     async (formData) => {
-      const { session, user } = await emailLogin(
-        formData.email,
-        formData.password
-      );
-      const isUserExists = await checkIfUserExists(user?.id);
+      try {
+        const { session, user } = await emailLogin(
+          formData.email,
+          formData.password,
+        );
+        const isUserExists = await checkIfUserExists(user?.id);
 
-      if (isUserExists) {
-        router.replace({
-          pathname: "/(tabs)",
-          params: {
-            accessToken: session?.access_token,
-            refreshToken: session?.refresh_token,
-          },
-        });
-      } else {
-        router.replace({
-          pathname: "/(auth)/user-info",
-          params: {
-            accessToken: session?.access_token,
-            refreshToken: session?.refresh_token,
-            platform: "email",
-          },
-        });
+        if (isUserExists) {
+          router.replace({
+            pathname: "/(tabs)",
+            params: {
+              accessToken: session?.access_token,
+              refreshToken: session?.refresh_token,
+            },
+          });
+        } else {
+          router.replace({
+            pathname: "/(auth)/user-info",
+            params: {
+              accessToken: session?.access_token,
+              refreshToken: session?.refresh_token,
+              platform: "email",
+            },
+          });
+        }
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+
+        if (errorMessage.includes("Invalid login credentials")) {
+          Toast.show({
+            type: "error",
+            text1: "잘못된 이메일 또는 비밀번호 입니다.",
+          });
+          return;
+        }
+
+        if (errorMessage.includes("Email not confirmed")) {
+          router.replace({
+            pathname: "/auth/callback",
+            params: {
+              email: formData.email,
+            },
+          });
+          Toast.show({
+            type: "error",
+            text1: "이메일 인증을 완료해주세요.",
+          });
+          return;
+        }
       }
     },
-    (error) => {
-      if (
-        Object.values(error)[0]
-          ?.message?.toString()
-          .includes("Invalid login credentials")
-      ) {
-        Toast.show({
-          type: "error",
-          text1: "잘못된 이메일 또는 비밀번호 입니다.",
-        });
-        return;
-      }
-
-      if (
-        Object.values(error)[0]
-          ?.message?.toString()
-          .includes("Email not confirmed")
-      ) {
-        Toast.show({
-          type: "error",
-          text1: "이메일 인증을 완료해주세요.",
-        });
-        setResendMail(true);
-        return;
-      }
-
+    (validationError) => {
       Toast.show({
         type: "error",
-        text1: Object.values(error)[0]?.message as string,
+        text1: Object.values(validationError)[0]?.message as string,
       });
-    }
+    },
   );
 
   return (
@@ -121,7 +111,7 @@ export default function EmailLoginScreen() {
               value={value}
               style={{
                 paddingHorizontal: 12,
-                paddingVertical: 16,
+                height: 50,
                 fontSize: 16,
                 lineHeight: 24,
                 marginTop: 6,
@@ -157,7 +147,7 @@ export default function EmailLoginScreen() {
               secureTextEntry={true}
               style={{
                 paddingHorizontal: 12,
-                paddingVertical: 16,
+                height: 50,
                 fontSize: 16,
                 lineHeight: 24,
                 marginTop: 6,
@@ -169,30 +159,6 @@ export default function EmailLoginScreen() {
           </View>
         )}
       />
-
-      {resendMail && (
-        <View
-          style={{
-            paddingVertical: 8,
-            marginHorizontal: "auto",
-            alignItems: "center",
-          }}
-        >
-          <Text>인증 메일 다시 보내기</Text>
-          <TouchableOpacity onPress={handleResendMail} style={{ marginTop: 8 }}>
-            <Text
-              style={{
-                paddingVertical: 8,
-                fontWeight: "600",
-                textAlign: "center",
-                color: "#ea580c",
-              }}
-            >
-              메일 재전송
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )}
 
       <Pressable
         onPress={handleLogin}

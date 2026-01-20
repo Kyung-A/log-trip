@@ -6,6 +6,6 @@ export const getUserProfile = async (id?: string | null) => {
     .select("*")
     .eq("id", id)
     .maybeSingle();
-  if (error) throw new Error(error.message);
+  if (error) throw error.message;
   return data;
 };
