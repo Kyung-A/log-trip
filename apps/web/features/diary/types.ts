@@ -1,7 +1,6 @@
 export interface IDiary {
   id?: string;
   user_info: {
-    name: string;
     nickname: string;
     email: string;
     profile_image: string;

@@ -3,7 +3,6 @@ export interface IProfile {
   created_at: string;
   gender: string;
   id: string;
-  name: string;
   nickname: string;
   email: string;
   platform: string;

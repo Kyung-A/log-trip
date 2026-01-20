@@ -1,6 +1,5 @@
 export interface IProfile {
   id: string;
-  name: string;
   year_of_birth: string;
   gender: "female" | "male";
   platform: string;

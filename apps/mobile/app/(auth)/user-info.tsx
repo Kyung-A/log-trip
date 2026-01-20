@@ -26,7 +26,6 @@ export default function UserInfoScreen() {
         id: user?.id,
         email: user?.email,
         nickname: formData.nickname,
-        name: user?.user_metadata?.name,
         about: formData.about,
         platform: platform,
       });
@@ -38,7 +37,6 @@ export default function UserInfoScreen() {
           email: user?.email,
           nickname: formData.nickname,
           about: formData.about,
-          name: user?.user_metadata?.name,
           platform: platform,
         })
         .eq("id", user?.id);
@@ -90,6 +88,7 @@ export default function UserInfoScreen() {
                 placeholder="닉네임 입력"
                 onChangeText={onChange}
                 value={value}
+                maxLength={10}
               />
             </View>
           )}
@@ -116,6 +115,7 @@ export default function UserInfoScreen() {
                 placeholder="간단한 자기소개 작성"
                 onChangeText={onChange}
                 value={value}
+                maxLength={30}
               />
             </View>
           )}

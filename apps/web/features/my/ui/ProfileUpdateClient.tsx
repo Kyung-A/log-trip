@@ -38,7 +38,7 @@ export const ProfileUpdateClient = () => {
       setProfileImg(newImages);
       event.target.value = "";
     },
-    []
+    [],
   );
 
   const uploadAndGetUrlImage = async () => {
@@ -165,6 +165,7 @@ export const ProfileUpdateClient = () => {
               placeholder="낙네임을 작성해주세요"
               onChange={onChange}
               value={value}
+              maxLength={10}
             />
           )}
         />

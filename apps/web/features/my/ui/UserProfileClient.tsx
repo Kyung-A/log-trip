@@ -41,9 +41,7 @@ export const UserProfileClient = () => {
             </div>
           )}
         </div>
-        <p className="mt-4 text-xl font-semibold">
-          {profile?.nickname ? profile.nickname : profile?.name}
-        </p>
+        <p className="mt-4 text-xl font-semibold">{profile?.nickname}</p>
         <p className="mt-3">{profile?.about}</p>
         <div className="flex items-center mt-6">
           <div className="flex items-center px-6 flex-col">

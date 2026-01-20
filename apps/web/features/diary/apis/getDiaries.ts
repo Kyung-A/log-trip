@@ -13,10 +13,10 @@ export const getDiaries = async () => {
       .select(
         `
         *,
-        user_info:user_id ( email, name, nickname, profile_image, about ),
+        user_info:user_id ( email, nickname, profile_image, about ),
         diary_images (id, url),
         diary_regions ( * )
-      `
+      `,
       )
       .eq("user_id", user?.id)
       .order("created_at", { ascending: false });

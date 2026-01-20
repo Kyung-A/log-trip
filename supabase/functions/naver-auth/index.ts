@@ -16,10 +16,10 @@ Deno.serve(async (req) => {
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    const { id, email, name, refreshToken } = await req.json();
+    const { id, email, refreshToken } = await req.json();
     const password = `${id}_${NAVER_INTERNAL_SECRET}`;
 
     // *  auth 테이블에서 유저 조회
@@ -39,7 +39,6 @@ Deno.serve(async (req) => {
         email_confirm: true,
         options: {
           data: {
-            name: name,
             email_verified: true,
             email: email,
           },
@@ -47,7 +46,6 @@ Deno.serve(async (req) => {
         user_metadata: {
           sub: id,
           provider_id: id,
-          full_name: name,
           provider: "naver",
           naver_refresh_token: refreshToken,
         },
@@ -86,7 +84,7 @@ Deno.serve(async (req) => {
         {
           status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        },
       );
 
     // * users 테이블에 유저가 있다면(로그인+추가정보 입력 완료) => 세션과 함께 메인으로 이동
@@ -95,7 +93,7 @@ Deno.serve(async (req) => {
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), {

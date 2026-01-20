@@ -6,10 +6,10 @@ export const getPublicDiaries = async () => {
     .select(
       `
         *,
-        user_info:user_id ( email, name, nickname, profile_image, about ),
+        user_info:user_id ( email, nickname, profile_image, about ),
         diary_images (id, url),
         diary_regions ( * )
-    `
+    `,
     )
     .eq("is_public", true)
     .order("updated_at", { ascending: false });

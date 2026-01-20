@@ -60,9 +60,9 @@ export const useSocialLogin = () => {
     if (!successResponse) throw new Error("네이버 로그인 실패");
 
     const profileResult = await NaverLogin.getProfile(
-      successResponse!.accessToken
+      successResponse!.accessToken,
     );
-    const { email, id, name } = profileResult.response;
+    const { email, id } = profileResult.response;
 
     const response = await fetch(
       `${process.env.EXPO_PUBLIC_SUPABASE_API_ENDPOINT}/naver-auth`,
@@ -75,10 +75,9 @@ export const useSocialLogin = () => {
         body: JSON.stringify({
           id,
           email,
-          name,
           refreshToken: successResponse.refreshToken,
         }),
-      }
+      },
     );
 
     const { nextPhoneAuth, session } = await response.json();
@@ -116,14 +115,11 @@ export const useSocialLogin = () => {
 
     try {
       const credential = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ],
+        requestedScopes: [AppleAuthentication.AppleAuthenticationScope.EMAIL],
         nonce: hashedNonce,
       });
 
-      const { identityToken, authorizationCode, fullName, email } = credential;
+      const { identityToken, authorizationCode, email } = credential;
       if (!identityToken) throw new Error("identityToken is null");
 
       const { data, error } = await supabase.auth.signInWithIdToken({
@@ -134,20 +130,13 @@ export const useSocialLogin = () => {
 
       if (error) throw new Error("error apply supabase");
 
-      if (fullName) {
-        const displayName = fullName
-          ? `${fullName.familyName ?? ""}${fullName.givenName ?? ""}`.trim()
-          : null;
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: {
+          email: email,
+        },
+      });
 
-        const { error: updateError } = await supabase.auth.updateUser({
-          data: {
-            email: email,
-            name: displayName,
-          },
-        });
-
-        if (updateError) throw new Error("error update full name");
-      }
+      if (updateError) throw new Error("error users email update");
 
       // * users 테이블에 이미 있다면 메인으로 이동
       const isUserExists = await checkIfUserExists(data.user.id);

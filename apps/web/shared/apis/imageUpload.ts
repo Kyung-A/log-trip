@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { supabase } from "@/shared";
 
 export const imageUpload = async (
   bucketName: string,
   filePath: string,
-  imageBlob: any
+  imageBlob: any,
 ) => {
   try {
     const { data } = await supabase.storage
