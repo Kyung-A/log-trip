@@ -1,7 +1,14 @@
 import { getUser, registerPushToken, supabase } from "@/shared";
 import { Controller, useForm } from "react-hook-form";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  AppState,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useRef } from "react";
 
 const DEFAULT_VALUES = {
   nickname: "",
@@ -9,6 +16,7 @@ const DEFAULT_VALUES = {
 };
 
 export default function UserInfoScreen() {
+  const appState = useRef(AppState.currentState);
   const params = useLocalSearchParams();
   const { platform, accessToken, refreshToken } = params;
 
@@ -55,6 +63,25 @@ export default function UserInfoScreen() {
     }
   };
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      "change",
+      async (nextAppState) => {
+        if (
+          appState.current.match(/active|foreground/) &&
+          nextAppState === "background"
+        ) {
+          // * 앱이 백그라운드 모드로 들어가면 세션 삭제
+          await supabase.auth.signOut();
+          router.replace("/(auth)/login");
+        }
+        appState.current = nextAppState;
+      },
+    );
+
+    return () => subscription.remove();
+  }, []);
+
   return (
     <>
       <View
@@ -78,7 +105,7 @@ export default function UserInfoScreen() {
               <TextInput
                 style={{
                   paddingHorizontal: 12,
-                  paddingVertical: 16,
+                  height: 50,
                   fontSize: 18,
                   marginTop: 6,
                   borderWidth: 1,
@@ -105,7 +132,7 @@ export default function UserInfoScreen() {
               <TextInput
                 style={{
                   paddingHorizontal: 12,
-                  paddingVertical: 16,
+                  height: 50,
                   fontSize: 18,
                   marginTop: 6,
                   borderWidth: 1,
