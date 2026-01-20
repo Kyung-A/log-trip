@@ -12,7 +12,7 @@ export default ({ config }) => ({
       supportsTablet: true,
       usesAppleSignIn: true,
       bundleIdentifier: "com.nek777.mytripapp",
-      buildNumber: "17",
+      buildNumber: "18",
       infoPlist: {
         CFBundleDisplayName: "로그트립",
         CFBundleName: "로그트립",
@@ -32,11 +32,12 @@ export default ({ config }) => ({
           "storykompassauth",
           "kakaolink",
         ],
-        NSCameraUsageDescription: "사진 촬영을 위해 카메라 권한이 필요합니다.",
+        NSCameraUsageDescription:
+          "사용자의 프로필 이미지 설정 및 일기 내 사진 첨부를 위해 카메라를 사용합니다. (예: 일기 작성 시 오늘 먹은 음식 사진 촬영)",
         NSPhotoLibraryUsageDescription:
-          "사진 업로드를 위해 앨범 접근 권한이 필요합니다.",
+          "작성한 일기 이미지나 수정된 프로필 사진을 사용자의 앨범에 저장하기 위해 권한이 필요합니다. (예: 일기에 사용된 이미지 다운로드)",
         NSPhotoLibraryAddUsageDescription:
-          "사진 저장을 위해 앨범 접근 권한이 필요합니다.",
+          "앨범에 저장된 사진을 불러와 프로필을 설정하거나 일기에 첨부하기 위해 접근 권한이 필요합니다. (예: 과거 여행 사진을 일기에 업로드)",
       },
     },
     android: {
