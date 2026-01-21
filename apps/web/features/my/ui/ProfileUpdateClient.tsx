@@ -30,7 +30,6 @@ export const ProfileUpdateClient = () => {
   const handleFileChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files;
-
       if (!file || file.length === 0) return;
 
       const newImages = URL.createObjectURL(file[0]);
@@ -41,19 +40,26 @@ export const ProfileUpdateClient = () => {
     [],
   );
 
-  const uploadAndGetUrlImage = async () => {
-    if (!profileImg) return null;
+  const uploadAndGetUrlImage = async (currentImg: string) => {
+    if (!currentImg.startsWith("blob:")) return currentImg;
 
-    const path = `profiles/${userId}/${uuidv4()}.jpg`;
+    try {
+      const path = `profiles/${userId}/${uuidv4()}.jpg`;
+      const base64DataUrl = await blobUrlToBase64(currentImg);
 
-    const base64DataUrl = await blobUrlToBase64(profileImg);
-    const buffer = Buffer.from(base64DataUrl, "base64");
+      const base64Image = base64DataUrl.split(";base64,").pop();
+      if (!base64Image) return null;
 
-    await supabase.storage.from("log-trip-images").remove([path]);
-    await imageUpload("log-trip-images", path, buffer);
-    const result = getImageUrl("log-trip-images", path);
+      const buffer = Buffer.from(base64Image, "base64");
 
-    return result.publicUrl;
+      await imageUpload("log-trip-images", path, buffer);
+
+      const { publicUrl } = getImageUrl("log-trip-images", path);
+      return publicUrl;
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      return null;
+    }
   };
 
   const handleSaveProfile = async (formData: {
@@ -62,9 +68,13 @@ export const ProfileUpdateClient = () => {
     profile_image: string | null;
   }) => {
     try {
-      const imageUrl = profileImg?.includes("blob:")
-        ? profileImg
-        : await uploadAndGetUrlImage();
+      let imageUrl = profileImg;
+
+      if (profileImg && profileImg.startsWith("blob:")) {
+        imageUrl = await uploadAndGetUrlImage(profileImg);
+      } else if (!profileImg) {
+        imageUrl = null;
+      }
 
       const data = {
         ...formData,
@@ -122,16 +132,16 @@ export const ProfileUpdateClient = () => {
           {profileImg ? (
             <button
               onClick={handleDeleted}
-              className="absolute right-0 top-0 bg-[#cdc6c3] rounded-full w-10 h-10 flex items-center justify-center"
+              className="absolute right-0 top-1 bg-[#cdc6c3] rounded-full w-8 h-8 flex items-center justify-center"
             >
-              <X size={26} color="#fff" />
+              <X size={20} color="#fff" />
             </button>
           ) : (
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="absolute right-0 top-0 bg-[#cdc6c3] rounded-full w-10 h-10 flex items-center justify-center"
+              className="absolute right-0 top-1 bg-[#cdc6c3] rounded-full w-8 h-8 flex items-center justify-center"
             >
-              <Camera size={24} color="#fff" />
+              <Camera size={20} color="#fff" />
             </button>
           )}
           <input
