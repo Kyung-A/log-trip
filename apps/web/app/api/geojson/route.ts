@@ -6,25 +6,15 @@ export async function GET(req: NextRequest) {
     const regionCode = req.nextUrl.searchParams.get("region_code");
     const shapeName = req.nextUrl.searchParams.get("shape_name");
 
-    console.log(
-      `[GeoJSON Debug] Start - apiUrl: ${apiUrl}, regionCode: ${regionCode}, shapeName: ${shapeName}`,
-    );
-
     if (!apiUrl) {
-      console.error("[GeoJSON Debug] Error: Missing api_url");
       return new Response("Missing api_url", { status: 400 });
     }
 
-    console.log(`[GeoJSON Debug] Fetching Meta from: ${apiUrl}`);
     const metaResp = await fetch(apiUrl);
     const metaRes = await metaResp.json();
 
     const geoUrl = metaRes?.simplifiedGeometryGeoJSON;
     if (!geoUrl) {
-      console.error(
-        "[GeoJSON Debug] Error: GeoJSON URL not found in meta data",
-        metaRes,
-      );
       return new Response("GeoJSON URL 없음", { status: 400 });
     }
 
