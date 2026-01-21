@@ -7,7 +7,9 @@ interface IDrawingCanvas {
   parentRef: RefObject<HTMLDialogElement | null>;
   canvasRef: RefObject<HTMLCanvasElement | null>;
   startDrawing: (
-    e: React.TouchEvent<HTMLCanvasElement> | React.MouseEvent<HTMLCanvasElement>
+    e:
+      | React.TouchEvent<HTMLCanvasElement>
+      | React.MouseEvent<HTMLCanvasElement>,
   ) => void;
   canvasSize: {
     width: number;
@@ -53,8 +55,12 @@ export const DrawingCanvas = ({
       ref={canvasRef}
       width={canvasSize.width}
       height={canvasSize.height}
-      style={{ touchAction: "none" }}
-      className="bg-white cursor-crosshair"
+      style={{
+        touchAction: "none",
+        userSelect: "none",
+        WebkitUserSelect: "none",
+      }}
+      className="bg-white cursor-crosshair touch-none"
       onMouseDown={startDrawing}
       onTouchStart={startDrawing}
     />
