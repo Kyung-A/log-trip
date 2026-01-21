@@ -23,7 +23,9 @@ const regionQueries = {
           shape_name,
         });
 
-        const resp = await fetch(`/api/geojson?${params.toString()}`);
+        const baseUrl =
+          typeof window !== "undefined" ? window.location.origin : "";
+        const resp = await fetch(`${baseUrl}/api/geojson?${params.toString()}`);
         if (!resp.ok) throw new Error("Geo fetch failed");
         const features = await resp.json();
 
@@ -47,7 +49,7 @@ export const useFetchRegions = (filters?: string | null) => {
 
 export const useFetchRegionsGeoJSON = (
   rowRegions: IRegion[] | null,
-  uniqueByCountry: ICountry[] | null
+  uniqueByCountry: ICountry[] | null,
 ) => {
   const coloredParams = useMemo(() => {
     if (
@@ -59,12 +61,12 @@ export const useFetchRegionsGeoJSON = (
       return [];
 
     const allowed = rowRegions.filter((c) =>
-      uniqueByCountry.some((reg) => c.region_code === reg.region_code)
+      uniqueByCountry.some((reg) => c.region_code === reg.region_code),
     );
 
     return allowed.reduce((acc, c): IOptionsParams[] => {
       const matched = COUNTRY_COLORS.find(
-        (color) => color.country_code === c.country_code
+        (color) => color.country_code === c.country_code,
       );
       if (matched) {
         acc.push({ ...c, color: matched.color });

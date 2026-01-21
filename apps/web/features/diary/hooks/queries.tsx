@@ -37,7 +37,7 @@ export const diaryQueries = {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchOnMount: false,
-      staleTime: Infinity,
+      staleTime: 0,
     }),
 };
 
