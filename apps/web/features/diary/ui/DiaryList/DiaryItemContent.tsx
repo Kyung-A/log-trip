@@ -48,13 +48,13 @@ export const DiaryItemContent = memo(
             width={0}
             height={0}
             sizes="100vw"
-            className="w-full h-full"
+            className="w-full object-cover"
             alt="diray content image"
           />
         )}
       </>
     );
-  }
+  },
 );
 
 DiaryItemContent.displayName = "DiaryItemContent";

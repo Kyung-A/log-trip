@@ -106,5 +106,6 @@ body:has(dialog[open]) {
 }
 
 #upload-slide .swiper-wrapper {
-  height: 402px;
+  height: auto !important;
+  aspect-ratio: 1;
 }
