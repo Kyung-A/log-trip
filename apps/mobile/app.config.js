@@ -12,7 +12,7 @@ export default ({ config }) => ({
       supportsTablet: true,
       usesAppleSignIn: true,
       bundleIdentifier: "com.nek777.mytripapp",
-      buildNumber: "18",
+      buildNumber: "21",
       infoPlist: {
         CFBundleDisplayName: "로그트립",
         CFBundleName: "로그트립",
