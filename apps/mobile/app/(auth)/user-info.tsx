@@ -1,10 +1,11 @@
-import { getUser, registerPushToken, supabase } from "@/shared";
+import { getUser, supabase } from "@/shared";
 import { Controller, useForm } from "react-hook-form";
 import {
+  ActivityIndicator,
   AppState,
+  Pressable,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
@@ -20,7 +21,12 @@ export default function UserInfoScreen() {
   const params = useLocalSearchParams();
   const { platform, accessToken, refreshToken } = params;
 
-  const { control, watch, getValues } = useForm({
+  const {
+    control,
+    watch,
+    getValues,
+    formState: { isSubmitting },
+  } = useForm({
     defaultValues: DEFAULT_VALUES,
   });
 
@@ -52,7 +58,8 @@ export default function UserInfoScreen() {
     }
 
     if (resultStatus === 201 || resultStatus === 200 || resultStatus === 204) {
-      await registerPushToken(user?.id);
+      // ! 알림 권한 추후에 추가
+      // await registerPushToken(user?.id); !
       router.replace({
         pathname: "/(tabs)",
         params: {
@@ -148,33 +155,43 @@ export default function UserInfoScreen() {
           )}
         />
 
-        <TouchableOpacity
+        <Pressable
           onPress={createUser}
           style={{
             justifyContent: "center",
             borderRadius: 6,
             backgroundColor:
-              watch("nickname") === "" || watch("about") === ""
+              watch("nickname") === "" || watch("about") === "" || isSubmitting
                 ? "#e5e7eb"
                 : "#bfdbfe",
           }}
-          disabled={watch("nickname") === "" || watch("about") === ""}
+          disabled={
+            watch("nickname") === "" || watch("about") === "" || isSubmitting
+          }
         >
-          <Text
-            style={{
-              paddingVertical: 18,
-              fontSize: 18,
-              fontWeight: "600",
-              textAlign: "center",
-              color:
-                watch("nickname") === "" || watch("about") === ""
-                  ? "#9ca3af"
-                  : "#3b82f6",
-            }}
-          >
-            완료
-          </Text>
-        </TouchableOpacity>
+          {isSubmitting ? (
+            <ActivityIndicator
+              style={{ paddingVertical: 17 }}
+              size="small"
+              color="#4b5563"
+            />
+          ) : (
+            <Text
+              style={{
+                paddingVertical: 18,
+                fontSize: 18,
+                fontWeight: "600",
+                textAlign: "center",
+                color:
+                  watch("nickname") === "" || watch("about") === ""
+                    ? "#9ca3af"
+                    : "#3b82f6",
+              }}
+            >
+              완료
+            </Text>
+          )}
+        </Pressable>
       </View>
     </>
   );
