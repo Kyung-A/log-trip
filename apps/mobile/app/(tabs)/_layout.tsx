@@ -11,9 +11,12 @@ import {
   UIManager,
   TouchableWithoutFeedback,
   TouchableOpacityProps,
+  Dimensions,
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useTabBarVisibility } from "@/shared";
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 function ComposeTabButton() {
   const anchorRef = useRef(null);
@@ -63,20 +66,26 @@ function ComposeTabButton() {
               <View
                 style={{
                   position: "absolute",
-                  top: layout.y - 55,
-                  left: layout.x - 12,
-                  padding: 14,
+                  left: SCREEN_WIDTH / 2,
+                  bottom: 112,
+                  width: 92,
+                  transform: [{ translateX: -(92 / 2) }],
+                  paddingVertical: 14,
                   backgroundColor: "#d5b2a8",
                   borderRadius: 8,
                   elevation: 5,
-                  boxShadow: "0px 0px 20px -2px rgba(0,0,0,0.20)",
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 20,
                 }}
               >
                 <View
                   style={{
                     position: "absolute",
                     bottom: -6,
-                    left: 37,
+                    left: "50%",
+                    marginLeft: -6,
                     width: 12,
                     height: 12,
                     backgroundColor: "#d5b2a8",
