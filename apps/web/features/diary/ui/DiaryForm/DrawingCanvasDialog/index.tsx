@@ -32,7 +32,7 @@ interface IDrawingCanvasDialog {
     canvasSize: {
       width: number;
       height: number;
-    }
+    },
   ) => void;
 }
 
@@ -51,7 +51,7 @@ export const DrawingCanvasDialog = ({
   const [currentTool, setCurrentTool] = useState<"pen" | "eraser">("pen");
   const [bgImageSrc, setBgImageSrc] = useState<string>("");
   const [loadedBgImage, setLoadedBgImage] = useState<HTMLImageElement | null>(
-    null
+    null,
   );
   const [canvasSize, setCanvasSize] = useState({
     width: 768,
@@ -110,7 +110,9 @@ export const DrawingCanvasDialog = ({
   };
 
   const startDrawing = (
-    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>
+    e:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>,
   ) => {
     if (isDrawing.current) return;
     isDrawing.current = true;
@@ -126,16 +128,21 @@ export const DrawingCanvasDialog = ({
     currentPath.current = [{ x, y }];
 
     if ("touches" in e) {
-      canvasRef.current?.addEventListener("touchmove", handleMove);
+      canvasRef.current?.addEventListener("touchmove", handleMove, {
+        passive: false,
+      });
       canvasRef.current?.addEventListener("touchend", handleUp);
     } else {
-      canvasRef.current?.addEventListener("mousemove", handleMove);
+      canvasRef.current?.addEventListener("mousemove", handleMove, {
+        passive: false,
+      });
       canvasRef.current?.addEventListener("mouseup", handleUp);
     }
   };
 
   const handleMove = (e: MouseEvent | TouchEvent) => {
     if (!isDrawing.current) return;
+    if (e.cancelable) e.preventDefault();
 
     const clientEvent = "touches" in e ? e.touches[0] : e;
     const { x, y } = getCanvasCoords(clientEvent);
@@ -244,7 +251,7 @@ export const DrawingCanvasDialog = ({
     <dialog
       open={isOpenDrawing}
       ref={parentRef}
-      className="fixed w-full h-screen inset-0 z-50 bg-white max-w-3xl mx-auto"
+      className="fixed w-full h-screen inset-0 z-50 bg-white max-w-3xl mx-auto touch-none"
     >
       <DrawingCanvas
         parentRef={parentRef}
@@ -254,7 +261,12 @@ export const DrawingCanvasDialog = ({
         setCanvasSize={setCanvasSize}
       />
 
-      <div className="w-full px-4 pt-2 border-t border-gray-300 flex flex-col">
+      <div
+        className="w-full px-4 pt-2 border-t border-gray-300 flex flex-col touch-none select-none"
+        style={{
+          WebkitTouchCallout: "none",
+        }}
+      >
         <DrawingController
           currentTool={currentTool}
           setCurrentTool={setCurrentTool}
