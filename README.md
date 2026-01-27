@@ -10,7 +10,7 @@
 
 **_현재 앱 스토어 심사중에 있습니다_**
 
-<img src="https://file.notion.so/f/f/84a0f652-4c42-495c-a0da-0d97df943c45/a8f205ba-6bcf-49b2-a85b-776166dd7d79/Frame_1.jpg?table=block&id=2686f796-3e8d-80eb-8bc1-cf1ebbbf2ef6&spaceId=84a0f652-4c42-495c-a0da-0d97df943c45&expirationTimestamp=1769443200000&signature=k6lPsC4TvmUbLLU116EU95sOofewr1K6LpjdZFPwF-I&downloadName=Frame+1.jpg" width="20%" alt="일기 화면" /> <img src="https://file.notion.so/f/f/84a0f652-4c42-495c-a0da-0d97df943c45/8f5e4ed9-0f7e-46de-a794-cd015f454f77/Frame_2.jpg?table=block&id=2686f796-3e8d-80d2-b135-e0564cbff7ce&spaceId=84a0f652-4c42-495c-a0da-0d97df943c45&expirationTimestamp=1769443200000&signature=8qBplqGTsFVSeSFo1eie3xiwzf8QO0t_QtOUrlzD_Ew&downloadName=Frame+2.jpg" width="20%" alt="세계지도 화면" />
+<img src="app-img1.jpg" width="20%" alt="일기 화면" /> <img src="app-img2.jpg" width="20%" alt="세계지도 화면" />
 
 ## ✨ 주요 기능
 
