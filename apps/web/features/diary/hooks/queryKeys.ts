@@ -19,7 +19,7 @@ export const diaryInvalidateKeys = (
   { queryKey: ["myCounters"] },
   { queryKey: diaryKeys.mine() },
   { queryKey: diaryKeys.feed() },
-  { queryKey: diaryRegionKeys.byUser(userId), exact: true },
+  { queryKey: diaryRegionKeys.byUser(userId) },
   { queryKey: ["regions"] },
   { queryKey: ["regionGeo"] },
 ];

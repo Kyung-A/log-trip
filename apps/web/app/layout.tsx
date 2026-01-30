@@ -24,20 +24,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <RootProvider>
-      <html>
-        <body className="w-screen bg-zinc-50 overflow-x-hidden">
+    <html>
+      <body className="w-screen bg-zinc-50 overflow-x-hidden">
+        <RootProvider>
           <main className="max-w-3xl bg-white mx-auto min-h-screen">
             {children}
           </main>
-        </body>
-      </html>
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar
-        theme="colored"
-      />
-    </RootProvider>
+        </RootProvider>
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar
+          theme="colored"
+        />
+      </body>
+    </html>
   );
 }

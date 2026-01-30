@@ -34,10 +34,10 @@ export const diaryQueries = {
       queryFn: () => getDiaryRegions(userId),
       placeholderData: (prev) => prev,
       enabled: !!userId,
+      staleTime: 0,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      refetchOnMount: false,
-      staleTime: Infinity,
+      refetchOnMount: true,
     }),
 };
 
