@@ -64,7 +64,7 @@ export default function RootProvider({
           );
         }
       });
-    }, 5000);
+    }, 3000);
 
     const {
       data: { subscription },
