@@ -1,9 +1,10 @@
-import { DiaryList, diaryQueries } from "@/features/diary";
 import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+
+import { DiaryList, diaryQueries } from "@/features/diary";
 
 export default async function Diary() {
   const queryClient = new QueryClient();
