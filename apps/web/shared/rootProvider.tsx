@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Image from "next/image";
+
 import { supabase } from ".";
 
 export default function RootProvider({
@@ -64,7 +66,7 @@ export default function RootProvider({
           );
         }
       });
-    }, 3000);
+    }, 1000);
 
     const {
       data: { subscription },
@@ -73,7 +75,7 @@ export default function RootProvider({
       if (isSettingSession.current) return;
 
       // 2. 중요: 아직 세션 주입 시도가 완료되지 않았다면(isReady가 false라면)
-      //    SIGNED_OUT 이벤트가 발생해도 로그아웃 처리하지 않음 (첫 진입 시 튕김 방지)
+      // SIGNED_OUT 이벤트가 발생해도 로그아웃 처리하지 않음 (첫 진입 시 튕김 방지)
       if (!isReady && (event === "SIGNED_OUT" || !session)) {
         console.log("세션 주입 대기 중... 로그아웃 체크 유예");
         return;
@@ -104,8 +106,22 @@ export default function RootProvider({
       {isReady ? (
         <>{children}</>
       ) : (
-        <div className="flex items-center justify-center h-screen bg-white">
-          <Loader2 className="w-8 h-8 animate-spin text-[#d5b2a8]" />
+        <div className="flex flex-col items-center justify-center h-screen bg-beige">
+          <Image
+            src="/images/logo/logo.png"
+            alt="loading"
+            className="mb-7"
+            width={160}
+            height={0}
+            sizes="100vw"
+          />
+          <Image
+            src="/images/loading.svg"
+            alt="loading"
+            width={60}
+            height={0}
+            sizes="100vw"
+          />
         </div>
       )}
     </QueryClientProvider>

@@ -1,11 +1,12 @@
-import { useTabBarVisibility } from "@/shared";
-import { useRef } from "react";
+import { LoadingView, useTabBarVisibility } from "@/shared";
+import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
 
 export default function PublicDiaryScreen() {
   const webViewRef = useRef<WebView>(null);
   const { setTabBarVisible } = useTabBarVisibility();
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <SafeAreaView
@@ -14,9 +15,10 @@ export default function PublicDiaryScreen() {
     >
       <WebView
         ref={webViewRef}
-        source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/public-diary` }}
         style={{ flex: 1 }}
-        startInLoadingState={true}
+        source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/public-diary` }}
+        onLoadStart={() => setIsLoading(true)}
+        onLoadEnd={() => setIsLoading(false)}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}
         onNavigationStateChange={(navState) => {
@@ -48,6 +50,8 @@ export default function PublicDiaryScreen() {
           }
         }}
       />
+
+      {isLoading && <LoadingView />}
     </SafeAreaView>
   );
 }

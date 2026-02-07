@@ -1,12 +1,13 @@
-import { supabase, useTabBarVisibility } from "@/shared";
+import { LoadingView, supabase, useTabBarVisibility } from "@/shared";
 import { router } from "expo-router";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
 
 export default function MyPageScreen() {
   const webViewRef = useRef<WebView>(null);
   const { setTabBarVisible } = useTabBarVisibility();
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <SafeAreaView
@@ -15,11 +16,12 @@ export default function MyPageScreen() {
     >
       <WebView
         ref={webViewRef}
+        style={{ flex: 1 }}
         source={{
           uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/mypage`,
         }}
-        style={{ flex: 1 }}
-        startInLoadingState={true}
+        onLoadStart={() => setIsLoading(true)}
+        onLoadEnd={() => setIsLoading(false)}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}
         onNavigationStateChange={(navState) => {
@@ -66,6 +68,8 @@ export default function MyPageScreen() {
         allowsInlineMediaPlayback={true}
         allowFileAccess={true}
       />
+
+      {isLoading && <LoadingView />}
     </SafeAreaView>
   );
 }

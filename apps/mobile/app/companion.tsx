@@ -1,5 +1,5 @@
-import { useTabBarVisibility } from "@/shared";
-import { useRef } from "react";
+import { LoadingView, useTabBarVisibility } from "@/shared";
+import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 
@@ -7,6 +7,7 @@ import { WebView } from "react-native-webview";
 export default function TabTwoScreen() {
   const webViewRef = useRef<WebView>(null);
   const { setTabBarVisible } = useTabBarVisibility();
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <SafeAreaView
@@ -15,14 +16,15 @@ export default function TabTwoScreen() {
     >
       <WebView
         ref={webViewRef}
-        source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/companion` }}
         style={{ flex: 1 }}
+        source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/companion` }}
+        onLoadStart={() => setIsLoading(true)}
+        onLoadEnd={() => setIsLoading(false)}
         onNavigationStateChange={(navState) => {
           const url = navState.url;
           const isCompanion = /companion\/.+/.test(url);
           setTabBarVisible(isCompanion ? false : true);
         }}
-        startInLoadingState={true}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}
         injectedJavaScriptBeforeContentLoaded={`
@@ -54,6 +56,8 @@ export default function TabTwoScreen() {
           }
         }}
       />
+
+      {isLoading && <LoadingView />}
     </SafeAreaView>
   );
 }

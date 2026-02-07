@@ -1,10 +1,12 @@
-import { useRef } from "react";
+import { LoadingView } from "@/shared";
+import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
 
 // TODO: 추후 추가 예정 서비스
 export default function CreateCompanion() {
   const webViewRef = useRef<WebView>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   return (
     <SafeAreaView
@@ -15,7 +17,8 @@ export default function CreateCompanion() {
         ref={webViewRef}
         source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/companion/new` }}
         style={{ flex: 1 }}
-        startInLoadingState={true}
+        onLoadStart={() => setIsLoading(true)}
+        onLoadEnd={() => setIsLoading(false)}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}
         injectedJavaScriptBeforeContentLoaded={`
@@ -41,6 +44,8 @@ export default function CreateCompanion() {
           }
         }}
       />
+
+      {isLoading && <LoadingView />}
     </SafeAreaView>
   );
 }

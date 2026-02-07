@@ -1,8 +1,12 @@
+import { LoadingView } from "@/shared";
 import { router } from "expo-router";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
 
 export default function CreateDiary() {
+  const [isLoading, setIsLoading] = useState(true);
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "#fff" }}
@@ -11,7 +15,8 @@ export default function CreateDiary() {
       <WebView
         source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/diary/new` }}
         style={{ flex: 1 }}
-        startInLoadingState={true}
+        onLoadStart={() => setIsLoading(true)}
+        onLoadEnd={() => setIsLoading(false)}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}
         injectedJavaScriptBeforeContentLoaded={`
@@ -40,6 +45,8 @@ export default function CreateDiary() {
           }
         }}
       />
+
+      {isLoading && <LoadingView />}
     </SafeAreaView>
   );
 }
