@@ -1,4 +1,5 @@
 import { supabase } from "@/shared";
+
 import { ICompanionRequest } from "..";
 
 export const createCompanions = async (data: ICompanionRequest) => {

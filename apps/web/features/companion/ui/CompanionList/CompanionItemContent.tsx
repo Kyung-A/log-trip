@@ -1,6 +1,7 @@
-import { CalendarClock, CalendarDays, Users, VenusAndMars } from "lucide-react";
-import { ICompanion } from "../..";
 import dayjs from "dayjs";
+import { CalendarClock, CalendarDays, Users, VenusAndMars } from "lucide-react";
+
+import { ICompanion } from "@/entities/companion";
 
 export const CompanionItemContent = ({ item }: { item: ICompanion }) => {
   return (
@@ -14,8 +15,8 @@ export const CompanionItemContent = ({ item }: { item: ICompanion }) => {
             {item.gender_preference === "R"
               ? "무관"
               : item.gender_preference === "M"
-              ? "남자만"
-              : "여자만"}{" "}
+                ? "남자만"
+                : "여자만"}{" "}
           </p>
         </div>
 
@@ -32,7 +33,7 @@ export const CompanionItemContent = ({ item }: { item: ICompanion }) => {
             {dayjs(item.deadline_at).diff(new Date(), "days") > 0
               ? `모집 마감 ${dayjs(item.deadline_at).diff(
                   new Date(),
-                  "days"
+                  "days",
                 )}일 전`
               : "곧 마감"}
           </p>

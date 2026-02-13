@@ -1,8 +1,12 @@
 import React from "react";
+
 import Image from "next/image";
 import Link from "next/link";
+
+import { ICompanion } from "@/entities/companion";
+
 import { GroupByCountryLabel } from "@/shared";
-import { ICompanion } from "../..";
+
 import { CompanionItemContent } from "./CompanionItemContent";
 
 export const CompanionItem = React.memo(({ item }: { item: ICompanion }) => {

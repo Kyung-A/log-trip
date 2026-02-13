@@ -3,9 +3,14 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { ICompanionRequest } from "../types";
-import { companionsKeys } from "./queryKeys";
-import { createCompanions, updateCompanions, deleteCompanion } from "..";
+
+import {
+  createCompanions,
+  updateCompanions,
+  deleteCompanion,
+  companionsKeys,
+  ICompanionRequest,
+} from "@/entities/companion";
 
 const companionMutations = {
   create: () =>

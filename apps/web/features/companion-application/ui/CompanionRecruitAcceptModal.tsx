@@ -1,11 +1,14 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useAcceptCompanion } from "@/features/companion-application";
-import { toast } from "react-toastify";
-import { navigateNative } from "@/shared";
+
 import dayjs from "dayjs";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
+
+import { useAcceptCompanion } from "@/features/companion-application";
+
+import { navigateNative } from "@/shared";
 
 export const CompanionRecruitAcceptModal = () => {
   const router = useRouter();

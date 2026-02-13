@@ -1,5 +1,6 @@
 import { supabase } from "@/shared";
-import { IRejectCompanion } from "../types";
+
+import { IRejectCompanion } from "..";
 
 export const rejectCompanion = async (data: IRejectCompanion) => {
   const { companion_id, ...body } = data;

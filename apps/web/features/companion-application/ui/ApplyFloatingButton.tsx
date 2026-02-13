@@ -5,9 +5,8 @@ import React, { useMemo } from "react";
 import dayjs from "dayjs";
 import Link from "next/link";
 
+import { useFetchCompanionDetail } from "@/entities/companion";
 import { useFetchUserId, useFetchUserProfile } from "@/entities/user";
-
-import { useFetchCompanionDetail } from "@/features/companion";
 
 export const ApplyFloatingButton = React.memo(({ id }: { id: string }) => {
   const { data } = useFetchCompanionDetail(id);

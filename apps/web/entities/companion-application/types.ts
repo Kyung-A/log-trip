@@ -6,7 +6,7 @@ export interface IApply {
   message?: string;
 }
 
-export type status = "pending" | "accepted" | "rejected" | "cancelled";
+export type statusType = "pending" | "accepted" | "rejected" | "cancelled";
 
 export interface IApplyStatus {
   id: string;
@@ -15,7 +15,7 @@ export interface IApplyStatus {
   message: string;
   decision_message: string;
   decision_read_at: string;
-  status: status;
+  status: statusType;
   created_at: string;
   updated_at: string;
   decided_at: string | null;
@@ -27,7 +27,7 @@ export interface IApplyStatus {
 
 export interface IApplicantsForMyPost {
   id: string;
-  status: status;
+  status: statusType;
   message: string;
   applicant_id: string;
   created_at: string;

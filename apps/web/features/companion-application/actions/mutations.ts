@@ -3,15 +3,19 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { acceptCompanion, apply, cancelApply, rejectCompanion } from "../api";
+
+import { companionsKeys } from "@/entities/companion";
 import {
-  IAcceptCompanion,
   IApply,
   IApplyStatus,
+  cancelApply,
+  IAcceptCompanion,
+  acceptCompanion,
   IRejectCompanion,
-} from "../types";
-import { applicationKeys } from "./queryKeys";
-import { companionsKeys } from "@/features/companion";
+  rejectCompanion,
+  applicationKeys,
+  apply,
+} from "@/entities/companion-application";
 
 const applicationMutations = {
   apply: () =>
@@ -64,13 +68,15 @@ export const useCancelApply = () => {
       await qc.cancelQueries({ queryKey: applicationKeys.mine(applicant_id) });
 
       const prevData = qc.getQueryData<IApplyStatus[]>(
-        applicationKeys.mine(applicant_id)
+        applicationKeys.mine(applicant_id),
       );
 
       if (prevData) {
         qc.setQueryData(
           applicationKeys.mine(applicant_id),
-          prevData.map((a) => (a.id === id ? { ...a, status: "cancelled" } : a))
+          prevData.map((a) =>
+            a.id === id ? { ...a, status: "cancelled" } : a,
+          ),
         );
       }
 
@@ -105,13 +111,13 @@ export const useAcceptCompanion = () => {
       });
 
       const prevData = qc.getQueryData<IApplyStatus[]>(
-        applicationKeys.byAuthor(decided_by)
+        applicationKeys.byAuthor(decided_by),
       );
 
       if (prevData) {
         qc.setQueryData(
           applicationKeys.byAuthor(decided_by),
-          prevData.map((a) => (a.id === id ? { ...a, status: "accepted" } : a))
+          prevData.map((a) => (a.id === id ? { ...a, status: "accepted" } : a)),
         );
       }
 
@@ -146,13 +152,13 @@ export const useRejectCompanion = () => {
       });
 
       const prevData = qc.getQueryData<IApplyStatus[]>(
-        applicationKeys.byAuthor(decided_by)
+        applicationKeys.byAuthor(decided_by),
       );
 
       if (prevData) {
         qc.setQueryData(
           applicationKeys.byAuthor(decided_by),
-          prevData.map((a) => (a.id === id ? { ...a, status: "rejected" } : a))
+          prevData.map((a) => (a.id === id ? { ...a, status: "rejected" } : a)),
         );
       }
 

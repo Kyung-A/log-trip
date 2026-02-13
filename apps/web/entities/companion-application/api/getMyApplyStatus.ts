@@ -1,7 +1,11 @@
 import { supabase } from "@/shared";
-import { status } from "../types";
 
-export const getMyApplyStatus = async (userId?: string, status?: status) => {
+import { statusType } from "..";
+
+export const getMyApplyStatus = async (
+  userId?: string,
+  status?: statusType,
+) => {
   if (!userId) throw new Error("id가 없습니다");
 
   let q = supabase

@@ -1,5 +1,6 @@
 import { supabase } from "@/shared";
-import { IApplyStatus } from "../types";
+
+import { IApplyStatus } from "..";
 
 export const cancelApply = async (data: IApplyStatus) => {
   try {

@@ -6,14 +6,15 @@ import dayjs from "dayjs";
 import { ChevronLeft, EllipsisVertical, Pencil, Trash } from "lucide-react";
 import Link from "next/link";
 
+import { useFetchCompanionDetail } from "@/entities/companion";
 import { useFetchUserId } from "@/entities/user";
 
 import { navigateNative, useClickOutside } from "@/shared";
 
-import { useDeleteCompanion, useFetchCompanionDetail } from "../..";
 import { CompanionType } from "./CompanionType";
 import { Itinerary } from "./Itinerary";
 import { Writer } from "./Writer";
+import { useDeleteCompanion } from "../..";
 
 export const CompanionDetailContent = ({ id }: { id: string }) => {
   const { data } = useFetchCompanionDetail(id);

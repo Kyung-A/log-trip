@@ -1,5 +1,6 @@
-import { Users, VenusAndMars } from "lucide-react";
 import React from "react";
+
+import { Users, VenusAndMars } from "lucide-react";
 
 interface ICompanionType {
   gender?: string;
@@ -30,7 +31,7 @@ export const CompanionType = React.memo(
         </div>
       </section>
     );
-  }
+  },
 );
 
 CompanionType.displayName = "CompanionType";

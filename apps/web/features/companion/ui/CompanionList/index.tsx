@@ -1,7 +1,9 @@
 "use client";
 
+import { useFetchCompanions } from "@/entities/companion";
+
 import { EmptyView } from "@/shared";
-import { useFetchCompanions } from "../..";
+
 import { CompanionItem } from "./CompanionItem";
 
 export const CompanionList = () => {

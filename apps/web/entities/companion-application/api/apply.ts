@@ -1,5 +1,6 @@
 import { supabase } from "@/shared";
-import { IApply } from "../types";
+
+import { IApply } from "..";
 
 export const apply = async (data: IApply) => {
   const { status, error } = await supabase
@@ -9,7 +10,7 @@ export const apply = async (data: IApply) => {
         ...data,
         status: "pending",
       },
-      { onConflict: "companion_id,applicant_id" }
+      { onConflict: "companion_id,applicant_id" },
     )
     .select()
     .single();

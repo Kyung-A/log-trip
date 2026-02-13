@@ -9,15 +9,15 @@ import { Controller, useForm } from "react-hook-form";
 import Picker from "react-mobile-picker";
 import { toast } from "react-toastify";
 
+import {
+  useFetchCompanionDetail,
+  ICompanionRequest,
+} from "@/entities/companion";
 import { IRegion, useFetchRegions } from "@/entities/region";
 
 import { CitySelectField, navigateNative } from "@/shared";
 
-import {
-  ICompanionRequest,
-  useCreateCompanion,
-  useFetchCompanionDetail,
-} from "..";
+import { useCreateCompanion } from "..";
 
 export function CompanionForm() {
   const router = useRouter();

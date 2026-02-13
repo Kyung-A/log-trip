@@ -3,8 +3,10 @@ import {
   useQuery,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+
 import { companionsKeys } from "./queryKeys";
-import { getCompanionDetail, getCompanions, ICompanion } from "..";
+import { getCompanions, getCompanionDetail } from "../api";
+import { ICompanion } from "../types";
 
 export const companionQueries = {
   list: () =>

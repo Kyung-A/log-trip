@@ -1,5 +1,6 @@
 import { supabase } from "@/shared";
-import { IAcceptCompanion } from "../types";
+
+import { IAcceptCompanion } from "..";
 
 export const acceptCompanion = async (data: IAcceptCompanion) => {
   const { companion_id, ...body } = data;

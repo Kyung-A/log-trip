@@ -1,9 +1,10 @@
 import { supabase } from "@/shared";
-import { IApplicantsForMyPost, status } from "../types";
+
+import { IApplicantsForMyPost, statusType } from "..";
 
 export const getApplicantsForMyPosts = async (
   userId?: string,
-  status?: status
+  status?: statusType,
 ) => {
   if (!userId) throw new Error("id가 없습니다");
 
@@ -14,7 +15,7 @@ export const getApplicantsForMyPosts = async (
           id, status, message, applicant_id, created_at,
           applicant:users!inner ( id, nickname, profile_image ),
           companion:companions!inner ( id, title )
-        `
+        `,
     )
     .eq("companion.user_id", userId)
     .order("status", { ascending: true })
