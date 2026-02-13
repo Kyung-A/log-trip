@@ -1,8 +1,11 @@
-import { queryOptions, useQueries, useQuery } from "@tanstack/react-query";
-import { getRegions } from "../apis";
 import { useMemo } from "react";
+
+import { queryOptions, useQueries, useQuery } from "@tanstack/react-query";
+
 import { COUNTRY_COLORS } from "@/shared";
+
 import { ICountry, IGeoJson, IOptionsParams, IRegion } from "..";
+import { getRegions } from "../api";
 
 const regionQueries = {
   regions: (filters?: string | null) =>

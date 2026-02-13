@@ -1,8 +1,9 @@
 import { supabase } from "@/shared";
+
 import { IRegion } from "..";
 
 export const getRegions = async (
-  filters?: string | null
+  filters?: string | null,
 ): Promise<IRegion[] | null> => {
   let q = supabase.from("adm_regions").select("*");
 

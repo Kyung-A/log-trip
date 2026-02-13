@@ -1,9 +1,14 @@
 "use client";
 
-import { useFetchUserId, useFetchUserProfile } from "@/features/auth";
-import Image from "next/image";
 import { UserRound } from "lucide-react";
-import { useFetchMyCounter } from "@/features/my";
+import Image from "next/image";
+
+import {
+  useFetchUserId,
+  useFetchUserProfile,
+  useFetchMyCounter,
+} from "@/entities/user";
+
 import { AccountSettings } from "./AccountSettings";
 
 export const MyPageClient = () => {

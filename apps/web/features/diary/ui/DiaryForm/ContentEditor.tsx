@@ -1,6 +1,6 @@
 import { Control, Controller } from "react-hook-form";
 import Image from "next/image";
-import { IDiary } from "../../types";
+import { IDiary } from "../../../../entities/diary/types";
 
 interface IContentEditor {
   isDrawing: boolean;

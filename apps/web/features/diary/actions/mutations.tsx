@@ -3,10 +3,16 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { diaryInvalidateKeys, diaryKeys } from "./queryKeys";
-import { createDiary, deleteDiary, updateIsReport } from "../apis";
-import { IDiary } from "..";
-import { updateIsPublic } from "../apis/updateIsPublic";
+
+import {
+  IDiary,
+  createDiary,
+  deleteDiary,
+  updateIsReport,
+  updateIsPublic,
+  diaryInvalidateKeys,
+  diaryKeys,
+} from "@/entities/diary";
 
 const diaryMutatins = {
   create: () =>

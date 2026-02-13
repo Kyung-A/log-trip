@@ -1,14 +1,18 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useDeleteCompanion, useFetchCompanionDetail } from "../..";
-import { useFetchUserId } from "@/features/auth";
-import { navigateNative, useClickOutside } from "@/shared";
+
 import dayjs from "dayjs";
 import { ChevronLeft, EllipsisVertical, Pencil, Trash } from "lucide-react";
 import Link from "next/link";
-import { Itinerary } from "./Itinerary";
+
+import { useFetchUserId } from "@/entities/user";
+
+import { navigateNative, useClickOutside } from "@/shared";
+
+import { useDeleteCompanion, useFetchCompanionDetail } from "../..";
 import { CompanionType } from "./CompanionType";
+import { Itinerary } from "./Itinerary";
 import { Writer } from "./Writer";
 
 export const CompanionDetailContent = ({ id }: { id: string }) => {
@@ -28,7 +32,7 @@ export const CompanionDetailContent = ({ id }: { id: string }) => {
         navigateNative("/companion");
       }
     },
-    [deleteMutateAsync]
+    [deleteMutateAsync],
   );
 
   return (

@@ -1,17 +1,20 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { DiaryItem } from "./DiaryItem";
-import {
-  IDiary,
-  useDeleteDiary,
-  useFetchDiaries,
-  useUpdateIsReport,
-  useUpdateIsPublic,
-} from "../..";
-import { EmptyView } from "@/shared";
+
 import { usePathname } from "next/navigation";
 import { toast } from "react-toastify";
+
+import { useFetchDiaries, IDiary } from "@/entities/diary";
+
+import { EmptyView } from "@/shared";
+
+import { DiaryItem } from "./DiaryItem";
+import {
+  useDeleteDiary,
+  useUpdateIsPublic,
+  useUpdateIsReport,
+} from "../../actions";
 
 export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
   const pathname = usePathname();

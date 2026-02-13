@@ -1,10 +1,13 @@
 "use client";
 
-import { useFetchUserId, useFetchUserProfile } from "@/features/auth";
-import { useFetchCompanionDetail } from "@/features/companion";
+import React, { useMemo } from "react";
+
 import dayjs from "dayjs";
 import Link from "next/link";
-import React, { useMemo } from "react";
+
+import { useFetchUserId, useFetchUserProfile } from "@/entities/user";
+
+import { useFetchCompanionDetail } from "@/features/companion";
 
 export const ApplyFloatingButton = React.memo(({ id }: { id: string }) => {
   const { data } = useFetchCompanionDetail(id);
@@ -25,7 +28,7 @@ export const ApplyFloatingButton = React.memo(({ id }: { id: string }) => {
 
   const applied = useMemo(
     () => data?.applications.some((v) => v.applicant_id === userId),
-    [data?.applications, userId]
+    [data?.applications, userId],
   );
 
   return (
@@ -50,8 +53,8 @@ export const ApplyFloatingButton = React.memo(({ id }: { id: string }) => {
               {applied
                 ? "동행 신청 완료"
                 : data?.is_full
-                ? "동행 신청 마감"
-                : "동행 신청하기"}
+                  ? "동행 신청 마감"
+                  : "동행 신청하기"}
             </p>
           </Link>
         </footer>

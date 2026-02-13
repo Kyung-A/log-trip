@@ -4,7 +4,9 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-import { DiaryList, diaryQueries } from "@/features/diary";
+import { diaryQueries } from "@/entities/diary";
+
+import { DiaryList } from "@/features/diary";
 
 export default async function Diary() {
   const queryClient = new QueryClient();

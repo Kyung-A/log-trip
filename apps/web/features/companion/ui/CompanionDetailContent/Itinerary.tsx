@@ -1,8 +1,11 @@
 import React from "react";
-import { IRegion } from "@/features/region";
-import { GroupByCountryLabel } from "@/shared";
+
 import dayjs from "dayjs";
 import { CalendarDays, Map, MapPin } from "lucide-react";
+
+import { IRegion } from "@/entities/region";
+
+import { GroupByCountryLabel } from "@/shared";
 
 interface IItinerary {
   startDate?: Date;
@@ -42,7 +45,7 @@ export const Itinerary = React.memo(
         </div>
       </section>
     );
-  }
+  },
 );
 
 Itinerary.displayName = "Itinerary";

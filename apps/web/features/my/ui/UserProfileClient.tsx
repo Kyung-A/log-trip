@@ -1,10 +1,11 @@
 "use client";
 
-import { useFetchUserProfile } from "@/features/auth";
-import Image from "next/image";
 import { ChevronLeft, UserRound } from "lucide-react";
-import { useFetchMyCounter } from "@/features/my";
+import Image from "next/image";
 import { useParams } from "next/navigation";
+
+import { useFetchUserProfile, useFetchMyCounter } from "@/entities/user";
+
 import { navigateNative } from "@/shared";
 
 export const UserProfileClient = () => {

@@ -1,8 +1,8 @@
 "use client";
 
-import { useFetchUserId } from "@/features/auth";
+import { useFetchUserId } from "@/entities/user";
 import { IDiary, useCreateDiary } from "@/features/diary";
-import { IRegion, useFetchRegions } from "@/features/region";
+import { IRegion, useFetchRegions } from "@/entities/region";
 import {
   blobUrlToBase64,
   CitySelectField,

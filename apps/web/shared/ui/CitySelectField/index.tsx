@@ -1,10 +1,13 @@
 "use client";
 
-import { IRegion } from "@/features/region";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Field } from "./Field";
-import { CitySelectDialog } from "./CitySelectDialog";
+
 import { Control, FieldValues, Path } from "react-hook-form";
+
+import { IRegion } from "@/entities/region";
+
+import { CitySelectDialog } from "./CitySelectDialog";
+import { Field } from "./Field";
 
 interface ICitySelectField<T extends FieldValues> {
   value: IRegion[];
@@ -36,7 +39,7 @@ export const CitySelectField = <T extends FieldValues>({
   const handleToggle = useCallback((item: IRegion) => {
     setDraft((prev) => {
       const isSelected = prev?.some(
-        (data) => data.region_code === item.region_code
+        (data) => data.region_code === item.region_code,
       );
 
       if (isSelected) {
@@ -54,7 +57,7 @@ export const CitySelectField = <T extends FieldValues>({
 
   const filteredList = useMemo(() => {
     return options?.filter(
-      (v) => v.region_name.includes(search) || v.country_name.includes(search)
+      (v) => v.region_name.includes(search) || v.country_name.includes(search),
     );
   }, [options, search]);
 

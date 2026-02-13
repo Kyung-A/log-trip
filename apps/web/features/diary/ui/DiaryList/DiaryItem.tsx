@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { IDiary } from "../../types";
+import { IDiary } from "../../../../entities/diary/types";
 import { DiaryPopoverMenu } from "./DiaryPopoverMenu";
 import { DiaryItemHeader } from "./DiaryItemHeader";
 import { DiaryImageSlider } from "./DiaryImageSlider";

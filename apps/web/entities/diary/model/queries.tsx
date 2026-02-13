@@ -3,8 +3,9 @@ import {
   useQuery,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+
+import { getDiaries, getDiaryRegions, getPublicDiaries } from "..";
 import { diaryKeys, diaryRegionKeys } from "./queryKeys";
-import { getDiaries, getDiaryRegions, getPublicDiaries } from "../apis";
 import { IDiary, IDiaryRegions } from "../types";
 
 export const diaryQueries = {

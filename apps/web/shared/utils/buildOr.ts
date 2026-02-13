@@ -1,4 +1,4 @@
-import { ICountry } from "@/features/region";
+import { ICountry } from "@/entities/region";
 
 export const buildOr = (batch: ICountry[] | null, opts = { loose: true }) => {
   const groups: string[] = [];
@@ -7,7 +7,7 @@ export const buildOr = (batch: ICountry[] | null, opts = { loose: true }) => {
   for (const { country_code, region_code, shape_name } of batch) {
     if (region_code)
       groups.push(
-        `and(country_code.eq.${country_code},region_code.eq.${region_code})`
+        `and(country_code.eq.${country_code},region_code.eq.${region_code})`,
       );
     if (shape_name) {
       const pat = opts.loose
@@ -18,7 +18,7 @@ export const buildOr = (batch: ICountry[] | null, opts = { loose: true }) => {
       groups.push(
         `and(country_code.eq.${country_code},shape_name.${
           opts.loose ? "ilike" : "eq"
-        }.${pat})`
+        }.${pat})`,
       );
     }
   }

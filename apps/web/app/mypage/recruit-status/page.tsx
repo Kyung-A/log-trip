@@ -1,6 +1,6 @@
 "use client";
 
-import { useFetchUserId } from "@/features/auth";
+import { useFetchUserId } from "@/entities/user";
 import {
   IApplicantsForMyPost,
   useApplicantsForMyPosts,

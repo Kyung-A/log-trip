@@ -1,11 +1,15 @@
 "use client";
 
-import { useFetchUserId, useFetchUserProfile } from "@/features/auth";
-import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import Image from "next/image";
+
+import { useQueryClient } from "@tanstack/react-query";
 import { Camera, ChevronLeft, UserRound, X } from "lucide-react";
+import Image from "next/image";
+import { Controller, useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
+
+import { useFetchUserId, useFetchUserProfile } from "@/entities/user";
+
 import {
   blobUrlToBase64,
   getImageUrl,
@@ -13,7 +17,6 @@ import {
   navigateNative,
   supabase,
 } from "@/shared";
-import { v4 as uuidv4 } from "uuid";
 
 export const ProfileUpdateClient = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);

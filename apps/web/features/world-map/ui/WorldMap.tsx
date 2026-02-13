@@ -1,14 +1,17 @@
 "use client";
 
-import mapboxgl from "mapbox-gl";
 import { useEffect, useMemo, useRef } from "react";
-import { useFetchDiaryRegions } from "@/features/diary";
-import { useFetchUserId } from "@/features/auth";
-import { buildOr } from "@/shared";
-import { useFetchRegions, useFetchRegionsGeoJSON } from "@/features/region";
-import { useRouter } from "next/navigation";
-import { RefreshCcw } from "lucide-react";
+
 import { useQueryClient } from "@tanstack/react-query";
+import { RefreshCcw } from "lucide-react";
+import mapboxgl from "mapbox-gl";
+import { useRouter } from "next/navigation";
+
+import { useFetchDiaryRegions } from "@/entities/diary";
+import { useFetchRegions, useFetchRegionsGeoJSON } from "@/entities/region";
+import { useFetchUserId } from "@/entities/user";
+
+import { buildOr } from "@/shared";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 

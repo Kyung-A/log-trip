@@ -9,3 +9,10 @@ export interface IProfile {
   nickname: string;
   email: string;
 }
+
+export interface IMyCounters {
+  diaries_count: number;
+  public_diaries_count: number;
+  applied_count: number;
+  received_count: number;
+}

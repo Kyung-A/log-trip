@@ -1,5 +1,6 @@
-import { IRegion } from "@/features/region";
 import { Search, X } from "lucide-react";
+
+import { IRegion } from "@/entities/region";
 
 interface ICitySelectDialog {
   isOpen: boolean;
@@ -61,7 +62,7 @@ export const CitySelectDialog = ({
         <main className="overflow-y-scroll h-screen">
           {filteredList?.map((item) => {
             const selected = draft?.some(
-              (v) => item.region_code === v.region_code
+              (v) => item.region_code === v.region_code,
             );
 
             return (
