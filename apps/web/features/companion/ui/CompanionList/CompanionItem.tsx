@@ -4,8 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { ICompanion } from "@/entities/companion";
-
-import { GroupByCountryLabel } from "@/shared";
+import { GroupByCountryLabel } from "@/entities/diary";
 
 import { CompanionItemContent } from "./CompanionItemContent";
 

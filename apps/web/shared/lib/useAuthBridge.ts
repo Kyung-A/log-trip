@@ -1,19 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import { useState, useRef, useEffect } from "react";
 
-import { useEffect, useRef, useState } from "react";
+import { QueryClient } from "@tanstack/react-query";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Image from "next/image";
+import { supabase } from "./supabase";
 
-import { supabase } from ".";
-
-export default function RootProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [queryClient] = useState(() => new QueryClient());
+export const useAuthBridge = (queryClient: QueryClient) => {
   const [isReady, setIsReady] = useState(false);
   const isSettingSession = useRef(false);
 
@@ -101,29 +94,5 @@ export default function RootProvider({
     };
   }, [queryClient, isReady]); // isReady를 의존성에 추가하여 상태 변화 감지
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      {isReady ? (
-        <>{children}</>
-      ) : (
-        <div className="flex flex-col items-center justify-center h-screen bg-beige">
-          <Image
-            src="/images/logo/logo.png"
-            alt="loading"
-            className="mb-7"
-            width={160}
-            height={0}
-            sizes="100vw"
-          />
-          <Image
-            src="/images/loading.svg"
-            alt="loading"
-            width={60}
-            height={0}
-            sizes="100vw"
-          />
-        </div>
-      )}
-    </QueryClientProvider>
-  );
-}
+  return { isReady };
+};

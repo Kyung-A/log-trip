@@ -1,9 +1,11 @@
+import { ToastContainer } from "react-toastify";
+
+import RootProvider from "./_providers/RootProvider";
+
 import type { Metadata, Viewport } from "next";
-import RootProvider from "@/shared/rootProvider";
 
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
-import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Create Next App",

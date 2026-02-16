@@ -3,9 +3,8 @@ import React from "react";
 import dayjs from "dayjs";
 import { CalendarDays, Map, MapPin } from "lucide-react";
 
+import { GroupByCountryLabel } from "@/entities/diary";
 import { IRegion } from "@/entities/region";
-
-import { GroupByCountryLabel } from "@/shared";
 
 interface IItinerary {
   startDate?: Date;

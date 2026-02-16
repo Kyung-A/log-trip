@@ -4,9 +4,7 @@ import dayjs from "dayjs";
 import { CalendarDays } from "lucide-react";
 import Image from "next/image";
 
-import { IDiaryRegionsRender } from "@/entities/diary";
-
-import { GroupByCountryLabel } from "@/shared";
+import { GroupByCountryLabel, IDiaryRegionsRender } from "@/entities/diary";
 
 interface DiaryItemContent {
   isDrawing: boolean;

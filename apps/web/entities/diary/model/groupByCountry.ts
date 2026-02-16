@@ -1,4 +1,4 @@
-import { IDiaryRegionsRender } from "@/features/diary";
+import { IDiaryRegionsRender } from "@/entities/diary";
 
 interface IGroupedResult {
   [key: string]: {

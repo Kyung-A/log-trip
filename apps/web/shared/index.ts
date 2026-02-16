@@ -1,8 +1,6 @@
-export * from "./supabase";
-export * from "./rootProvider";
-export * from "./utils";
+export * from "./util";
 export * from "./consts";
-export { Switch, GroupByCountryLabel, FeedSkeleton, EmptyView } from "./ui";
-export * from "./apis";
+export { Switch, FeedSkeleton, EmptyView } from "./ui";
+export * from "./api";
 export * from "./hooks";
 export * from "./lib";

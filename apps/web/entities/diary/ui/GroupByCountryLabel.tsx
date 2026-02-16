@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { groupByCountry } from "..";
-import { IDiaryRegionsRender } from "@/features/diary";
+
+import { groupByCountry, IDiaryRegionsRender } from "@/entities/diary";
 
 export const GroupByCountryLabel = React.memo(
   ({ regions }: { regions: IDiaryRegionsRender[] }) => {
@@ -14,7 +14,7 @@ export const GroupByCountryLabel = React.memo(
           key: countryCode,
           countryName: country_name,
           regions: regions.join(", "),
-        })
+        }),
       );
     }, [groupedRegions]);
 
@@ -28,7 +28,7 @@ export const GroupByCountryLabel = React.memo(
         ))}
       </div>
     );
-  }
+  },
 );
 
 GroupByCountryLabel.displayName = "GroupByCountryLabel";
