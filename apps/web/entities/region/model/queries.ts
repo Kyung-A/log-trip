@@ -5,7 +5,7 @@ import { queryOptions, useQueries, useQuery } from "@tanstack/react-query";
 import { COUNTRY_COLORS } from "@/shared";
 
 import { ICountry, IGeoJson, IOptionsParams, IRegion } from "..";
-import { getRegions } from "../api";
+import { getGeoJson, getRegions } from "../api";
 
 const regionQueries = {
   regions: (filters?: string | null) =>
@@ -20,23 +20,13 @@ const regionQueries = {
     return queryOptions<IGeoJson>({
       queryKey: ["regionGeo", api_url, region_code, shape_name],
       queryFn: async () => {
-        const params = new URLSearchParams({
-          api_url,
-          region_code,
-          shape_name,
-        });
-
-        const baseUrl =
-          typeof window !== "undefined" ? window.location.origin : "";
-        const resp = await fetch(`${baseUrl}/api/geojson?${params.toString()}`);
-        if (!resp.ok) throw new Error("Geo fetch failed");
-        const features = await resp.json();
+        const resp = await getGeoJson(api_url, region_code, shape_name);
 
         return {
           id: region_code,
           color: color,
           type: "FeatureCollection",
-          features: features,
+          features: resp,
         };
       },
       staleTime: 24 * 60 * 60 * 1000,
