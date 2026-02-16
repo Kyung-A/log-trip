@@ -11,6 +11,7 @@ import { useFetchUserId } from "@/entities/user";
 import { useWorldMapData } from "@/features/world-map-viewer";
 
 import { useMapbox } from "@/shared";
+import { MapSplashScreen } from "@/widgets/splash-screen";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -74,13 +75,7 @@ export function WorldMap() {
         className="w-full h-screen relative"
       />
 
-      {isFetching && (
-        <div className="absolute top-0 w-full h-screen left-0 bg-transparent">
-          <p className="backdrop-blur-xs bg-white/20 w-full h-full flex items-center justify-center text-lg font-semibold">
-            지도를 불러오는 중...
-          </p>
-        </div>
-      )}
+      {isFetching && <MapSplashScreen />}
 
       <button
         type="button"
