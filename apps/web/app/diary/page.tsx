@@ -6,7 +6,7 @@ import {
 
 import { diaryQueries } from "@/entities/diary";
 
-import { DiaryList } from "@/features/diary";
+import { DiaryList } from "@/widgets/diary-list";
 
 export default async function Diary() {
   const queryClient = new QueryClient();
