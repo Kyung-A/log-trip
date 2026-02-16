@@ -1,10 +1,13 @@
-import { CompanionDetailContent, companionQueries } from "@/features/companion";
-import { ApplyFloatingButton } from "@/features/companion-application";
 import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+
+import { companionQueries } from "@/entities/companion";
+
+import { CompanionDetailContent } from "@/features/companion";
+import { ApplyFloatingButton } from "@/features/companion-application";
 
 export default async function CompanionDetail({
   params,
