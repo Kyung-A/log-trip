@@ -15,7 +15,9 @@ import {
 } from "@/entities/companion";
 import { IRegion, useFetchRegions } from "@/entities/region";
 
-import { CitySelectField, navigateNative } from "@/shared";
+import { CitySelectField } from "@/features/diary-create";
+
+import { navigateNative } from "@/shared";
 
 import { useCreateCompanion } from "..";
 
