@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { Camera, ChevronLeft, UserRound, X } from "lucide-react";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
@@ -15,12 +14,13 @@ import {
   getImageUrl,
   imageUpload,
   navigateNative,
-  supabase,
 } from "@/shared";
 
-export const ProfileUpdateClient = () => {
+import { useUpdateUserProfile } from "../model";
+
+export const UserProfileForm = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const qc = useQueryClient();
+  const { mutateAsync } = useUpdateUserProfile();
 
   const { data: userId } = useFetchUserId();
   const { data: profile } = useFetchUserProfile(userId);
@@ -84,18 +84,8 @@ export const ProfileUpdateClient = () => {
         profile_image: imageUrl,
       };
 
-      const response = await supabase
-        .from("users")
-        .update(data)
-        .eq("id", userId)
-        .select();
-
-      if (response.status === 200) {
-        qc.invalidateQueries({
-          queryKey: ["profile"],
-          refetchType: "active",
-          exact: true,
-        });
+      const result = await mutateAsync({ userId, ...data });
+      if (result === 200) {
         navigateNative("/mypage", "WINDOW_LOCATION");
       }
     } catch (error) {

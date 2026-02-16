@@ -16,3 +16,10 @@ export interface IMyCounters {
   applied_count: number;
   received_count: number;
 }
+
+export interface IUpdateProfileData {
+  userId?: string;
+  profile_image: string | null;
+  nickname: string | null;
+  about: string | null;
+}

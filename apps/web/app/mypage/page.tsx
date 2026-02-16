@@ -1,5 +1,9 @@
-import { MyPageClient } from "@/features/my";
+import { AccountSettings, UserProfileWidget } from "@/widgets/user-profile";
 
 export default async function MyPage() {
-  return <MyPageClient />;
+  return (
+    <UserProfileWidget isMine>
+      <AccountSettings />
+    </UserProfileWidget>
+  );
 }

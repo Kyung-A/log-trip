@@ -1,5 +1,10 @@
-import { UserProfileClient } from "@/features/my";
+import { UserProfileWidget } from "@/widgets/user-profile";
 
-export default function UserProfile() {
-  return <UserProfileClient />;
+export default async function UserProfile({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const targetId = (await params).id;
+  return <UserProfileWidget targetId={targetId} />;
 }

@@ -1,3 +1,5 @@
-export * from "./getUser";
-export * from "./getUserProfile";
-export * from "./getMyCounter";
+export { getUser } from "./getUser";
+export { getUserProfile } from "./getUserProfile";
+export { getMyCounter } from "./getMyCounter";
+export { updateUserProfile } from "./updateUserProfile";
+export { deleteUser } from "./deleteUser";
