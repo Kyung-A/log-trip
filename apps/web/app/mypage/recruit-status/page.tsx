@@ -1,17 +1,21 @@
 "use client";
 
-import { useFetchUserId } from "@/entities/user";
+import React from "react";
+
+import dayjs from "dayjs";
+import { ChevronLeft, User } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+
 import {
   IApplicantsForMyPost,
   useApplicantsForMyPosts,
-  useRejectCompanion,
-} from "@/features/companion-application";
+} from "@/entities/companion-application";
+import { useFetchUserId } from "@/entities/user";
+
+import { useRejectCompanion } from "@/features/companion-application";
+
 import { EmptyView, navigateNative } from "@/shared";
-import dayjs from "dayjs";
-import { ChevronLeft, User } from "lucide-react";
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
 
 const statusLabel = {
   pending: (

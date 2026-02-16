@@ -1,15 +1,19 @@
 "use client";
 
-import { useFetchUserId } from "@/entities/user";
-import {
-  IApplyStatus,
-  useCancelApply,
-  useMyApplyStatus,
-} from "@/features/companion-application";
-import { EmptyView, navigateNative } from "@/shared";
+import React from "react";
+
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+
+import {
+  IApplyStatus,
+  useMyApplyStatus,
+} from "@/entities/companion-application";
+import { useFetchUserId } from "@/entities/user";
+
+import { useCancelApply } from "@/features/companion-application";
+
+import { EmptyView, navigateNative } from "@/shared";
 
 const statusLabel = {
   pending: <p className="text-sm font-semibold text-green-700">● 대기중</p>,

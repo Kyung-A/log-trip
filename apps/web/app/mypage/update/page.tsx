@@ -1,5 +1,5 @@
-import { ProfileUpdateClient } from "@/features/my";
+import { UserProfileForm } from "@/features/user-profile-update";
 
 export default function ProfileUpdate() {
-  return <ProfileUpdateClient />;
+  return <UserProfileForm />;
 }
