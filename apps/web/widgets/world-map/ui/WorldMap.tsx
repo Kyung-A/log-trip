@@ -1,68 +1,33 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { RefreshCcw } from "lucide-react";
-import mapboxgl from "mapbox-gl";
 import { useRouter } from "next/navigation";
 
-import { useFetchDiaryRegions } from "@/entities/diary";
-import { useFetchRegions, useFetchRegionsGeoJSON } from "@/entities/region";
 import { useFetchUserId } from "@/entities/user";
 
-import { buildOr } from "@/shared";
+import { useWorldMapData } from "@/features/world-map-viewer";
+
+import { useMapbox } from "@/shared";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
 export function WorldMap() {
   const router = useRouter();
   const qc = useQueryClient();
-  const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useMapbox(mapContainerRef);
 
   const { data: userId } = useFetchUserId();
-  const { data: diaryRegions } = useFetchDiaryRegions(userId);
-
-  const uniqueByCountry = useMemo(() => {
-    if (!diaryRegions) return null;
-    return Array.from(
-      new Map(diaryRegions.map((item) => [item.region_code, item])).values(),
-    ).map((v) => ({
-      region_code: v.region_code,
-      shape_name: v.shape_name,
-      country_code: v.country_code,
-    }));
-  }, [diaryRegions]);
-
-  const filters = useMemo(() => buildOr(uniqueByCountry), [uniqueByCountry]);
-  const { data: rowRegions = null } = useFetchRegions(filters);
-  const { geoJson, isFetching } = useFetchRegionsGeoJSON(
-    rowRegions,
-    uniqueByCountry,
-  );
+  const { geoJson, isFetching } = useWorldMapData(userId);
 
   const handleRefresh = async () => {
     await qc.resetQueries({ queryKey: ["user"] });
     await qc.resetQueries({ queryKey: ["diary"] });
     router.refresh();
   };
-
-  useEffect(() => {
-    if (typeof window === "undefined" || !mapContainerRef.current) return;
-
-    mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_KEY as string;
-
-    mapRef.current = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      center: [126.978, 37.5665],
-      zoom: 3,
-      style: process.env.NEXT_PUBLIC_MAPBOX_STYLE_URL,
-      attributionControl: false,
-    });
-
-    return () => mapRef.current?.remove();
-  }, []);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -99,7 +64,7 @@ export function WorldMap() {
     };
     if (map.isStyleLoaded()) updateMap();
     else map.once("style.load", updateMap);
-  }, [geoJson]);
+  }, [geoJson, mapRef]);
 
   return (
     <>

@@ -1,0 +1,1 @@
+export { useWorldMapData } from "./useWorldMapData";

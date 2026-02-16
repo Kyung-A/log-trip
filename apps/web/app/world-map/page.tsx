@@ -1,4 +1,4 @@
-import { WorldMap } from "@/features/world-map";
+import { WorldMap } from "@/widgets/world-map";
 
 export default function WorldMapPage() {
   return <WorldMap />;
