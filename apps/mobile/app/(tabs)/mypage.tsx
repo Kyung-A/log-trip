@@ -22,6 +22,8 @@ export default function MyPageScreen() {
         }}
         onLoadStart={() => setIsLoading(true)}
         onLoadEnd={() => setIsLoading(false)}
+        sharedCookiesEnabled={true}
+        thirdPartyCookiesEnabled={true}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}
         onNavigationStateChange={(navState) => {

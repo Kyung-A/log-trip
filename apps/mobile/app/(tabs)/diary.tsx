@@ -22,6 +22,8 @@ export default function DiaryScreen() {
         pullToRefreshEnabled={true}
         allowsInlineMediaPlayback={true}
         allowFileAccess={true}
+        sharedCookiesEnabled={true}
+        thirdPartyCookiesEnabled={true}
       />
 
       {isLoading && <LoadingView />}
