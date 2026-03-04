@@ -21,6 +21,8 @@ export default function PublicDiaryScreen() {
         onLoadEnd={() => setIsLoading(false)}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}
+        sharedCookiesEnabled={true}
+        thirdPartyCookiesEnabled={true}
         onNavigationStateChange={(navState) => {
           const url = navState.url;
           const isMypage = /profile\/.+/.test(url);

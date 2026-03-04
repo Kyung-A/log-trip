@@ -19,6 +19,8 @@ export default function CreateDiary() {
         onLoadEnd={() => setIsLoading(false)}
         webviewDebuggingEnabled={true}
         pullToRefreshEnabled={true}
+        sharedCookiesEnabled={true}
+        thirdPartyCookiesEnabled={true}
         injectedJavaScriptBeforeContentLoaded={`
           (function () {
             window.ReactNativeWebView = window.ReactNativeWebView || {

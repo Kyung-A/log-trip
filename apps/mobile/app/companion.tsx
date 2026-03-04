@@ -20,6 +20,8 @@ export default function TabTwoScreen() {
         source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/companion` }}
         onLoadStart={() => setIsLoading(true)}
         onLoadEnd={() => setIsLoading(false)}
+        sharedCookiesEnabled={true}
+        thirdPartyCookiesEnabled={true}
         onNavigationStateChange={(navState) => {
           const url = navState.url;
           const isCompanion = /companion\/.+/.test(url);
