@@ -6,9 +6,10 @@
 
 ## 🚀 서비스 소개
 
-`log-trip`은 여행 중에 발생하는 다양한 에피소드와 정보를 실시간으로 기록하기 위해 제작되었습니다. 단순한 텍스트 기록을 넘어 사진과 장소 기반의 로그를 생성하며, 모노레포 아키텍처를 통해 확장성 있는 구조로 설계되었습니다.
+`로그트립`은 여행 중에 발생하는 다양한 에피소드와 정보를 실시간으로 기록하기 위해 제작되었습니다. 단순한 텍스트 기록을 넘어 사진과 장소 기반의 로그를 생성하며, 모노레포 아키텍처를 통해 확장성 있는 구조로 설계되었습니다.
 
 **[🔗 App Store 다운로드](https://apps.apple.com/kr/app/%EB%A1%9C%EA%B7%B8%ED%8A%B8%EB%A6%BD-%EB%82%B4-%EC%97%AC%ED%96%89%EC%9D%84-%EC%84%B8%EA%B3%84%EC%A7%80%EB%8F%84%EC%97%90-%EA%B8%B0%EB%A1%9D/id6751894902)**
+**[🔗 개발 과정 및 회고](https://kyung-a.tistory.com/category/Project/%EB%A1%9C%EA%B7%B8%ED%8A%B8%EB%A6%BD)**
 
 <img src="app-img1.jpg" width="20%" alt="일기 화면" /> <img src="app-img2.jpg" width="20%" alt="세계지도 화면" />
 
