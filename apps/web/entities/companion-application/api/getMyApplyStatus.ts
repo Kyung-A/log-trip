@@ -1,4 +1,4 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 import { statusType } from "..";
 
@@ -6,6 +6,8 @@ export const getMyApplyStatus = async (
   userId?: string,
   status?: statusType,
 ) => {
+  const supabase = createClient();
+
   if (!userId) throw new Error("id가 없습니다");
 
   let q = supabase

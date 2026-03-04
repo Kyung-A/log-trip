@@ -1,6 +1,8 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 export const updateIsReport = async (id: string) => {
+  const supabase = createClient();
+
   const { status, error } = await supabase
     .from("diaries")
     .update({ is_report: true })

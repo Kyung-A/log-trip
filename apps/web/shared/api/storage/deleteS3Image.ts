@@ -1,6 +1,8 @@
-import { supabase } from "@/shared";
+import { createServerClient } from "@/shared";
 
 export const deleteS3Image = async (bucket: string, filePaths: string[]) => {
+  const supabase = await createServerClient();
+
   try {
     return await supabase.storage.from(bucket).remove(filePaths);
   } catch (error) {

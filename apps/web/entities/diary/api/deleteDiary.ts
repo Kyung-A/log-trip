@@ -1,4 +1,4 @@
-import { deleteS3Image, supabase } from "@/shared";
+import { createServerClient, deleteS3Image } from "@/shared";
 
 import { IDiary } from "..";
 
@@ -9,6 +9,8 @@ const extractPathFromUrl = (url: string) => {
 };
 
 export const deleteDiary = async (data: IDiary) => {
+  const supabase = createClient();
+
   try {
     await supabase.from("diary_regions").delete().eq("diary_id", data.id);
     const response = await supabase.from("diaries").delete().eq("id", data.id);

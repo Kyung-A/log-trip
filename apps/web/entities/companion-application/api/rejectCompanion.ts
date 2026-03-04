@@ -1,8 +1,10 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 import { IRejectCompanion } from "..";
 
 export const rejectCompanion = async (data: IRejectCompanion) => {
+  const supabase = createClient();
+
   const { companion_id, ...body } = data;
 
   try {

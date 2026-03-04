@@ -1,6 +1,8 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 export const getCompanions = async () => {
+  const supabase = createClient();
+
   const { data, error } = await supabase
     .from("companions")
     .select(
@@ -8,7 +10,7 @@ export const getCompanions = async () => {
             *,
             user_info:user_id ( nickname, profile_image, gender ),
             companion_regions ( * )
-        `
+        `,
     )
     .gte("deadline_at", new Date().toISOString())
     .order("created_at", { ascending: true });

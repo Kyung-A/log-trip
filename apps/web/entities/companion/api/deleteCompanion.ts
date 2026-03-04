@@ -1,6 +1,8 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 export const deleteCompanion = async (id: string) => {
+  const supabase = createClient();
+
   await supabase.from("companion_regions").delete().eq("companion_id", id);
   const { status, error } = await supabase
     .from("companions")

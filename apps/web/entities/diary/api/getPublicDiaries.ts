@@ -1,6 +1,8 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 export const getPublicDiaries = async () => {
+  const supabase = createClient();
+
   const { data, error } = await supabase
     .from("diaries")
     .select(

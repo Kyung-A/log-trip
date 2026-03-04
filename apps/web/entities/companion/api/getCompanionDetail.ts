@@ -1,6 +1,8 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 export const getCompanionDetail = async (id: string) => {
+  const supabase = createClient();
+
   const { data, error } = await supabase
     .from("companions")
     .select(
@@ -11,7 +13,7 @@ export const getCompanionDetail = async (id: string) => {
             applications:companion_applications (
               id, status, message, applicant_id
             )
-        `
+        `,
     )
     .eq("id", id)
     .in("applications.status", ["pending", "accepted"])

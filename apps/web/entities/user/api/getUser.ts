@@ -1,6 +1,8 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 export const getUser = async () => {
+  const supabase = createClient();
+
   const {
     data: { user },
     error,
