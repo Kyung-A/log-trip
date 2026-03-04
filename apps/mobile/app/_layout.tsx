@@ -1,4 +1,9 @@
-import { checkIfUserExists, supabase, TabBarProvider } from "@/shared";
+import {
+  checkIfUserExists,
+  setSupabaseCookie,
+  supabase,
+  TabBarProvider,
+} from "@/shared";
 import { router, SplashScreen, Stack } from "expo-router";
 import Toast, {
   BaseToastProps,
@@ -69,12 +74,10 @@ export default function RootLayout() {
           const isUserExists = await checkIfUserExists(session.user.id);
 
           if (isUserExists) {
+            await setSupabaseCookie(session);
+
             router.replace({
               pathname: "/(tabs)",
-              params: {
-                accessToken: session.access_token,
-                refreshToken: session.refresh_token,
-              },
             });
           } else {
             Toast.show({
@@ -84,8 +87,7 @@ export default function RootLayout() {
             router.replace({
               pathname: "/(auth)/user-info",
               params: {
-                accessToken: session.access_token,
-                refreshToken: session.refresh_token,
+                session: JSON.stringify(session),
                 platform: session.user.app_metadata.provider,
               },
             });
@@ -101,6 +103,24 @@ export default function RootLayout() {
     };
 
     bootstrap();
+  }, []);
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        // 세션이 생기거나 갱신되면 쿠키 업데이트
+        await setSupabaseCookie(session);
+      } else if (event === "SIGNED_OUT") {
+        // 로그아웃 시 웹뷰 쿠키도 삭제 로직이 필요하다면 여기서 수행
+        // 예: await NitroCookies.remove(url, 'sb-xxx-auth-token');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (

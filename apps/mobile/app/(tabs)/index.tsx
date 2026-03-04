@@ -1,27 +1,12 @@
 import { LoadingView, supabase } from "@/shared";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { Alert, View } from "react-native";
 import WebView from "react-native-webview";
 
 export default function HomeScreen() {
   const webviewRef = useRef<WebView>(null);
-  const params = useLocalSearchParams();
-  const { accessToken, refreshToken } = params;
-
   const [isLoading, setIsLoading] = useState(true);
-
-  const injectSession = () => {
-    if (webviewRef.current && accessToken && refreshToken) {
-      const message = JSON.stringify({
-        type: "SESSION",
-        accessToken,
-        refreshToken,
-      });
-
-      webviewRef.current.postMessage(message);
-    }
-  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -29,10 +14,9 @@ export default function HomeScreen() {
         ref={webviewRef}
         source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/world-map` }}
         onLoadStart={() => setIsLoading(true)}
-        onLoadEnd={() => {
-          setIsLoading(false);
-          setTimeout(injectSession, 0);
-        }}
+        onLoadEnd={() => setIsLoading(false)}
+        sharedCookiesEnabled={true}
+        thirdPartyCookiesEnabled={true}
         style={{ flex: 1 }}
         webviewDebuggingEnabled={true}
         onMessage={(event) => {

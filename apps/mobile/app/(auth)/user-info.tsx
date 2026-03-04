@@ -1,4 +1,4 @@
-import { getUser, supabase } from "@/shared";
+import { getUser, setSupabaseCookie, supabase } from "@/shared";
 import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
@@ -19,7 +19,7 @@ const DEFAULT_VALUES = {
 export default function UserInfoScreen() {
   const appState = useRef(AppState.currentState);
   const params = useLocalSearchParams();
-  const { platform, accessToken, refreshToken } = params;
+  const { platform, session } = params;
 
   const {
     control,
@@ -60,12 +60,9 @@ export default function UserInfoScreen() {
     if (resultStatus === 201 || resultStatus === 200 || resultStatus === 204) {
       // ! 알림 권한 추후에 추가
       // await registerPushToken(user?.id); !
+      await setSupabaseCookie(JSON.parse(session as string));
       router.replace({
         pathname: "/(tabs)",
-        params: {
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        },
       });
     }
   };

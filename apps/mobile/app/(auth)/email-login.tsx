@@ -1,4 +1,4 @@
-import { checkIfUserExists, emailLogin } from "@/shared";
+import { checkIfUserExists, emailLogin, setSupabaseCookie } from "@/shared";
 import { router } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -23,19 +23,15 @@ export default function EmailLoginScreen() {
         const isUserExists = await checkIfUserExists(user?.id);
 
         if (isUserExists) {
+          await setSupabaseCookie(session);
           router.replace({
             pathname: "/(tabs)",
-            params: {
-              accessToken: session?.access_token,
-              refreshToken: session?.refresh_token,
-            },
           });
         } else {
           router.replace({
             pathname: "/(auth)/user-info",
             params: {
-              accessToken: session?.access_token,
-              refreshToken: session?.refresh_token,
+              session: JSON.stringify(session),
               platform: "email",
             },
           });

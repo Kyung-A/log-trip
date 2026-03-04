@@ -5,6 +5,7 @@ import NaverLogin from "@react-native-seoul/naver-login";
 import {
   checkIfUserExists,
   generateRawNonce,
+  setSupabaseCookie,
   sha256Hex,
   supabase,
 } from "@/shared";
@@ -29,19 +30,15 @@ export const useSocialLogin = () => {
 
       const isUserExists = await checkIfUserExists(data.user.id);
       if (isUserExists) {
+        await setSupabaseCookie(data.session);
         router.replace({
           pathname: "/(tabs)",
-          params: {
-            accessToken: data?.session.access_token,
-            refreshToken: data?.session.refresh_token,
-          },
         });
       } else {
         router.replace({
           pathname: "/(auth)/user-info",
           params: {
-            accessToken: data?.session.access_token,
-            refreshToken: data?.session.refresh_token,
+            session: JSON.stringify(data.session),
             platform: "kakao",
           },
         });
@@ -92,18 +89,14 @@ export const useSocialLogin = () => {
       router.replace({
         pathname: "/(auth)/user-info",
         params: {
-          accessToken: session.access_token,
-          refreshToken: session.refresh_token,
+          session: JSON.stringify(session),
           platform: "naver",
         },
       });
     } else {
+      await setSupabaseCookie(session);
       router.replace({
         pathname: "/(tabs)",
-        params: {
-          accessToken: session.access_token,
-          refreshToken: session.refresh_token,
-        },
       });
     }
   }, []);
@@ -141,12 +134,9 @@ export const useSocialLogin = () => {
       // * users 테이블에 이미 있다면 메인으로 이동
       const isUserExists = await checkIfUserExists(data.user.id);
       if (isUserExists) {
+        await setSupabaseCookie(data?.session);
         router.replace({
           pathname: "/(tabs)",
-          params: {
-            accessToken: data?.session.access_token,
-            refreshToken: data?.session.refresh_token,
-          },
         });
         return;
       }
@@ -165,8 +155,7 @@ export const useSocialLogin = () => {
       router.replace({
         pathname: "/(auth)/user-info",
         params: {
-          accessToken: data?.session.access_token,
-          refreshToken: data?.session.refresh_token,
+          session: JSON.stringify(data?.session),
           platform: "apple",
         },
       });
