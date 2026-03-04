@@ -3,26 +3,22 @@
 import { useEffect, useRef } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { useFetchUserId } from "@/entities/user";
 
-import { useWorldMapData } from "@/features/world-map-viewer";
-
 import { useMapbox } from "@/shared";
-import { MapSplashScreen } from "@/widgets/splash-screen";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
-export function WorldMap() {
+export function WorldMap({ geoJson }) {
   const router = useRouter();
   const qc = useQueryClient();
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useMapbox(mapContainerRef);
 
   const { data: userId } = useFetchUserId();
-  const { geoJson, isFetching } = useWorldMapData(userId);
+  // const { geoJson, isFetching } = useWorldMapData(userId);
 
   const handleRefresh = async () => {
     await qc.resetQueries({ queryKey: ["user"] });
@@ -75,14 +71,14 @@ export function WorldMap() {
         className="w-full h-screen relative"
       />
 
-      {isFetching && <MapSplashScreen />}
+      {/* {isFetching && <MapSplashScreen />} */}
 
       <button
         type="button"
         onClick={handleRefresh}
         className="absolute bottom-2 z-10 right-2 p-2 bg-white rounded-lg shadow-[0px_0px_10px_-3px_rgba(0,0,0,0.4)]"
       >
-        <RefreshCcw size={24} className={isFetching ? "animate-spin" : ""} />
+        {/* <RefreshCcw size={24} className={isFetching ? "animate-spin" : ""} /> */}
       </button>
     </>
   );

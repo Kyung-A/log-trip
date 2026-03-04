@@ -1,8 +1,10 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 import { IUpdateProfileData } from "../types";
 
 export const updateUserProfile = async (data: IUpdateProfileData) => {
+  const supabase = createClient();
+
   const { userId, ...updateData } = data;
 
   const { status, error } = await supabase

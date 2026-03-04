@@ -1,9 +1,12 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
+
 import { IDiaryRegions } from "..";
 
 export const getDiaryRegions = async (
-  id?: string | null
+  id?: string | null,
 ): Promise<IDiaryRegions[] | null> => {
+  const supabase = createClient();
+
   if (!id) throw new Error("id가 없습니다");
 
   const { data, error } = await supabase
@@ -12,7 +15,7 @@ export const getDiaryRegions = async (
       `
           *,
           diaries!inner(user_id)
-        `
+        `,
     )
     .eq("diaries.user_id", id);
 

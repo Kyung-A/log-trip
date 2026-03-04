@@ -1,10 +1,12 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 import { IRegion } from "..";
 
 export const getRegions = async (
   filters?: string | null,
 ): Promise<IRegion[] | null> => {
+  const supabase = createClient();
+
   let q = supabase.from("adm_regions").select("*");
 
   if (filters) {

@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { supabase } from "@/shared";
+
+import { createServerClient } from "@/shared";
 
 export const imageUpload = async (
   bucketName: string,
   filePath: string,
   imageBlob: any,
 ) => {
+  const supabase = await createServerClient();
+
   try {
     const { data } = await supabase.storage
       .from(bucketName)

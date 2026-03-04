@@ -1,8 +1,10 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 import { IApply } from "..";
 
 export const apply = async (data: IApply) => {
+  const supabase = createClient();
+
   const { status, error } = await supabase
     .from("companion_applications")
     .upsert(

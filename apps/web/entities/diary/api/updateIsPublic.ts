@@ -1,6 +1,8 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 export const updateIsPublic = async (id: string, state: boolean) => {
+  const supabase = createClient();
+
   const { status, error } = await supabase
     .from("diaries")
     .update({ is_public: state })

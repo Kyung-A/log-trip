@@ -1,6 +1,7 @@
-import { supabase } from "@/shared";
+import { createServerClient } from "@/shared";
 
 export const getDiaries = async () => {
+  const supabase = await createServerClient();
   let result = [];
 
   const {

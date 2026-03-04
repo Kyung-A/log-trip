@@ -1,8 +1,9 @@
-import { supabase } from "@/shared";
+import { createClient } from "@/shared";
 
 import { ICompanionRequest } from "..";
 
 export const createCompanions = async (data: ICompanionRequest) => {
+  const supabase = createClient();
   const { companion_regions, ...post } = data;
 
   const response = await supabase
