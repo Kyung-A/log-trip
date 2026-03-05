@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 
 import { ChevronLeft } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
@@ -8,8 +8,7 @@ import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
 
 import { IDiary } from "@/entities/diary";
-import { IRegion, useFetchRegions } from "@/entities/region";
-import { useFetchUserId } from "@/entities/user";
+import { IRegion } from "@/entities/region";
 
 import {
   blobUrlToBase64,
@@ -23,7 +22,7 @@ import { DrawingCanvasDialog } from "./DrawingCanvasDialog";
 import { DrawingModeToggle } from "./DrawingModeToggle";
 import { ImageEditDialog } from "./ImageEditDialog";
 import { UploadDiaryImageField } from "./UploadDiaryImageField";
-import { CitySelectField, useCreateDiary } from "../..";
+import { CitySelectField, createDiaryAction } from "../..";
 
 const DEFAULT_FORM_VALUES: Partial<IDiary> = {
   user_id: "",
@@ -36,7 +35,13 @@ const DEFAULT_FORM_VALUES: Partial<IDiary> = {
   diary_regions: [],
 };
 
-export const DiaryForm = () => {
+export const DiaryForm = ({
+  regions,
+  userId,
+}: {
+  regions: IRegion[] | null;
+  userId?: string;
+}) => {
   const [cities, setCities] = useState<IRegion[]>([]);
   const [imgs, setImgs] = useState<{ origin: string; modified: string }[]>([]);
   const [isOpenDrawing, setOpenDrawing] = useState<boolean>(false);
@@ -47,9 +52,7 @@ export const DiaryForm = () => {
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [currentEditImage, setCurrentEditImage] = useState<string | null>(null);
 
-  const { data: userId } = useFetchUserId();
-  const { data: regions } = useFetchRegions();
-  const { mutateAsync } = useCreateDiary();
+  const [, startTransition] = useTransition();
 
   const { control, watch, setValue, handleSubmit } = useForm<IDiary>({
     defaultValues: DEFAULT_FORM_VALUES,
@@ -151,7 +154,7 @@ export const DiaryForm = () => {
       await imageUpload("log-trip-images", path, buffer);
       const result = getImageUrl("log-trip-images", path);
 
-      return result.publicUrl;
+      return (await result).publicUrl;
     } catch (error) {
       console.error("Image upload failed:", error);
       return null;
@@ -194,10 +197,21 @@ export const DiaryForm = () => {
         body = { ...body, drawing_content: drawingContentUrl };
       }
 
-      const result = await mutateAsync(body as IDiary);
-      if (result) {
-        navigateNative("/diary");
-      }
+      startTransition(async () => {
+        const { success } = await createDiaryAction(body as IDiary);
+
+        if (success) {
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({
+                type: "REFRESH_MAP_DATA",
+              }),
+            );
+          }
+
+          navigateNative("/diary");
+        }
+      });
     },
     (error) => {
       toast.error(Object.values(error)[0].message);

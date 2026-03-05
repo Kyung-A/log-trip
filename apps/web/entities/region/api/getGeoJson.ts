@@ -40,7 +40,7 @@ export const getGeoJson = async (
     async () => fetchAndFilterGeoJson(api_url, region_code, shape_name),
     ["geojson-data", api_url, region_code, shape_name],
     {
-      tags: ["geojson"],
+      tags: ["geojson-data"],
       revalidate: 86400, // TODO: 24시간 동안 서버에 저장
     },
   );

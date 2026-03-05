@@ -1,17 +1,18 @@
 import { LoadingView, supabase } from "@/shared";
 import { router } from "expo-router";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Alert, View } from "react-native";
 import WebView from "react-native-webview";
+import { useWebviewRefs } from "./_layout";
 
 export default function HomeScreen() {
-  const webviewRef = useRef<WebView>(null);
+  const { mapWebviewRef } = useWebviewRefs();
   const [isLoading, setIsLoading] = useState(true);
 
   return (
     <View style={{ flex: 1 }}>
       <WebView
-        ref={webviewRef}
+        ref={mapWebviewRef}
         source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/world-map` }}
         onLoadStart={() => setIsLoading(true)}
         onLoadEnd={() => setIsLoading(false)}
