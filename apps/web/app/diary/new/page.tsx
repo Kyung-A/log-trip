@@ -1,5 +1,16 @@
+import { getRegions } from "@/entities/region";
+
 import { DiaryForm } from "@/features/diary-create";
 
-export default function CreateDiary() {
-  return <DiaryForm />;
+import { createServerClient } from "@/shared";
+
+export default async function CreateDiary() {
+  const supabase = await createServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const regions = await getRegions();
+
+  return <DiaryForm userId={user?.id} regions={regions} />;
 }

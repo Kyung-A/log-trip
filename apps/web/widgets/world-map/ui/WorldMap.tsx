@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useTransition } from "react";
+import { useCallback, useEffect, useRef, useTransition } from "react";
 
 import { RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -26,12 +26,12 @@ export function WorldMap({
   const mapRef = useMapbox(mapContainerRef);
   const [isPending, startTransition] = useTransition();
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     startTransition(async () => {
       await revalidateAllData(userId);
       router.refresh();
     });
-  };
+  }, [router, userId]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -90,6 +90,16 @@ export function WorldMap({
     if (map.isStyleLoaded()) updateMap();
     else map.once("style.load", updateMap);
   }, [geoJson, mapRef]);
+
+  useEffect(() => {
+    window.forceRefreshMap = () => {
+      handleRefresh();
+    };
+
+    return () => {
+      delete window.forceRefreshMap;
+    };
+  }, [handleRefresh]);
 
   return (
     <>

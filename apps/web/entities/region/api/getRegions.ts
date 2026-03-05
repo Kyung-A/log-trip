@@ -19,7 +19,7 @@ const fetchRegions = (supabase: SupabaseClient, filters?: string | null) =>
 
       return data;
     },
-    ["all-regions"],
+    ["all-regions", filters ?? "default"],
     { tags: ["all-regions"] },
   )();
 

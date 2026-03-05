@@ -3,8 +3,10 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
+import { useWebviewRefs } from "./(tabs)/_layout";
 
 export default function CreateDiary() {
+  const { mapWebviewRef } = useWebviewRefs();
   const [isLoading, setIsLoading] = useState(true);
 
   return (
@@ -41,6 +43,15 @@ export default function CreateDiary() {
               router.push({
                 pathname: path,
               });
+            }
+
+            if (data.type === "REFRESH_MAP_DATA") {
+              mapWebviewRef?.current?.injectJavaScript(`
+              if (window.forceRefreshMap) {
+                window.forceRefreshMap();
+              }
+              true;
+            `);
             }
           } catch (e) {
             console.warn("Invalid message from web", e);

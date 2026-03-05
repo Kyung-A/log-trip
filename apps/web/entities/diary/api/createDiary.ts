@@ -1,9 +1,9 @@
-import { createClient } from "@/shared";
+import { createServerClient } from "@/shared";
 
 import { IDiary } from "../types";
 
 export const createDiary = async (data: IDiary) => {
-  const supabase = createClient();
+  const supabase = await createServerClient();
 
   const { diary_images, diary_regions, ...post } = data;
 

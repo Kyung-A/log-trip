@@ -1,5 +1,5 @@
 import { router, Tabs } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { createContext, useContext, useRef, useState } from "react";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import {
   Pressable,
@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useTabBarVisibility } from "@/shared";
+import WebView from "react-native-webview";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -138,99 +139,107 @@ function ComposeTabButton() {
   );
 }
 
+const WebviewRefContext = createContext<{
+  mapWebviewRef: React.RefObject<WebView | null> | null;
+}>({ mapWebviewRef: null });
+
+export const useWebviewRefs = () => useContext(WebviewRefContext);
+
 export default function TabLayout() {
   const { isTabBarVisible } = useTabBarVisibility();
+  const mapWebviewRef = useRef<WebView>(null);
 
   return (
-    <Tabs
-      screenOptions={({ route }) => ({
-        tabBarStyle: {
-          paddingLeft: 14,
-          paddingRight: 14,
-          paddingBottom: 0,
-          display: isTabBarVisible ? "flex" : "none",
-        },
-        headerShown: false,
-        contentStyle: {
-          paddingTop: 0,
-        },
-        safeAreaInsets: { top: 0, bottom: 0 },
-        tabBarIcon: ({ focused }) => {
-          if (route.name === "index") {
-            return (
-              <Ionicons
-                name="map"
-                size={19}
-                color={focused ? "#a38f86" : "#A9A9A9"}
-              />
-            );
-          } else if (route.name === "companion") {
-            // TODO: 추후 추가 예정 서비스
-            return;
-            // return (
-            //   <Ionicons
-            //     name="people"
-            //     size={20}
-            //     color={focused ? "#a38f86" : "#A9A9A9"}
-            //   />
-            // );
-          } else if (route.name === "diary") {
-            return (
-              <FontAwesome
-                name="suitcase"
-                size={18}
-                color={focused ? "#a38f86" : "#A9A9A9"}
-              />
-            );
-          } else if (route.name === "publicDiary") {
-            return (
-              <Entypo
-                name="slideshare"
-                size={19}
-                color={focused ? "#a38f86" : "#A9A9A9"}
-              />
-            );
-          } else if (route.name === "mypage") {
-            return (
-              <Ionicons
-                name="person"
-                size={19}
-                color={focused ? "#a38f86" : "#A9A9A9"}
-              />
-            );
-          }
-        },
-        tabBarButton: (props) => {
-          if (route.name === "write") {
-            return <ComposeTabButton />;
-          }
+    <WebviewRefContext.Provider value={{ mapWebviewRef }}>
+      <Tabs
+        screenOptions={({ route }) => ({
+          tabBarStyle: {
+            paddingLeft: 14,
+            paddingRight: 14,
+            paddingBottom: 0,
+            display: isTabBarVisible ? "flex" : "none",
+          },
+          headerShown: false,
+          contentStyle: {
+            paddingTop: 0,
+          },
+          safeAreaInsets: { top: 0, bottom: 0 },
+          tabBarIcon: ({ focused }) => {
+            if (route.name === "index") {
+              return (
+                <Ionicons
+                  name="map"
+                  size={19}
+                  color={focused ? "#a38f86" : "#A9A9A9"}
+                />
+              );
+            } else if (route.name === "companion") {
+              // TODO: 추후 추가 예정 서비스
+              return;
+              // return (
+              //   <Ionicons
+              //     name="people"
+              //     size={20}
+              //     color={focused ? "#a38f86" : "#A9A9A9"}
+              //   />
+              // );
+            } else if (route.name === "diary") {
+              return (
+                <FontAwesome
+                  name="suitcase"
+                  size={18}
+                  color={focused ? "#a38f86" : "#A9A9A9"}
+                />
+              );
+            } else if (route.name === "publicDiary") {
+              return (
+                <Entypo
+                  name="slideshare"
+                  size={19}
+                  color={focused ? "#a38f86" : "#A9A9A9"}
+                />
+              );
+            } else if (route.name === "mypage") {
+              return (
+                <Ionicons
+                  name="person"
+                  size={19}
+                  color={focused ? "#a38f86" : "#A9A9A9"}
+                />
+              );
+            }
+          },
+          tabBarButton: (props) => {
+            if (route.name === "write") {
+              return <ComposeTabButton />;
+            }
 
-          return <TouchableOpacity {...(props as TouchableOpacityProps)} />;
-        },
-        tabBarActiveTintColor: "#a38f86",
-        tabBarInactiveTintColor: "#A9A9A9",
-      })}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "세계지도",
-        }}
-      />
-      <Tabs.Screen
-        name="diary"
-        options={{
-          title: "내여행",
-        }}
-      />
+            return <TouchableOpacity {...(props as TouchableOpacityProps)} />;
+          },
+          tabBarActiveTintColor: "#a38f86",
+          tabBarInactiveTintColor: "#A9A9A9",
+        })}
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "세계지도",
+          }}
+        />
+        <Tabs.Screen
+          name="diary"
+          options={{
+            title: "내여행",
+          }}
+        />
 
-      <Tabs.Screen
-        name="write"
-        options={{
-          tabBarLabel: "",
-        }}
-      />
-      {/* // TODO: 추후 추가 예정 서비스
+        <Tabs.Screen
+          name="write"
+          options={{
+            tabBarLabel: "",
+          }}
+        />
+        {/* // TODO: 추후 추가 예정 서비스
       <Tabs.Screen
         name="companion"
         options={{
@@ -238,18 +247,19 @@ export default function TabLayout() {
         }}
       /> */}
 
-      <Tabs.Screen
-        name="publicDiary"
-        options={{
-          title: "일기숲",
-        }}
-      />
-      <Tabs.Screen
-        name="mypage"
-        options={{
-          title: "마이페이지",
-        }}
-      />
-    </Tabs>
+        <Tabs.Screen
+          name="publicDiary"
+          options={{
+            title: "일기숲",
+          }}
+        />
+        <Tabs.Screen
+          name="mypage"
+          options={{
+            title: "마이페이지",
+          }}
+        />
+      </Tabs>
+    </WebviewRefContext.Provider>
   );
 }

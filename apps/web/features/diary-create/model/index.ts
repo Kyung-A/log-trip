@@ -1,1 +1,1 @@
-export { useCreateDiary } from "./useCreateDiary";
+export { createDiaryAction } from "./createDiaryAction";
