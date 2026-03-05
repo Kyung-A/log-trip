@@ -1,10 +1,11 @@
 import { LoadingView } from "@/shared";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
+import { useWebviewRefs } from "./_layout";
 
 export default function DiaryScreen() {
-  const webviewRef = useRef<WebView>(null);
+  const { mapWebviewRef } = useWebviewRefs();
   const [isLoading, setIsLoading] = useState(true);
 
   return (
@@ -13,7 +14,6 @@ export default function DiaryScreen() {
       edges={["top", "left", "right"]}
     >
       <WebView
-        ref={webviewRef}
         source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/diary` }}
         style={{ flex: 1 }}
         onLoadStart={() => setIsLoading(true)}
@@ -24,6 +24,34 @@ export default function DiaryScreen() {
         allowFileAccess={true}
         sharedCookiesEnabled={true}
         thirdPartyCookiesEnabled={true}
+        injectedJavaScriptBeforeContentLoaded={`
+          (function () {
+            window.ReactNativeWebView = window.ReactNativeWebView || {
+              postMessage: function (data) {
+                window.postMessage(data);
+              }
+            };
+          })();
+          true;
+        `}
+        onMessage={(event) => {
+          try {
+            const data = JSON.parse(event.nativeEvent.data);
+
+            if (data.type === "REFRESH_MAP_DATA") {
+              console.log("A탭에서 신호 수신 -> B탭(지도) 강제 새로고침 실행");
+
+              mapWebviewRef?.current?.injectJavaScript(`
+              if (window.forceRefreshMap) {
+                window.forceRefreshMap();
+              }
+              true;
+            `);
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }}
       />
 
       {isLoading && <LoadingView />}
