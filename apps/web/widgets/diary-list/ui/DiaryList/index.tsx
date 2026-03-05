@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { toast } from "react-toastify";
 
-import { useFetchDiaries, IDiary } from "@/entities/diary";
+import { IDiary } from "@/entities/diary";
 
 import { useDeleteDiary } from "@/features/diary-delete";
 import {
@@ -17,10 +17,15 @@ import { EmptyView } from "@/shared";
 
 import { DiaryItem } from "./DiaryItem";
 
-export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
+export const DiaryList = ({
+  data,
+  isNotFeed,
+}: {
+  data: IDiary[];
+  isNotFeed: boolean;
+}) => {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
-  const { data } = useFetchDiaries(queryKey);
   const { mutateAsync: deleteMutateAsync } = useDeleteDiary();
   const { mutate: updateIsPublicMutate } = useToggleVisibility();
   const { mutateAsync: updateIsReportMutate } = useUpdateIsReport();
@@ -84,7 +89,7 @@ export const DiaryList = ({ queryKey }: { queryKey: readonly unknown[] }) => {
           handleReportDiary={handleReportDiary}
           handleDeleteDiary={handleDeleteDiary}
           handleIsPublicDiaryChange={handleIsPublicDiaryChange}
-          isNotFeed={queryKey[1] !== "feed"}
+          isNotFeed={isNotFeed}
         />
       ))}
     </ul>
