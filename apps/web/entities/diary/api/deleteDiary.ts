@@ -9,7 +9,7 @@ const extractPathFromUrl = (url: string) => {
 };
 
 export const deleteDiary = async (data: IDiary) => {
-  const supabase = createClient();
+  const supabase = await createServerClient();
 
   try {
     await supabase.from("diary_regions").delete().eq("diary_id", data.id);

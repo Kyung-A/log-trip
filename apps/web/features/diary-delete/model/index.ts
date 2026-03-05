@@ -1,1 +1,1 @@
-export { useDeleteDiary } from "./useDeleteDiary";
+export { deleteDiaryAction } from "./deleteDiaryAction";

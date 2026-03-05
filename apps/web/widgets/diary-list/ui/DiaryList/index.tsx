@@ -2,12 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 import { IDiary } from "@/entities/diary";
 
-import { useDeleteDiary } from "@/features/diary-delete";
+import { deleteDiaryAction } from "@/features/diary-delete";
 import {
   useToggleVisibility,
   useUpdateIsReport,
@@ -25,8 +25,9 @@ export const DiaryList = ({
   isNotFeed: boolean;
 }) => {
   const pathname = usePathname();
+  const router = useRouter();
+
   const [isMounted, setIsMounted] = useState(false);
-  const { mutateAsync: deleteMutateAsync } = useDeleteDiary();
   const { mutate: updateIsPublicMutate } = useToggleVisibility();
   const { mutateAsync: updateIsReportMutate } = useUpdateIsReport();
 
@@ -50,10 +51,20 @@ export const DiaryList = ({
   const handleDeleteDiary = useCallback(
     async (item: IDiary) => {
       if (confirm("정말 삭제하시겠습니까?")) {
-        await deleteMutateAsync(item);
+        await deleteDiaryAction(item);
+
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({
+              type: "REFRESH_MAP_DATA",
+            }),
+          );
+        }
+
+        router.refresh();
       }
     },
-    [deleteMutateAsync],
+    [router],
   );
 
   const handleIsPublicDiaryChange = useCallback(
