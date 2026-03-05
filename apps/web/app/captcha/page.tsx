@@ -1,13 +1,13 @@
 "use client";
-import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { useRef } from "react";
+
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export default function Captcha() {
   const hcaptchaRef = useRef(null);
 
   const onVerificationSuccess = (token: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).ReactNativeWebView?.postMessage(JSON.stringify({ token }));
+    window.ReactNativeWebView?.postMessage(JSON.stringify({ token }));
   };
 
   return (

@@ -1,18 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export function navigateNative(path: string, type = "NAVIGATE", params?: any) {
+export function navigateNative(
+  path: string,
+  type = "NAVIGATE",
+  params?: { [key: string]: string },
+) {
   if (typeof window === "undefined") return;
 
-  if (!(window as any).ReactNativeWebView) {
+  if (!window.ReactNativeWebView) {
     return;
   }
 
-  (window as any).ReactNativeWebView.postMessage(
+  window.ReactNativeWebView.postMessage(
     JSON.stringify({
       type: type,
       payload: {
         path,
         params,
       },
-    })
+    }),
   );
 }
