@@ -1,1 +1,1 @@
-export { useWorldMapData } from "./useWorldMapData";
+export { revalidateAllData } from "./revalidateAllData";
