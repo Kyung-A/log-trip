@@ -1,12 +1,8 @@
-import {
-  queryOptions,
-  useQuery,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
-import { getDiaries, getDiaryRegions, getPublicDiaries } from "..";
-import { diaryKeys, diaryRegionKeys } from "./queryKeys";
-import { IDiary, IDiaryRegions } from "../types";
+import { getDiaries, getPublicDiaries } from "..";
+import { diaryKeys } from "./queryKeys";
+import { IDiary } from "../types";
 
 export const diaryQueries = {
   mineList: () =>
@@ -28,18 +24,6 @@ export const diaryQueries = {
       refetchOnMount: false,
       staleTime: Infinity,
     }),
-
-  regions: (userId?: string | null) =>
-    queryOptions<IDiaryRegions[] | null>({
-      queryKey: diaryRegionKeys.byUser(userId),
-      queryFn: () => getDiaryRegions(userId),
-      placeholderData: (prev) => prev,
-      enabled: !!userId,
-      staleTime: 0,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: true,
-    }),
 };
 
 export const useFetchDiaries = (queryKey: readonly unknown[]) => {
@@ -56,11 +40,5 @@ export const useFetchDiaries = (queryKey: readonly unknown[]) => {
 
   return useSuspenseQuery({
     ...options,
-  });
-};
-
-export const useFetchDiaryRegions = (userId?: string | null) => {
-  return useQuery({
-    ...diaryQueries.regions(userId),
   });
 };
