@@ -1,22 +1,15 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
+import { getDiaries } from "@/entities/diary";
 
-import { diaryQueries } from "@/entities/diary";
-
+import { createServerClient } from "@/shared";
 import { DiaryList } from "@/widgets/diary-list";
 
 export default async function Diary() {
-  const queryClient = new QueryClient();
-  const options = diaryQueries.mineList();
+  const supabase = await createServerClient();
 
-  await queryClient.prefetchQuery(options);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const data = await getDiaries(user?.id);
 
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <DiaryList queryKey={options.queryKey} />
-    </HydrationBoundary>
-  );
+  return <DiaryList data={data} isNotFeed={true} />;
 }

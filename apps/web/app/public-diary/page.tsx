@@ -1,22 +1,9 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
-
-import { diaryQueries } from "@/entities/diary";
+import { getPublicDiaries } from "@/entities/diary";
 
 import { DiaryList } from "@/widgets/diary-list";
 
 export default async function PublicDiary() {
-  const queryClient = new QueryClient();
-  const options = diaryQueries.feedList();
+  const data = await getPublicDiaries();
 
-  await queryClient.prefetchQuery(options);
-
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <DiaryList queryKey={options.queryKey} />
-    </HydrationBoundary>
-  );
+  return <DiaryList data={data} isNotFeed={false} />;
 }
