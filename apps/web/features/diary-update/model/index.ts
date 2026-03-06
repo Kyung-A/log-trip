@@ -1,2 +1,2 @@
 export { toggleVisibilityAction } from "./toggleVisibilityAction";
-export { useUpdateIsReport } from "./useUpdateIsReport";
+export { updateIsReportAction } from "./updateIsReportAction";
