@@ -9,7 +9,7 @@ import { IDiary } from "@/entities/diary";
 
 import { deleteDiaryAction } from "@/features/diary-delete";
 import {
-  useToggleVisibility,
+  toggleVisibilityAction,
   useUpdateIsReport,
 } from "@/features/diary-update";
 
@@ -28,7 +28,6 @@ export const DiaryList = ({
   const router = useRouter();
 
   const [isMounted, setIsMounted] = useState(false);
-  const { mutate: updateIsPublicMutate } = useToggleVisibility();
   const { mutateAsync: updateIsReportMutate } = useUpdateIsReport();
 
   useEffect(() => {
@@ -51,7 +50,8 @@ export const DiaryList = ({
   const handleDeleteDiary = useCallback(
     async (item: IDiary) => {
       if (confirm("정말 삭제하시겠습니까?")) {
-        await deleteDiaryAction(item);
+        const { success } = await deleteDiaryAction(item);
+        if (!success) return;
 
         if (window.ReactNativeWebView) {
           window.ReactNativeWebView.postMessage(
@@ -68,11 +68,11 @@ export const DiaryList = ({
   );
 
   const handleIsPublicDiaryChange = useCallback(
-    (id: string, state: boolean) => {
-      updateIsPublicMutate({ id, state });
-      return state;
+    async (id: string, state: boolean, userId?: string) => {
+      await toggleVisibilityAction(id, state, userId);
+      router.refresh();
     },
-    [updateIsPublicMutate],
+    [router],
   );
 
   if (!isMounted) {
