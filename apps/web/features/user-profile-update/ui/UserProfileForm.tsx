@@ -16,7 +16,7 @@ import {
   navigateNative,
 } from "@/shared";
 
-import { useUpdateUserProfile } from "../model";
+import { updateUserProfileAction } from "../model";
 
 export const UserProfileForm = ({
   profile,
@@ -26,7 +26,6 @@ export const UserProfileForm = ({
   userId?: string;
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { mutateAsync } = useUpdateUserProfile();
 
   const { control, handleSubmit } = useForm({
     defaultValues: profile,
@@ -90,8 +89,22 @@ export const UserProfileForm = ({
         profile_image: imageUrl,
       };
 
-      const result = await mutateAsync({ userId, ...data });
-      if (result === 200) {
+      const { success } = await updateUserProfileAction({ userId, ...data });
+      if (success) {
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({
+              type: "REFRESH_PUBLIC_DIARY_DATA",
+            }),
+          );
+        }
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({
+              type: "REFRESH_DIARY_DATA",
+            }),
+          );
+        }
         navigateNative("/mypage", "WINDOW_LOCATION");
       }
     } catch (error) {

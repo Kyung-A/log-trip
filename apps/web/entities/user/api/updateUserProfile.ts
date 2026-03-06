@@ -1,9 +1,9 @@
-import { createClient } from "@/shared";
+import { createServerClient } from "@/shared";
 
 import { IUpdateProfileData } from "../types";
 
 export const updateUserProfile = async (data: IUpdateProfileData) => {
-  const supabase = createClient();
+  const supabase = await createServerClient();
 
   const { userId, ...updateData } = data;
 
