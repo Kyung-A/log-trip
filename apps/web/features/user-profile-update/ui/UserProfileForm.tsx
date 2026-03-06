@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
-import { useFetchUserId, useFetchUserProfile } from "@/entities/user";
+import { IProfile } from "@/entities/user";
 
 import {
   blobUrlToBase64,
@@ -18,13 +18,19 @@ import {
 
 import { useUpdateUserProfile } from "../model";
 
-export const UserProfileForm = () => {
+export const UserProfileForm = ({
+  profile,
+  userId,
+}: {
+  profile: IProfile;
+  userId?: string;
+}) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { mutateAsync } = useUpdateUserProfile();
 
-  const { data: userId } = useFetchUserId();
-  const { data: profile } = useFetchUserProfile(userId);
-  const { control, handleSubmit } = useForm({ defaultValues: profile });
+  const { control, handleSubmit } = useForm({
+    defaultValues: profile,
+  });
 
   const [profileImg, setProfileImg] = useState<string | null>(null);
 
@@ -159,9 +165,13 @@ export const UserProfileForm = () => {
             </div>
           )}
         </div>
+        {/* TODO: 닉네임 필수 */}
         <Controller
           control={control}
           name="nickname"
+          rules={{
+            required: "닉네임은 필수입니다.",
+          }}
           render={({ field: { onChange, value } }) => (
             <input
               className="w-40 mt-6 text-xl font-semibold text-center outline-0"
@@ -169,6 +179,7 @@ export const UserProfileForm = () => {
               onChange={onChange}
               value={value}
               maxLength={10}
+              readOnly
             />
           )}
         />

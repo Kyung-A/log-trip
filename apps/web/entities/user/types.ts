@@ -10,7 +10,7 @@ export interface IProfile {
   email: string;
 }
 
-export interface IMyCounters {
+export interface IDiaryCounters {
   diaries_count: number;
   public_diaries_count: number;
   applied_count: number;
