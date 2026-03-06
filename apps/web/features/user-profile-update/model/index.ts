@@ -1,1 +1,1 @@
-export { useUpdateUserProfile } from "./useUpdateUserProfile";
+export { updateUserProfileAction } from "./updateUserProfileAction";

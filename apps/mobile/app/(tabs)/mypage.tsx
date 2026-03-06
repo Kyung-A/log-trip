@@ -3,8 +3,10 @@ import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
+import { useWebviewRefs } from "./_layout";
 
 export default function MyPageScreen() {
+  const { publicDiaryWebviewRef, diaryWebviewRef } = useWebviewRefs();
   const webViewRef = useRef<WebView>(null);
   const { setTabBarVisible } = useTabBarVisibility();
   const [isLoading, setIsLoading] = useState(true);
@@ -62,6 +64,24 @@ export default function MyPageScreen() {
                 window.location.href = '/mypage';
                 true;
               `);
+            }
+
+            if (data.type === "REFRESH_PUBLIC_DIARY_DATA") {
+              publicDiaryWebviewRef?.current?.injectJavaScript(`
+              if (window.forceRefreshMap) {
+                window.forceRefreshMap();
+              }
+              true;
+            `);
+            }
+
+            if (data.type === "REFRESH_DIARY_DATA") {
+              diaryWebviewRef?.current?.injectJavaScript(`
+                if (window.forceRefreshMap) {
+                  window.forceRefreshMap();
+                }
+              true;
+            `);
             }
           } catch (e) {
             console.warn("Invalid message from web", e);
