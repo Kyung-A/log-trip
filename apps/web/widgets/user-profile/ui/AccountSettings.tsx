@@ -2,27 +2,28 @@
 
 import { useCallback } from "react";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
-import { useFetchUserId, useFetchUserProfile } from "@/entities/user";
+import { IProfile } from "@/entities/user";
 
 import { useDeleteUser } from "@/features/user-delete";
 
 import { navigateNative } from "@/shared";
 
-export const AccountSettings = () => {
+export const AccountSettings = ({
+  userId,
+  profile,
+}: {
+  userId?: string;
+  profile: IProfile;
+}) => {
   const router = useRouter();
-  const qc = useQueryClient();
   const { mutate } = useDeleteUser();
 
-  const { data: userId } = useFetchUserId();
-  const { data: profile } = useFetchUserProfile(userId);
-
   const handleLogout = useCallback(async () => {
-    qc.clear();
+    // qc.clear();
     navigateNative("/mypage", "LOGOUT"); // * 로그아웃 처리는 RN 쪽에서 처리
-  }, [qc]);
+  }, []);
 
   const handleDeleteUser = useCallback(() => {
     if (

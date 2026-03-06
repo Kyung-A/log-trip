@@ -1,18 +1,27 @@
-import { createClient } from "@/shared";
+import { unstable_cache } from "next/cache";
 
-export const getUserProfile = async (id?: string | null) => {
-  const supabase = createClient();
+import { createServerClient } from "@/shared";
 
-  if (!id) throw new Error("id가 없습니다");
+export const getUserProfile = async (userId?: string) => {
+  if (!userId) throw new Error("id가 없습니다");
 
-  const { data, error } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+  const fetchProfile = unstable_cache(
+    async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
 
-  if (error) throw new Error(error.message);
-  console.log("getUserProfile", data);
+      if (error) throw new Error(error.message);
 
-  return data;
+      return data;
+    },
+    ["user-profile", userId],
+    { tags: ["user-profile", `user-profile-${userId}`], revalidate: 86400 },
+  );
+
+  const supabase = await createServerClient();
+  const data = await fetchProfile();
+  return { data };
 };

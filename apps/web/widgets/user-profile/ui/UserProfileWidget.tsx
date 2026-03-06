@@ -3,31 +3,24 @@
 import { ChevronLeft, UserRound } from "lucide-react";
 import Image from "next/image";
 
-import {
-  useFetchUserId,
-  useFetchUserProfile,
-  useFetchMyCounter,
-} from "@/entities/user";
+import { IDiaryCounters, IProfile } from "@/entities/user";
 
 import { navigateNative } from "@/shared";
 
 interface IProfileWidgetProps {
+  profile: IProfile;
+  counters: IDiaryCounters;
   targetId?: string;
   isMine?: boolean;
   children?: React.ReactNode;
 }
 
 export const UserProfileWidget = ({
-  targetId,
+  profile,
+  counters,
   isMine,
   children,
 }: IProfileWidgetProps) => {
-  const { data: myId } = useFetchUserId();
-  const activeId = targetId || myId;
-
-  const { data: profile } = useFetchUserProfile(activeId);
-  const { data: counters } = useFetchMyCounter(activeId);
-
   return (
     <>
       {!isMine && (
