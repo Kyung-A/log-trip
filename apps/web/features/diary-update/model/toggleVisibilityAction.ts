@@ -1,5 +1,5 @@
 "use server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { updateIsPublic } from "@/entities/diary";
 
@@ -13,7 +13,9 @@ export const toggleVisibilityAction = async (
 
     revalidateTag("diaries", "default");
     revalidateTag(`diaries-${userId}`, "default");
-    // TODO: 일기숲도 초기화 필요
+    revalidateTag("public-diaries", "default");
+
+    revalidatePath("/public-diary");
 
     return { success: true, result };
   } catch (e) {
