@@ -6,7 +6,8 @@ import WebView from "react-native-webview";
 import { useWebviewRefs } from "./(tabs)/_layout";
 
 export default function CreateDiary() {
-  const { mapWebviewRef } = useWebviewRefs();
+  const { mapWebviewRef, publicDiaryWebviewRef, mypageWebviewRef } =
+    useWebviewRefs();
   const [isLoading, setIsLoading] = useState(true);
 
   return (
@@ -52,6 +53,24 @@ export default function CreateDiary() {
               }
               true;
             `);
+            }
+
+            if (data.type === "REFRESH_PUBLIC_DIARY_DATA") {
+              publicDiaryWebviewRef?.current?.injectJavaScript(`
+                if (window.forceRefreshMap) {
+                  window.forceRefreshMap();
+                }
+                true;
+              `);
+            }
+
+            if (data.type === "REFRESH_MYPAGE_DATA") {
+              mypageWebviewRef?.current?.injectJavaScript(`
+                if (window.forceRefreshMap) {
+                  window.forceRefreshMap();
+                }
+                true;
+              `);
             }
           } catch (e) {
             console.warn("Invalid message from web", e);

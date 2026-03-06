@@ -5,8 +5,12 @@ import WebView from "react-native-webview";
 import { useWebviewRefs } from "./_layout";
 
 export default function DiaryScreen() {
-  const { mapWebviewRef, publicDiaryWebviewRef, diaryWebviewRef } =
-    useWebviewRefs();
+  const {
+    mapWebviewRef,
+    publicDiaryWebviewRef,
+    diaryWebviewRef,
+    mypageWebviewRef,
+  } = useWebviewRefs();
   const [isLoading, setIsLoading] = useState(true);
 
   return (
@@ -51,6 +55,15 @@ export default function DiaryScreen() {
 
             if (data.type === "REFRESH_PUBLIC_DIARY_DATA") {
               publicDiaryWebviewRef?.current?.injectJavaScript(`
+              if (window.forceRefreshMap) {
+                window.forceRefreshMap();
+              }
+              true;
+            `);
+            }
+
+            if (data.type === "REFRESH_MYPAGE_DATA") {
+              mypageWebviewRef?.current?.injectJavaScript(`
               if (window.forceRefreshMap) {
                 window.forceRefreshMap();
               }

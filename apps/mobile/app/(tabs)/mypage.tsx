@@ -1,13 +1,13 @@
 import { LoadingView, supabase, useTabBarVisibility } from "@/shared";
 import { router } from "expo-router";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WebView from "react-native-webview";
 import { useWebviewRefs } from "./_layout";
 
 export default function MyPageScreen() {
-  const { publicDiaryWebviewRef, diaryWebviewRef } = useWebviewRefs();
-  const webViewRef = useRef<WebView>(null);
+  const { publicDiaryWebviewRef, diaryWebviewRef, mypageWebviewRef } =
+    useWebviewRefs();
   const { setTabBarVisible } = useTabBarVisibility();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -17,7 +17,7 @@ export default function MyPageScreen() {
       edges={["top", "left", "right"]}
     >
       <WebView
-        ref={webViewRef}
+        ref={mypageWebviewRef}
         style={{ flex: 1 }}
         source={{
           uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/mypage`,
@@ -60,7 +60,7 @@ export default function MyPageScreen() {
             }
 
             if (data.type === "WINDOW_LOCATION") {
-              webViewRef.current?.injectJavaScript(`
+              mypageWebviewRef?.current?.injectJavaScript(`
                 window.location.href = '/mypage';
                 true;
               `);
