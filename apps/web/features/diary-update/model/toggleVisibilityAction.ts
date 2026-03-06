@@ -14,7 +14,11 @@ export const toggleVisibilityAction = async (
     revalidateTag("diaries", "default");
     revalidateTag(`diaries-${userId}`, "default");
     revalidateTag("public-diaries", "default");
+    revalidateTag("user-diary-counter", "default");
+    revalidateTag(`user-diary-counter-${userId}`, "default");
 
+    revalidatePath("/mypage");
+    revalidatePath(`/profile/${userId}`);
     revalidatePath("/public-diary");
 
     return { success: true, result };

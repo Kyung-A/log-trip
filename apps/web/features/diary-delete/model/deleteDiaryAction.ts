@@ -15,7 +15,11 @@ export const deleteDiaryAction = async (data: IDiary) => {
     revalidateTag("all-regions", "default");
     revalidateTag("geojson-data", "default");
     revalidateTag("public-diaries", "default");
+    revalidateTag("user-diary-counter", "default");
+    revalidateTag(`user-diary-counter-${data.user_id}`, "default");
 
+    revalidatePath("/mypage");
+    revalidatePath(`/profile/${data.user_id}`);
     revalidatePath("/public-diary");
     revalidatePath("/world-map");
     revalidatePath("/diary");

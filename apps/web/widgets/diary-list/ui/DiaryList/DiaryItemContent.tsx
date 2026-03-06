@@ -39,20 +39,22 @@ export const DiaryItemContent = memo(
           <GroupByCountryLabel regions={regions} />
 
           {!isDrawing && (
-            <p className="py-4 whitespace-pre-wrap">{textContent}</p>
+            <p className="pt-4 whitespace-pre-wrap">{textContent}</p>
           )}
         </div>
 
-        {isDrawing && (
-          <Image
-            src={drawingContent!}
-            width={0}
-            height={0}
-            sizes="100vw"
-            className="w-full object-cover"
-            alt="diray content image"
-          />
-        )}
+        <div className="pb-4">
+          {isDrawing && drawingContent !== null && (
+            <Image
+              src={drawingContent!}
+              width={0}
+              height={0}
+              sizes="100vw"
+              className="w-full object-cover"
+              alt="diray content image"
+            />
+          )}
+        </div>
       </>
     );
   },

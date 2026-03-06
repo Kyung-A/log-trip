@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { ChevronLeft, UserRound } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import { IDiaryCounters, IProfile } from "@/entities/user";
 
@@ -21,6 +24,18 @@ export const UserProfileWidget = ({
   isMine,
   children,
 }: IProfileWidgetProps) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    window.forceRefreshMap = () => {
+      router.refresh();
+    };
+
+    return () => {
+      delete window.forceRefreshMap;
+    };
+  }, [router]);
+
   return (
     <>
       {!isMine && (

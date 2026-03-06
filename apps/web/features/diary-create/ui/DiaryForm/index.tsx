@@ -207,6 +207,18 @@ export const DiaryForm = ({
                 type: "REFRESH_MAP_DATA",
               }),
             );
+
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({
+                type: "REFRESH_PUBLIC_DIARY_DATA",
+              }),
+            );
+
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({
+                type: "REFRESH_MYPAGE_DATA",
+              }),
+            );
           }
 
           navigateNative("/diary");
