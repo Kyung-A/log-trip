@@ -1,8 +1,7 @@
-import { createServerClient } from "@/shared";
+import { createClient } from "@/shared";
 
-export const getImageUrl = async (bucketName: string, path: string) => {
-  const supabase = await createServerClient();
-
+export const getImageUrl = (bucketName: string, path: string) => {
+  const supabase = createClient();
   const { data } = supabase.storage.from(bucketName).getPublicUrl(path);
   return data;
 };
