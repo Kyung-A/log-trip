@@ -14,10 +14,11 @@ export const deleteDiaryAction = async (data: IDiary) => {
     revalidateTag(`diary-regions-${data.user_id}`, "default");
     revalidateTag("all-regions", "default");
     revalidateTag("geojson-data", "default");
+    revalidateTag("public-diaries", "default");
 
+    revalidatePath("/public-diary");
     revalidatePath("/world-map");
     revalidatePath("/diary");
-    // TODO: 일기숲도 초기화 필요
 
     return { success: true, result: result };
   } catch (e) {
