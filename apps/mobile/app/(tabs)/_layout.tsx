@@ -141,16 +141,22 @@ function ComposeTabButton() {
 
 const WebviewRefContext = createContext<{
   mapWebviewRef: React.RefObject<WebView | null> | null;
-}>({ mapWebviewRef: null });
+  publicDiaryWebviewRef: React.RefObject<WebView | null> | null;
+  diaryWebviewRef: React.RefObject<WebView | null> | null;
+}>({ mapWebviewRef: null, publicDiaryWebviewRef: null, diaryWebviewRef: null });
 
 export const useWebviewRefs = () => useContext(WebviewRefContext);
 
 export default function TabLayout() {
   const { isTabBarVisible } = useTabBarVisibility();
   const mapWebviewRef = useRef<WebView>(null);
+  const publicDiaryWebviewRef = useRef<WebView>(null);
+  const diaryWebviewRef = useRef<WebView>(null);
 
   return (
-    <WebviewRefContext.Provider value={{ mapWebviewRef }}>
+    <WebviewRefContext.Provider
+      value={{ mapWebviewRef, publicDiaryWebviewRef, diaryWebviewRef }}
+    >
       <Tabs
         screenOptions={({ route }) => ({
           tabBarStyle: {
