@@ -5,7 +5,8 @@ import WebView from "react-native-webview";
 import { useWebviewRefs } from "./_layout";
 
 export default function DiaryScreen() {
-  const { mapWebviewRef } = useWebviewRefs();
+  const { mapWebviewRef, publicDiaryWebviewRef, diaryWebviewRef } =
+    useWebviewRefs();
   const [isLoading, setIsLoading] = useState(true);
 
   return (
@@ -14,6 +15,7 @@ export default function DiaryScreen() {
       edges={["top", "left", "right"]}
     >
       <WebView
+        ref={diaryWebviewRef}
         source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/diary` }}
         style={{ flex: 1 }}
         onLoadStart={() => setIsLoading(true)}
@@ -39,9 +41,16 @@ export default function DiaryScreen() {
             const data = JSON.parse(event.nativeEvent.data);
 
             if (data.type === "REFRESH_MAP_DATA") {
-              console.log("A탭에서 신호 수신 -> B탭(지도) 강제 새로고침 실행");
-
               mapWebviewRef?.current?.injectJavaScript(`
+              if (window.forceRefreshMap) {
+                window.forceRefreshMap();
+              }
+              true;
+            `);
+            }
+
+            if (data.type === "REFRESH_PUBLIC_DIARY_DATA") {
+              publicDiaryWebviewRef?.current?.injectJavaScript(`
               if (window.forceRefreshMap) {
                 window.forceRefreshMap();
               }
