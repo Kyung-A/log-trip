@@ -10,7 +10,7 @@ import { IDiary } from "@/entities/diary";
 import { deleteDiaryAction } from "@/features/diary-delete";
 import {
   toggleVisibilityAction,
-  useUpdateIsReport,
+  updateIsReportAction,
 } from "@/features/diary-update";
 
 import { EmptyView } from "@/shared";
@@ -28,7 +28,6 @@ export const DiaryList = ({
   const router = useRouter();
 
   const [isMounted, setIsMounted] = useState(false);
-  const { mutateAsync: updateIsReportMutate } = useUpdateIsReport();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -36,15 +35,24 @@ export const DiaryList = ({
   }, []);
 
   const handleReportDiary = useCallback(
-    async (id: string) => {
+    async (id: string, userId: string) => {
       if (confirm("정말 신고하시겠습니까?")) {
-        const status = await updateIsReportMutate(id);
-        if (status === 204) {
+        const { success } = await updateIsReportAction(id, userId);
+        if (success) {
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({
+                type: "REFRESH_DIARY_DATA",
+              }),
+            );
+          }
+
           toast.success("신고 처리 되었습니다.");
+          router.refresh();
         }
       }
     },
-    [updateIsReportMutate],
+    [router],
   );
 
   const handleDeleteDiary = useCallback(
@@ -59,6 +67,12 @@ export const DiaryList = ({
               type: "REFRESH_MAP_DATA",
             }),
           );
+
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({
+              type: "REFRESH_PUBLIC_DIARY_DATA",
+            }),
+          );
         }
 
         router.refresh();
@@ -69,11 +83,34 @@ export const DiaryList = ({
 
   const handleIsPublicDiaryChange = useCallback(
     async (id: string, state: boolean, userId?: string) => {
-      await toggleVisibilityAction(id, state, userId);
-      router.refresh();
+      const { success } = await toggleVisibilityAction(id, state, userId);
+
+      if (success) {
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(
+            JSON.stringify({
+              type: "REFRESH_PUBLIC_DIARY_DATA",
+            }),
+          );
+        }
+
+        router.refresh();
+      }
     },
     [router],
   );
+
+  useEffect(() => {
+    window.forceRefreshMap = () => {
+      if (document.visibilityState === "hidden") {
+        router.refresh();
+      }
+    };
+
+    return () => {
+      delete window.forceRefreshMap;
+    };
+  }, [router]);
 
   if (!isMounted) {
     return <div className="w-full min-h-dvh bg-zinc-100" />;

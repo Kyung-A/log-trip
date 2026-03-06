@@ -15,7 +15,7 @@ import { DiaryPopoverMenu } from "./DiaryPopoverMenu";
 
 interface IDiaryItem {
   item: IDiary;
-  handleReportDiary: (id: string) => void;
+  handleReportDiary: (id: string, userId: string) => void;
   handleDeleteDiary: (item: IDiary) => void;
   handleIsPublicDiaryChange: (
     id: string,
@@ -76,7 +76,7 @@ export const DiaryItem = ({
 
           {openId === item.id && (
             <DiaryPopoverMenu
-              onReport={() => handleReportDiary(item.id!)}
+              onReport={() => handleReportDiary(item.id!, item.user_id!)}
               onDelete={() => handleDeleteDiary(item)}
               ref={popoverRef}
               isNotFeed={isNotFeed}
