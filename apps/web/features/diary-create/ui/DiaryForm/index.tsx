@@ -154,7 +154,7 @@ export const DiaryForm = ({
       await imageUpload("log-trip-images", path, buffer);
       const result = getImageUrl("log-trip-images", path);
 
-      return (await result).publicUrl;
+      return result.publicUrl;
     } catch (error) {
       console.error("Image upload failed:", error);
       return null;
