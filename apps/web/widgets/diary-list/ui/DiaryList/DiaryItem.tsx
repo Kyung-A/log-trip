@@ -17,7 +17,11 @@ interface IDiaryItem {
   item: IDiary;
   handleReportDiary: (id: string) => void;
   handleDeleteDiary: (item: IDiary) => void;
-  handleIsPublicDiaryChange: (id: string, state: boolean) => boolean;
+  handleIsPublicDiaryChange: (
+    id: string,
+    state: boolean,
+    userId?: string,
+  ) => void;
   isNotFeed: boolean;
 }
 
@@ -49,16 +53,10 @@ export const DiaryItem = ({
       ) : (
         <article className="w-full h-auto mb-2 bg-white relative">
           <DiaryItemHeader
-            profileImage={item.user_info.profile_image}
-            nickname={item.user_info.nickname}
-            isPublic={item.is_public}
-            about={item.user_info.about}
-            userId={item.user_id}
-            handleIsPublicDiaryChange={() =>
-              handleIsPublicDiaryChange(item.id!, !item.is_public)
-            }
+            item={item}
             onToggle={onToggle}
             isNotFeed={isNotFeed}
+            handleIsPublicDiaryChange={handleIsPublicDiaryChange}
           />
 
           {item.diary_images && item.diary_images.length > 0 && (
