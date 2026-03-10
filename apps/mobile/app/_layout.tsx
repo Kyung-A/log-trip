@@ -3,6 +3,7 @@ import {
   setSupabaseCookie,
   supabase,
   TabBarProvider,
+  WebviewProvider,
 } from "@/shared";
 import { router, SplashScreen, Stack } from "expo-router";
 import Toast, {
@@ -124,42 +125,44 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <TabBarProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="(auth)/email-login"
-          options={{
-            title: "로그인",
-            headerBackTitle: "뒤로",
-          }}
-        />
-        <Stack.Screen
-          name="(auth)/email-signup"
-          options={{
-            title: "회원가입",
-            headerBackTitle: "뒤로",
-          }}
-        />
-        <Stack.Screen
-          name="(auth)/user-info"
-          options={{
-            title: "프로필 입력",
-            headerBackTitle: "",
-            headerLeft: () => null,
-            headerBackVisible: false,
-          }}
-        />
-        <Stack.Screen name="createDiary" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="thirdPartyLoginResult"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
-        {/* <Stack.Screen name="createCompanion" options={{ headerShown: false }} /> // TODO: 추후 추가 예정 서비스 */}
-      </Stack>
-      <Toast config={toastConfig} topOffset={80} />
-    </TabBarProvider>
+    <WebviewProvider>
+      <TabBarProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(auth)/email-login"
+            options={{
+              title: "로그인",
+              headerBackTitle: "뒤로",
+            }}
+          />
+          <Stack.Screen
+            name="(auth)/email-signup"
+            options={{
+              title: "회원가입",
+              headerBackTitle: "뒤로",
+            }}
+          />
+          <Stack.Screen
+            name="(auth)/user-info"
+            options={{
+              title: "프로필 입력",
+              headerBackTitle: "",
+              headerLeft: () => null,
+              headerBackVisible: false,
+            }}
+          />
+          <Stack.Screen name="createDiary" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="thirdPartyLoginResult"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
+          {/* <Stack.Screen name="createCompanion" options={{ headerShown: false }} /> // TODO: 추후 추가 예정 서비스 */}
+        </Stack>
+        <Toast config={toastConfig} topOffset={80} />
+      </TabBarProvider>
+    </WebviewProvider>
   );
 }

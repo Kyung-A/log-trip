@@ -1,65 +1,15 @@
-import { LoadingView, useTabBarVisibility } from "@/shared";
-import { useRef, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { WebViewContainer } from "@/shared";
+import { useRef } from "react";
 import { WebView } from "react-native-webview";
 
 // TODO: 추후 추가 예정 서비스
 export default function TabTwoScreen() {
   const webViewRef = useRef<WebView>(null);
-  const { setTabBarVisible } = useTabBarVisibility();
-  const [isLoading, setIsLoading] = useState(true);
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#fff" }}
-      edges={["top", "left", "right"]}
-    >
-      <WebView
-        ref={webViewRef}
-        style={{ flex: 1 }}
-        source={{ uri: `${process.env.EXPO_PUBLIC_WEBVIEW_URL}/companion` }}
-        onLoadStart={() => setIsLoading(true)}
-        onLoadEnd={() => setIsLoading(false)}
-        sharedCookiesEnabled={true}
-        thirdPartyCookiesEnabled={true}
-        onNavigationStateChange={(navState) => {
-          const url = navState.url;
-          const isCompanion = /companion\/.+/.test(url);
-          setTabBarVisible(isCompanion ? false : true);
-        }}
-        webviewDebuggingEnabled={true}
-        pullToRefreshEnabled={true}
-        injectedJavaScriptBeforeContentLoaded={`
-          (function () {
-            window.ReactNativeWebView = window.ReactNativeWebView || {
-              postMessage: function (data) {
-                window.postMessage(data);
-              }
-            };
-          })();
-          true;
-        `}
-        onMessage={(event) => {
-          try {
-            const data = JSON.parse(event.nativeEvent.data);
-
-            if (data.type === "WINDOW_LOCATION") {
-              webViewRef.current?.injectJavaScript(`
-                window.location.href = '/companion';
-                true;
-              `);
-            }
-            if (data.type === "NAVIGATE") {
-              // TODO: 추후 추가 기능
-              // router.replace("/(tabs)/companion");
-            }
-          } catch (e) {
-            console.warn("Invalid message from web", e);
-          }
-        }}
-      />
-
-      {isLoading && <LoadingView />}
-    </SafeAreaView>
+    <WebViewContainer
+      ref={webViewRef}
+      url={`${process.env.EXPO_PUBLIC_WEBVIEW_URL}/companion`}
+    />
   );
 }
