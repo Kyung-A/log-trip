@@ -5,61 +5,79 @@ import React, { useMemo } from "react";
 import dayjs from "dayjs";
 import Link from "next/link";
 
-import { useFetchCompanionDetail } from "@/entities/companion";
-import { useFetchUserId, useFetchUserProfile } from "@/entities/user";
+import { ICompanion } from "@/entities/companion";
+import { IProfile } from "@/entities/user";
 
-export const ApplyFloatingButton = React.memo(({ id }: { id: string }) => {
-  const { data } = useFetchCompanionDetail(id);
-  const { data: userId } = useFetchUserId();
-  const { data: profile } = useFetchUserProfile(userId);
+export const ApplyFloatingButton = React.memo(
+  ({
+    companionId,
+    profile,
+    companionData,
+    myId,
+  }: {
+    companionId: string;
+    profile: IProfile;
+    companionData: ICompanion;
+    myId?: string;
+  }) => {
+    const gender = useMemo(() => {
+      if (
+        companionData?.gender_preference === "F" &&
+        profile?.gender === "female"
+      ) {
+        return true;
+      } else if (
+        companionData?.gender_preference === "M" &&
+        profile?.gender === "male"
+      ) {
+        return true;
+      } else if (companionData?.gender_preference === "R") {
+        return true;
+      } else {
+        return false;
+      }
+    }, [companionData, profile]);
 
-  const gender = useMemo(() => {
-    if (data?.gender_preference === "F" && profile?.gender === "female") {
-      return true;
-    } else if (data?.gender_preference === "M" && profile?.gender === "male") {
-      return true;
-    } else if (data?.gender_preference === "R") {
-      return true;
-    } else {
-      return false;
-    }
-  }, [data, profile]);
+    const applied = useMemo(
+      () => companionData?.applications.some((v) => v.applicant_id === myId),
+      [companionData?.applications, myId],
+    );
 
-  const applied = useMemo(
-    () => data?.applications.some((v) => v.applicant_id === userId),
-    [data?.applications, userId],
-  );
-
-  return (
-    <>
-      {userId !== data?.user_id && gender && (
-        <footer className="fixed max-w-3xl bottom-0 w-full px-4 pt-4 bg-white border-t border-gray-200 pb-14">
-          <Link
-            href={`/companion/apply?postId=${id}&userId=${userId}`}
-            className={`block w-full rounded-lg ${
-              dayjs().isAfter(data?.deadline_at) || applied || data?.is_full
-                ? "bg-gray-300 pointer-events-none"
-                : "bg-[#d5b2a7]"
-            }`}
-          >
-            <p
-              className={`py-3 font-bold text-center text-lg ${
-                dayjs().isAfter(data?.deadline_at) || applied || data?.is_full
-                  ? "text-zinc-400"
-                  : "text-white"
+    return (
+      <>
+        {myId !== companionData?.user_id && gender && (
+          <footer className="fixed max-w-3xl bottom-0 w-full px-4 pt-4 bg-white border-t border-gray-200 pb-14">
+            <Link
+              href={`/companion/apply?postId=${companionId}&userId=${myId}`}
+              className={`block w-full rounded-lg ${
+                dayjs().isAfter(companionData?.deadline_at) ||
+                applied ||
+                companionData?.is_full
+                  ? "bg-gray-300 pointer-events-none"
+                  : "bg-[#d5b2a7]"
               }`}
             >
-              {applied
-                ? "동행 신청 완료"
-                : data?.is_full
-                  ? "동행 신청 마감"
-                  : "동행 신청하기"}
-            </p>
-          </Link>
-        </footer>
-      )}
-    </>
-  );
-});
+              <p
+                className={`py-3 font-bold text-center text-lg ${
+                  dayjs().isAfter(companionData?.deadline_at) ||
+                  applied ||
+                  companionData?.is_full
+                    ? "text-zinc-400"
+                    : "text-white"
+                }`}
+              >
+                {applied
+                  ? "동행 신청 완료"
+                  : companionData?.is_full
+                    ? "동행 신청 마감"
+                    : "동행 신청하기"}
+              </p>
+            </Link>
+          </footer>
+        )}
+      </>
+    );
+  },
+);
 
 ApplyFloatingButton.displayName = "ApplyFloatingButton";

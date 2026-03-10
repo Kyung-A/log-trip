@@ -240,7 +240,7 @@ export const DiaryForm = ({
     <>
       <header className="sticky h-10 top-0 z-30 w-full bg-white border-b border-gray-300 flex items-center px-2">
         <button
-          onClick={() => navigateNative("/diary")}
+          onClick={() => navigateNative("/diary", "BACK")}
           className="flex items-center gap-x-1"
         >
           <ChevronLeft size={30} color="#646464" />

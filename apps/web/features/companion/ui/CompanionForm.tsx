@@ -4,16 +4,13 @@ import { useEffect, useState } from "react";
 
 import dayjs from "dayjs";
 import { ChevronLeft } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import Picker from "react-mobile-picker";
 import { toast } from "react-toastify";
 
-import {
-  useFetchCompanionDetail,
-  ICompanionRequest,
-} from "@/entities/companion";
-import { IRegion, useFetchRegions } from "@/entities/region";
+import { ICompanionRequest, ICompanion } from "@/entities/companion";
+import { IRegion } from "@/entities/region";
 
 import { CitySelectField } from "@/features/diary-create";
 
@@ -21,13 +18,16 @@ import { navigateNative } from "@/shared";
 
 import { useCreateCompanion } from "..";
 
-export function CompanionForm() {
+export function CompanionForm({
+  regions,
+  detailData,
+}: {
+  regions: IRegion[] | null;
+  detailData?: ICompanion;
+}) {
   const router = useRouter();
-  const { id } = useParams();
 
-  const { data: regions } = useFetchRegions();
   const { mutateAsync } = useCreateCompanion();
-  const { data: detailData } = useFetchCompanionDetail(id as string);
 
   const { control, watch, setValue, handleSubmit } = useForm<
     Partial<ICompanionRequest>
@@ -70,9 +70,9 @@ export function CompanionForm() {
       <header className="sticky h-10 top-0 z-30 w-full bg-white border-b border-gray-300 flex items-center px-2">
         <button
           onClick={() =>
-            id
-              ? router.push(`/companion/${id}`)
-              : navigateNative("/companion", "NAVIGATE")
+            detailData && detailData?.id
+              ? router.push(`/companion/${detailData?.id}`)
+              : navigateNative("/companion", "BACK")
           }
         >
           <ChevronLeft size={30} color="#646464" />
