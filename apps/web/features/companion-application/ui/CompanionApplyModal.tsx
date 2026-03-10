@@ -4,8 +4,6 @@ import { useCallback, useState } from "react";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { useApply } from "@/features/companion-application";
-
 export const CompanionApplyModal = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -13,7 +11,6 @@ export const CompanionApplyModal = () => {
   const userId = searchParams.get("userId");
 
   const [applyMessage, setApplyMessage] = useState<string>();
-  const { mutateAsync: applyMutateAsync } = useApply();
 
   const handleCompanionApplication = useCallback(async () => {
     const body = {
@@ -22,11 +19,12 @@ export const CompanionApplyModal = () => {
       message: applyMessage,
     };
 
-    const status = await applyMutateAsync(body);
-    if (status === 201 || status === 200) {
-      router.replace(`/companion/${postId}`);
-    }
-  }, [applyMessage, applyMutateAsync, postId, router, userId]);
+    // TODO: action 함수 필요
+    // const status = await applyMutateAsync(body);
+    // if (status === 201 || status === 200) {
+    //   router.replace(`/companion/${postId}`);
+    // }
+  }, [applyMessage, postId, router, userId]);
 
   return (
     <dialog

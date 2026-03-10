@@ -1,19 +1,14 @@
-"use client";
-
 import React from "react";
 
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
 import {
+  getMyApplyStatus,
   IApplyStatus,
-  useMyApplyStatus,
 } from "@/entities/companion-application";
-import { useFetchUserId } from "@/entities/user";
 
-import { useCancelApply } from "@/features/companion-application";
-
-import { EmptyView, navigateNative } from "@/shared";
+import { createServerClient, EmptyView, navigateNative } from "@/shared";
 
 const statusLabel = {
   pending: <p className="text-sm font-semibold text-green-700">● 대기중</p>,
@@ -24,8 +19,6 @@ const statusLabel = {
 
 // TODO: 추후 추가 예정 서비스
 const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
-  const { mutate } = useCancelApply();
-
   return (
     <div key={item.id} className="w-full h-auto mb-2 bg-white">
       <div className="p-6">
@@ -54,7 +47,8 @@ const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
         </Link>
         {(item.status === "pending" || item.status === "accepted") && (
           <button
-            onClick={() => mutate(item)}
+            // TODO: action 함수 필요
+            // onClick={() => mutate(item)}
             className="w-full mt-4 bg-beige rounded-lg"
           >
             <p className="text-[#a38f86] py-4 text-center font-bold">
@@ -69,9 +63,13 @@ const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
 
 StatusCard.displayName = "StatusCard";
 
-export default function ApplyStatus() {
-  const { data: userId } = useFetchUserId();
-  const { data } = useMyApplyStatus(userId);
+export default async function ApplyStatus() {
+  const supabase = await createServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const data = await getMyApplyStatus(user?.id);
 
   return (
     <div className="w-full bg-beige min-h-screen">

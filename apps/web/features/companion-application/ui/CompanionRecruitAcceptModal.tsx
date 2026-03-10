@@ -6,10 +6,6 @@ import dayjs from "dayjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 
-import { useAcceptCompanion } from "@/features/companion-application";
-
-import { navigateNative } from "@/shared";
-
 export const CompanionRecruitAcceptModal = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -19,7 +15,6 @@ export const CompanionRecruitAcceptModal = () => {
   const userId = searchParams.get("userId");
 
   const [applyMessage, setApplyMessage] = useState<string>();
-  const { mutateAsync: acceptMutateAsync } = useAcceptCompanion();
 
   const handleAcceptCompanion = useCallback(async () => {
     if (!applyMessage) {
@@ -35,11 +30,12 @@ export const CompanionRecruitAcceptModal = () => {
       decided_at: dayjs(),
     };
 
-    const status = await acceptMutateAsync(body);
-    if (status === 204) {
-      navigateNative("/mypage", "WINDOW_LOCATION");
-    }
-  }, [acceptMutateAsync, applyMessage, companionId, postId, userId]);
+    // TODO: action 함수 필요
+    // const status = await acceptMutateAsync(body);
+    // if (status === 204) {
+    //   navigateNative("/mypage", "WINDOW_LOCATION");
+    // }
+  }, [applyMessage, companionId, postId, userId]);
 
   return (
     <dialog

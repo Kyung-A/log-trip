@@ -16,8 +16,6 @@ import { CitySelectField } from "@/features/diary-create";
 
 import { navigateNative } from "@/shared";
 
-import { useCreateCompanion } from "..";
-
 export function CompanionForm({
   regions,
   detailData,
@@ -26,8 +24,6 @@ export function CompanionForm({
   detailData?: ICompanion;
 }) {
   const router = useRouter();
-
-  const { mutateAsync } = useCreateCompanion();
 
   const { control, watch, setValue, handleSubmit } = useForm<
     Partial<ICompanionRequest>
@@ -49,10 +45,11 @@ export function CompanionForm({
         })),
       } as ICompanionRequest;
 
-      const resp = await mutateAsync(body);
-      if (resp.status === 201) {
-        router.push(`/companion/${resp.data.id}`);
-      }
+      // TODO: action 함수 필요
+      // const resp = await mutateAsync(body);
+      // if (resp.status === 201) {
+      //   router.push(`/companion/${resp.data.id}`);
+      // }
     },
     (error) => {
       toast.error(Object.values(error)[0]?.message?.toString());
