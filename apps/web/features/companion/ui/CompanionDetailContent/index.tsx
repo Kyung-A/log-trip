@@ -6,8 +6,7 @@ import dayjs from "dayjs";
 import { ChevronLeft, EllipsisVertical, Pencil, Trash } from "lucide-react";
 import Link from "next/link";
 
-import { useFetchCompanionDetail } from "@/entities/companion";
-import { useFetchUserId } from "@/entities/user";
+import { ICompanion } from "@/entities/companion";
 
 import { navigateNative, useClickOutside } from "@/shared";
 
@@ -16,9 +15,13 @@ import { Itinerary } from "./Itinerary";
 import { Writer } from "./Writer";
 import { useDeleteCompanion } from "../..";
 
-export const CompanionDetailContent = ({ id }: { id: string }) => {
-  const { data } = useFetchCompanionDetail(id);
-  const { data: userId } = useFetchUserId();
+export const CompanionDetailContent = ({
+  myId,
+  companionData,
+}: {
+  myId?: string;
+  companionData: ICompanion;
+}) => {
   const { mutateAsync: deleteMutateAsync } = useDeleteCompanion();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -46,7 +49,7 @@ export const CompanionDetailContent = ({ id }: { id: string }) => {
           <ChevronLeft size={22} color="#646464" />
           <span className="text-lg">뒤로</span>
         </button>
-        {userId === data?.user_id && (
+        {myId === companionData?.user_id && (
           <button onClick={() => setIsOpen(true)}>
             <EllipsisVertical size={22} color="#646464" />
           </button>
@@ -55,30 +58,30 @@ export const CompanionDetailContent = ({ id }: { id: string }) => {
 
       <main className="w-full pt-12 h-screen bg-white gap-y-6">
         <header className="p-4 border-b border-gray-200">
-          <p className="text-xl font-semibold">{data?.title}</p>
+          <p className="text-xl font-semibold">{companionData?.title}</p>
           <p className="mt-1 text-sm text-slate-500">
-            {dayjs(data?.created_at).format("YYYY-MM-DD HH:mm")} 작성
+            {dayjs(companionData?.created_at).format("YYYY-MM-DD HH:mm")} 작성
           </p>
         </header>
 
         <div className="flex flex-col px-4 pt-6 pb-16 gap-y-6">
           <Itinerary
-            startDate={data?.start_date}
-            endDate={data?.end_date}
-            regions={data?.companion_regions}
-            place={data?.place}
+            startDate={companionData?.start_date}
+            endDate={companionData?.end_date}
+            regions={companionData?.companion_regions}
+            place={companionData?.place}
           />
           <CompanionType
-            gender={data?.gender_preference}
-            acceptedCount={data?.accepted_count}
-            companionCount={data?.companion_count}
+            gender={companionData?.gender_preference}
+            acceptedCount={companionData?.accepted_count}
+            companionCount={companionData?.companion_count}
           />
 
           <div className="py-6 text-gray-800 whitespace-pre-wrap">
-            {data?.content}
+            {companionData?.content}
           </div>
 
-          <Writer userInfo={data?.user_info} />
+          <Writer userInfo={companionData?.user_info} />
         </div>
       </main>
 
@@ -89,7 +92,7 @@ export const CompanionDetailContent = ({ id }: { id: string }) => {
           onClick={(e) => e.stopPropagation()}
         >
           <Link
-            href={`/companion/${id}/update`}
+            href={`/companion/${companionData!.id}/update`}
             className="flex items-center gap-x-2 w-full px-4 py-2 text-left text-base font-semibold text-blue-500"
           >
             <Pencil size={20} />
@@ -98,7 +101,7 @@ export const CompanionDetailContent = ({ id }: { id: string }) => {
 
           <button
             type="button"
-            onClick={() => handleDeleteCompanion(data!.id)}
+            onClick={() => handleDeleteCompanion(companionData!.id)}
             className="flex items-center gap-x-2 w-full px-4 py-2 text-left text-base font-semibold text-red-500"
           >
             <Trash size={20} />

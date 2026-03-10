@@ -1,14 +1,12 @@
 "use client";
 
-import { useFetchCompanions } from "@/entities/companion";
+import { ICompanion } from "@/entities/companion";
 
 import { EmptyView } from "@/shared";
 
 import { CompanionItem } from "./CompanionItem";
 
-export const CompanionList = () => {
-  const { data } = useFetchCompanions();
-
+export const CompanionList = ({ data }: { data: ICompanion[] }) => {
   if (!data || data?.length === 0) {
     return <EmptyView message="지금 바로 동행 모집하는 글을 작성해보세요!" />;
   }

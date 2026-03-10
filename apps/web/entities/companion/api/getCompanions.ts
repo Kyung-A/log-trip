@@ -1,7 +1,7 @@
-import { createClient } from "@/shared";
+import { createServerClient } from "@/shared";
 
 export const getCompanions = async () => {
-  const supabase = createClient();
+  const supabase = await createServerClient();
 
   const { data, error } = await supabase
     .from("companions")

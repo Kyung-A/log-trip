@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+
 import Loading from "./loading";
 
 export default function CompanionLayout({
