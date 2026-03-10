@@ -1,21 +1,15 @@
-"use client";
-
 import React from "react";
 
-import dayjs from "dayjs";
 import { ChevronLeft, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 import {
+  getApplicantsForMyPosts,
   IApplicantsForMyPost,
-  useApplicantsForMyPosts,
 } from "@/entities/companion-application";
-import { useFetchUserId } from "@/entities/user";
 
-import { useRejectCompanion } from "@/features/companion-application";
-
-import { EmptyView, navigateNative } from "@/shared";
+import { createServerClient, EmptyView, navigateNative } from "@/shared";
 
 const statusLabel = {
   pending: (
@@ -35,8 +29,6 @@ const statusLabel = {
 // TODO: 추후 추가 예정 서비스
 const StatusCard = React.memo(
   ({ item, userId }: { item: IApplicantsForMyPost; userId?: string }) => {
-    const { mutate: rejectMutate } = useRejectCompanion();
-
     return (
       <>
         <div key={item.id} className="w-full h-auto mb-2 bg-white">
@@ -86,14 +78,15 @@ const StatusCard = React.memo(
                 </Link>
 
                 <button
-                  onClick={() =>
-                    rejectMutate({
-                      id: item.id,
-                      decided_by: userId,
-                      decided_at: dayjs(),
-                      companion_id: item?.companion.id,
-                    })
-                  }
+                  // TODO: action 함수 필요
+                  // onClick={() =>
+                  // rejectMutate({
+                  //   id: item.id,
+                  //   decided_by: userId,
+                  //   decided_at: dayjs(),
+                  //   companion_id: item?.companion.id,
+                  // })
+                  // }
                   className="bg-beige rounded-lg w-1/2"
                 >
                   <p className="text-[#a38f86] py-4 text-center font-bold">
@@ -111,9 +104,12 @@ const StatusCard = React.memo(
 
 StatusCard.displayName = "StatusCard";
 
-export default function RecruitStatus() {
-  const { data: userId } = useFetchUserId();
-  const { data } = useApplicantsForMyPosts(userId);
+export default async function RecruitStatus() {
+  const supabase = await createServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const data = await getApplicantsForMyPosts(user?.id);
 
   return (
     <div className="w-full bg-beige min-h-screen">
@@ -133,7 +129,7 @@ export default function RecruitStatus() {
       {data && data?.length > 0 ? (
         <ul className="pt-10">
           {data?.map((item) => (
-            <StatusCard key={item.id} item={item} userId={userId} />
+            <StatusCard key={item.id} item={item} userId={user?.id} />
           ))}
         </ul>
       ) : (
