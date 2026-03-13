@@ -1,3 +1,5 @@
+import { AuthLayout } from "@/widgets/auth";
+
 export default function MypageLayout({
   children,
   modal,
@@ -6,9 +8,9 @@ export default function MypageLayout({
   modal: React.ReactNode;
 }) {
   return (
-    <>
+    <AuthLayout>
       {children}
       {modal}
-    </>
+    </AuthLayout>
   );
 }

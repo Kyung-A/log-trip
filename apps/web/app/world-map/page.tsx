@@ -9,6 +9,7 @@ import {
 } from "@/entities/region";
 
 import { buildOr, COUNTRY_COLORS, createServerClient } from "@/shared";
+import { AuthLayout } from "@/widgets/auth";
 import { WorldMap } from "@/widgets/world-map";
 
 export default async function WorldMapPage() {
@@ -77,5 +78,9 @@ export default async function WorldMapPage() {
   };
 
   const finalGeoJson = await getFullGeoJsonData();
-  return <WorldMap geoJson={finalGeoJson} userId={user?.id} />;
+  return (
+    <AuthLayout>
+      <WorldMap geoJson={finalGeoJson} userId={user?.id} />;
+    </AuthLayout>
+  );
 }
