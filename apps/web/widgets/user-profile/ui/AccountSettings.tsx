@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 
 import { IProfile } from "@/entities/user";
 
-import { useDeleteUser } from "@/features/user-delete";
+import { deleteUserAction } from "@/features/user-delete";
+import { logoutAction } from "@/features/user-logout";
 
 import { navigateNative } from "@/shared";
 
@@ -18,14 +19,15 @@ export const AccountSettings = ({
   profile: IProfile;
 }) => {
   const router = useRouter();
-  const { mutate } = useDeleteUser();
 
   const handleLogout = useCallback(async () => {
-    // qc.clear();
-    navigateNative("/mypage", "LOGOUT"); // * 로그아웃 처리는 RN 쪽에서 처리
+    const { success } = await logoutAction();
+    if (success) {
+      navigateNative("/(auth)/login", "LOGOUT");
+    }
   }, []);
 
-  const handleDeleteUser = useCallback(() => {
+  const handleDeleteUser = useCallback(async () => {
     if (
       !confirm(
         "탈퇴 할 경우 모든 데이터가 삭제되며,\n소셜 로그인 연동도 해제됩니다.\n정말 탈퇴 하시겠습니까?",
@@ -33,9 +35,11 @@ export const AccountSettings = ({
     )
       return;
 
-    mutate({ id: userId, platform: profile?.platform });
-    navigateNative("/mypage", "DELETE-USER");
-  }, [mutate, userId, profile?.platform]);
+    const { success } = await deleteUserAction(userId, profile?.platform);
+    if (success) {
+      navigateNative("/(auth)/login", "DELETE_USER");
+    }
+  }, [userId, profile?.platform]);
 
   return (
     <>
