@@ -1,1 +1,1 @@
-export { useDeleteUser } from "./useDeleteUser";
+export { deleteUserAction } from "./deleteUserAction";
