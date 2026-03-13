@@ -29,7 +29,7 @@ export const setSupabaseCookie = async (session: any) => {
       path: "/",
       secure: false, // TODO: http 환경이므로 false
       httpOnly: false, // TODO: SDK가 읽어야 하므로 false
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString(),
+      expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString(),
     });
   } catch (e) {
     console.error("❌ 쿠키 주입 에러:", e);

@@ -177,7 +177,7 @@ export default function EmailLoginScreen() {
         </Text>
       </Pressable>
 
-      <TouchableOpacity onPress={() => router.push("/(auth)/email-signup")}>
+      <TouchableOpacity onPress={() => router.navigate("/(auth)/email-signup")}>
         <Text
           style={{
             fontSize: 16,

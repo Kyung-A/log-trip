@@ -108,11 +108,18 @@ export const useSocialLogin = () => {
 
     try {
       const credential = await AppleAuthentication.signInAsync({
-        requestedScopes: [AppleAuthentication.AppleAuthenticationScope.EMAIL],
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+        ],
         nonce: hashedNonce,
       });
 
-      const { identityToken, authorizationCode, email } = credential;
+      const {
+        identityToken,
+        authorizationCode,
+        email: appleEmail,
+      } = credential;
       if (!identityToken) throw new Error("identityToken is null");
 
       const { data, error } = await supabase.auth.signInWithIdToken({
@@ -121,46 +128,44 @@ export const useSocialLogin = () => {
         nonce: rawNonce,
       });
 
-      if (error) throw new Error("error apply supabase");
+      if (error) throw new Error("Supabase Auth 로그인 실패");
+      const user = data.user;
 
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: {
-          email: email,
-        },
-      });
+      if (appleEmail) {
+        await supabase.auth.updateUser({ data: { display_email: appleEmail } });
+      }
 
-      if (updateError) throw new Error("error users email update");
+      const isUserExists = await checkIfUserExists(user.id);
+      await setSupabaseCookie(data.session);
 
-      // * users 테이블에 이미 있다면 메인으로 이동
-      const isUserExists = await checkIfUserExists(data.user.id);
       if (isUserExists) {
-        await setSupabaseCookie(data?.session);
-        router.replace({
-          pathname: "/(tabs)",
-        });
+        router.replace("/(tabs)");
         return;
       }
 
-      // * users 테이블에 없다면 추가 회원가입 로직 실행
       if (authorizationCode) {
         try {
           await supabase.functions.invoke("apple-auth", {
-            body: { code: authorizationCode, userId: data.user.id, email },
+            body: {
+              code: authorizationCode,
+              userId: user.id,
+              email: appleEmail || user.email,
+            },
           });
-        } catch (funcError) {
-          console.error("애플 토큰 교환 실패:", funcError);
+        } catch (fError) {
+          console.error("Edge Function 호출 실패:", fError);
         }
       }
 
       router.replace({
         pathname: "/(auth)/user-info",
         params: {
-          session: JSON.stringify(data?.session),
+          session: JSON.stringify(data.session),
           platform: "apple",
         },
       });
     } catch (error) {
-      console.error(error);
+      console.error("Apple Login Error:", error);
     }
   }, []);
 

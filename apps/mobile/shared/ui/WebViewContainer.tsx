@@ -7,6 +7,7 @@ import {
 import { router } from "expo-router";
 import { useState, forwardRef, useImperativeHandle, useRef } from "react";
 import { Alert } from "react-native";
+import NitroCookies from "react-native-nitro-cookies";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView, WebViewProps } from "react-native-webview";
 
@@ -34,6 +35,10 @@ const WebViewContainer = forwardRef(
         const data = JSON.parse(event.nativeEvent.data);
         const { path } = data.payload || {};
 
+        const domain = process.env.EXPO_PUBLIC_WEBVIEW_URL as string;
+        const projectId = process.env.EXPO_PUBLIC_SUPABASE_ID as string;
+        const cookieName = `sb-${projectId}-auth-token`;
+
         switch (data.type) {
           case "BACK":
             router.back();
@@ -52,15 +57,18 @@ const WebViewContainer = forwardRef(
 
           case "LOGOUT":
             await supabase.auth.signOut();
+            await NitroCookies.clearByName(domain, cookieName);
             router.replace("/(auth)/login");
-            Alert.alert(
-              "로그인 만료",
-              "다시 로그인 해주세요.\n해당 문제가 계속 발생한다면,\n앱스토어로 문의 바랍니다.",
-            );
             break;
 
-          case "DELETE-USER":
+          case "DELETE_USER":
             await supabase.auth.signOut();
+            await NitroCookies.clearByName(domain, cookieName);
+            router.replace("/(auth)/login");
+            break;
+
+          case "NOT_SESSION":
+            await NitroCookies.clearByName(domain, cookieName);
             router.replace("/(auth)/login");
             break;
 

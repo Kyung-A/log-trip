@@ -43,6 +43,7 @@ export default function UserInfoScreen() {
         about: formData.about,
         platform: platform,
       });
+
       resultStatus = status;
     } else {
       const { status } = await supabase
@@ -54,12 +55,13 @@ export default function UserInfoScreen() {
           platform: platform,
         })
         .eq("id", user?.id);
+
       resultStatus = status;
     }
 
     if (resultStatus === 201 || resultStatus === 200 || resultStatus === 204) {
       // ! 알림 권한 추후에 추가
-      // await registerPushToken(user?.id); !
+      // await registerPushToken(user?.id);
       await setSupabaseCookie(JSON.parse(session as string));
       router.replace({
         pathname: "/(tabs)",

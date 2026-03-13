@@ -13,6 +13,7 @@ import Toast, {
 } from "react-native-toast-message";
 import "react-native-reanimated";
 import { useEffect } from "react";
+import NitroCookies from "react-native-nitro-cookies";
 
 export const unstable_settings = {
   initialRouteName: "(auth)/login",
@@ -111,11 +112,15 @@ export default function RootLayout() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
-        // 세션이 생기거나 갱신되면 쿠키 업데이트
         await setSupabaseCookie(session);
       } else if (event === "SIGNED_OUT") {
-        // 로그아웃 시 웹뷰 쿠키도 삭제 로직이 필요하다면 여기서 수행
-        // 예: await NitroCookies.remove(url, 'sb-xxx-auth-token');
+        const domain = process.env.EXPO_PUBLIC_WEBVIEW_URL as string;
+        const projectId = process.env.EXPO_PUBLIC_SUPABASE_ID as string;
+        const cookieName = `sb-${projectId}-auth-token`;
+
+        await supabase.auth.signOut();
+        await NitroCookies.clearByName(domain, cookieName);
+        router.replace("/(auth)/login");
       }
     });
 
