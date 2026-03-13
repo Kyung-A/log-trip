@@ -31,19 +31,6 @@ export async function updateSession(request: NextRequest) {
 
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
-  //   if (
-  //     !user &&
-  //     !request.nextUrl.pathname.startsWith("/login") &&
-  //     !request.nextUrl.pathname.startsWith("/auth")
-  //   ) {
-  //     // no user, potentially respond by redirecting the user to the login page
-  //     // const url = request.nextUrl.clone()
-  //     // url.pathname = '/login'
-  //     // return NextResponse.redirect(url)
-  //     console.log("🚨 인증되지 않은 접근 시도:", request.nextUrl.pathname);
-  //   }
-
-  console.log("✅ 인증된 사용자:", user?.email);
 
   return supabaseResponse;
 }

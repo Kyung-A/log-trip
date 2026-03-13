@@ -112,7 +112,7 @@ export default function LoginScreen() {
         />
 
         <TouchableOpacity
-          onPress={() => router.push("/(auth)/email-login")}
+          onPress={() => router.navigate("/(auth)/email-login")}
           style={{ justifyContent: "center", width: 240, marginTop: 24 }}
         >
           <Text style={{ fontSize: 16, textAlign: "center" }}>
