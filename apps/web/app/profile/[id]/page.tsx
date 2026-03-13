@@ -1,5 +1,6 @@
 import { getDiaryCounter, getUserProfile } from "@/entities/user";
 
+import { AuthLayout } from "@/widgets/auth";
 import { UserProfileWidget } from "@/widgets/user-profile";
 
 export default async function UserProfile({
@@ -11,5 +12,9 @@ export default async function UserProfile({
   const { data: profile } = await getUserProfile(userId);
   const { data: counters } = await getDiaryCounter(userId);
 
-  return <UserProfileWidget profile={profile} counters={counters} />;
+  return (
+    <AuthLayout>
+      <UserProfileWidget profile={profile} counters={counters} />;
+    </AuthLayout>
+  );
 }

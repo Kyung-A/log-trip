@@ -1,7 +1,5 @@
 import { ToastContainer } from "react-toastify";
 
-import { AuthLayout } from "@/widgets/auth";
-
 import type { Metadata, Viewport } from "next";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -28,11 +26,9 @@ export default function RootLayout({
   return (
     <html>
       <body className="w-screen bg-zinc-50 overflow-x-hidden">
-        <AuthLayout>
-          <main className="max-w-3xl bg-white mx-auto min-h-screen">
-            {children}
-          </main>
-        </AuthLayout>
+        <main className="max-w-3xl bg-white mx-auto min-h-screen">
+          {children}
+        </main>
         <ToastContainer
           position="top-center"
           autoClose={3000}

@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 
+import { AuthLayout } from "@/widgets/auth";
+
 import Loading from "./loading";
 
 export default function DiaryLayout({
@@ -7,5 +9,9 @@ export default function DiaryLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <Suspense fallback={<Loading />}>{children}</Suspense>;
+  return (
+    <AuthLayout>
+      <Suspense fallback={<Loading />}>{children}</Suspense>;
+    </AuthLayout>
+  );
 }
