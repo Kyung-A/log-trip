@@ -13,7 +13,6 @@ import { navigateNative, useClickOutside } from "@/shared";
 import { CompanionType } from "./CompanionType";
 import { Itinerary } from "./Itinerary";
 import { Writer } from "./Writer";
-import { useDeleteCompanion } from "../..";
 
 export const CompanionDetailContent = ({
   myId,
@@ -22,22 +21,18 @@ export const CompanionDetailContent = ({
   myId?: string;
   companionData: ICompanion;
 }) => {
-  const { mutateAsync: deleteMutateAsync } = useDeleteCompanion();
-
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const popoverRef = useClickOutside<HTMLDivElement>(() => {
     if (isOpen) setIsOpen(false);
   });
 
-  const handleDeleteCompanion = useCallback(
-    async (id: string) => {
-      const status = await deleteMutateAsync(id);
-      if (status === 204) {
-        navigateNative("/companion");
-      }
-    },
-    [deleteMutateAsync],
-  );
+  const handleDeleteCompanion = useCallback(async (id: string) => {
+    // TODO: action 함수 필요
+    // const status = await deleteMutateAsync(id);
+    // if (status === 204) {
+    //   navigateNative("/companion");
+    // }
+  }, []);
 
   return (
     <div className="w-full relative pb-6">
