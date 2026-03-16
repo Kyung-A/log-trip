@@ -38,7 +38,7 @@ export default function GlobalError({
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: "0 16px",
+            padding: 0,
             margin: 0,
             fontFamily: "sans-serif",
             backgroundColor: "#fff",
