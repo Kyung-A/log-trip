@@ -14,7 +14,13 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html lang="ko">
+    <html
+      lang="ko"
+      style={{
+        margin: 0,
+        padding: 0,
+      }}
+    >
       <body
         style={{
           margin: 0,
@@ -33,6 +39,7 @@ export default function GlobalError({
             alignItems: "center",
             justifyContent: "center",
             padding: "0 16px",
+            margin: 0,
             fontFamily: "sans-serif",
             backgroundColor: "#fff",
             color: "#333",
@@ -43,6 +50,7 @@ export default function GlobalError({
               fontSize: "1.25rem",
               fontWeight: 600,
               margin: "0 0 8px 0",
+              padding: 0,
             }}
           >
             서비스 점검중
@@ -52,6 +60,7 @@ export default function GlobalError({
               textAlign: "center",
               lineHeight: "1.6",
               margin: 0,
+              padding: 0,
               fontSize: "0.95rem",
               color: "#666",
             }}
