@@ -1,10 +1,11 @@
-import { SupabaseClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
 
 import { createServerClient } from "@/shared";
 
-const fetchDiaries = (supabase: SupabaseClient, userId: string) =>
-  unstable_cache(
+export const getDiaries = async (userId?: string) => {
+  if (!userId) throw new Error("id가 없습니다");
+
+  const fetchDiaries = unstable_cache(
     async () => {
       const { data, error } = await supabase
         .from("diaries")
@@ -25,10 +26,8 @@ const fetchDiaries = (supabase: SupabaseClient, userId: string) =>
     },
     ["diaries", userId],
     { tags: ["diaries", `diaries-${userId}`] },
-  )();
+  );
 
-export const getDiaries = async (userId?: string) => {
-  if (!userId) throw new Error("id가 없습니다");
   const supabase = await createServerClient();
-  return await fetchDiaries(supabase, userId);
+  return await fetchDiaries();
 };

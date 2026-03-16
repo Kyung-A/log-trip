@@ -1,10 +1,9 @@
-import { SupabaseClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
 
 import { createServerClient } from "@/shared";
 
-const fetchPublicDiaries = (supabase: SupabaseClient) =>
-  unstable_cache(
+export const getPublicDiaries = async () => {
+  const fetchPublicDiaries = unstable_cache(
     async () => {
       const { data, error } = await supabase
         .from("diaries")
@@ -25,9 +24,8 @@ const fetchPublicDiaries = (supabase: SupabaseClient) =>
     },
     ["public-diaries"],
     { tags: ["public-diaries"] },
-  )();
+  );
 
-export const getPublicDiaries = async () => {
   const supabase = await createServerClient();
-  return await fetchPublicDiaries(supabase);
+  return await fetchPublicDiaries();
 };
