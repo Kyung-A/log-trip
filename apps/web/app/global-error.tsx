@@ -15,11 +15,19 @@ export default function GlobalError({
 
   return (
     <html lang="ko">
-      <body style={{ margin: 0, padding: 0 }}>
+      <body
+        style={{
+          margin: 0,
+          padding: 0,
+          width: "100vw",
+          height: "100vh",
+          overflow: "hidden",
+        }}
+      >
         <main
           style={{
-            width: "100vw",
-            height: "100vh",
+            width: "100%",
+            height: "100%",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
