@@ -41,7 +41,7 @@ export const getGeoJson = async (
     ["geojson-data", api_url, region_code, shape_name],
     {
       tags: ["geojson-data"],
-      revalidate: 86400, // TODO: 24시간 동안 서버에 저장
+      revalidate: 86400,
     },
   );
 
