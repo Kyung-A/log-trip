@@ -1,13 +1,24 @@
 export default ({ config }) => ({
   expo: {
     name: "logtrip",
-    slug: "mobile",
-    version: "1.1.1",
+    slug: "logtrip",
+    version: "1.1",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "com.nek777.mytripapp",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
+    updates: {
+      url: "https://u.expo.dev/90697817-0682-4e84-9a8e-000a097e1cb9",
+    },
+    runtimeVersion: {
+      policy: "appVersion",
+    },
+    extra: {
+      eas: {
+        projectId: "90697817-0682-4e84-9a8e-000a097e1cb9",
+      },
+    },
     ios: {
       supportsTablet: true,
       usesAppleSignIn: true,
