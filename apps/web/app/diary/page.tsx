@@ -9,7 +9,7 @@ export default async function Diary() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const data = await getDiaries(user?.id);
+  const data = await getDiaries(user?.id, 1, 10);
 
-  return <DiaryList data={data} isNotFeed={true} />;
+  return <DiaryList data={data} isNotFeed={true} userId={user?.id} />;
 }

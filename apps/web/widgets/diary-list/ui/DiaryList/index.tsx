@@ -2,12 +2,18 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useInView } from "react-intersection-observer";
 import { toast } from "react-toastify";
 
 import { IDiary } from "@/entities/diary";
 
 import { deleteDiaryAction } from "@/features/diary-delete";
+import {
+  getDiariesAction,
+  getPublicDiariesAction,
+} from "@/features/diary-more-list";
 import {
   toggleVisibilityAction,
   updateIsReportAction,
@@ -20,19 +26,47 @@ import { DiaryItem } from "./DiaryItem";
 export const DiaryList = ({
   data,
   isNotFeed,
+  userId,
 }: {
   data: IDiary[];
   isNotFeed: boolean;
+  userId?: string;
 }) => {
-  const pathname = usePathname();
   const router = useRouter();
 
   const [isMounted, setIsMounted] = useState(false);
+
+  const [diaries, setDiaries] = useState(data);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const { ref, inView } = useInView();
+
+  const loadMoreDiaries = async () => {
+    const nextPage = page + 1;
+    const newData = isNotFeed
+      ? await getDiariesAction(nextPage, userId)
+      : await getPublicDiariesAction(nextPage);
+
+    if (newData.length === 0) {
+      setHasMore(false);
+    } else {
+      setDiaries((prev) => [...prev, ...newData]);
+      setPage(nextPage);
+    }
+  };
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (inView && hasMore) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      loadMoreDiaries();
+    }
+  }, [inView]);
 
   const handleReportDiary = useCallback(
     async (id: string, userId: string) => {
@@ -131,7 +165,7 @@ export const DiaryList = ({
     return (
       <EmptyView
         message={
-          pathname.includes("public")
+          !isNotFeed
             ? "공개된 일기가 없습니다\n가장 먼저 내 일기를 공개 해보세요!"
             : "작성된 일기가 없습니다"
         }
@@ -141,7 +175,7 @@ export const DiaryList = ({
 
   return (
     <ul className="w-full min-h-dvh bg-zinc-100">
-      {data.map((item) => (
+      {diaries.map((item) => (
         <DiaryItem
           key={item.id}
           item={item}
@@ -151,6 +185,17 @@ export const DiaryList = ({
           isNotFeed={isNotFeed}
         />
       ))}
+      {hasMore && (
+        <li ref={ref} className="h-10 flex items-center justify-center">
+          <Image
+            src="/images/loading.svg"
+            alt="loading"
+            width={50}
+            height={0}
+            sizes="100vw"
+          />
+        </li>
+      )}
     </ul>
   );
 };

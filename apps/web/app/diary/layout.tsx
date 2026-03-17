@@ -11,7 +11,7 @@ export default function DiaryLayout({
 }) {
   return (
     <AuthLayout>
-      <Suspense fallback={<Loading />}>{children}</Suspense>;
+      <Suspense fallback={<Loading />}>{children}</Suspense>
     </AuthLayout>
   );
 }

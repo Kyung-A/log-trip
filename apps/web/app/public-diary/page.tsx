@@ -3,7 +3,7 @@ import { getPublicDiaries } from "@/entities/diary";
 import { DiaryList } from "@/widgets/diary-list";
 
 export default async function PublicDiary() {
-  const data = await getPublicDiaries();
+  const data = await getPublicDiaries(1, 10);
 
   return <DiaryList data={data} isNotFeed={false} />;
 }
