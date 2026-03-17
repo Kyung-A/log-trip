@@ -53,7 +53,7 @@ export default function GlobalError({
               padding: 0,
             }}
           >
-            서비스 점검중
+            앱 업데이트 확인
           </h1>
           <p
             style={{
@@ -65,10 +65,11 @@ export default function GlobalError({
               color: "#666",
             }}
           >
-            현재 좀 더 안정적인 서비스를 제공하기 위해
+            앱 업데이트 후 다시 재로그인 부탁드립니다.
             <br />
-            개편중에 있습니다. <br />
-            이용에 불편을 드려 죄송합니다.
+            만약 문제가 지속 될 경우
+            <br />
+            nek1717@naver.com으로 메일을 남겨주세요.
           </p>
         </main>
       </body>
