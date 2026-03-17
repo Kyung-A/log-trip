@@ -6,10 +6,9 @@
 
 ## 🚀 서비스 소개
 
-`로그트립`은 여행 중에 발생하는 다양한 에피소드와 정보를 실시간으로 기록하기 위해 제작되었습니다. 단순한 텍스트 기록을 넘어 사진과 장소 기반의 로그를 생성하며, 모노레포 아키텍처를 통해 확장성 있는 구조로 설계되었습니다.
+`로그트립`은 여행 중에 발생하는 다양한 에피소드와 정보를 기록하기 위해 제작되었습니다. 단순한 텍스트 기록을 넘어 사진과 장소 기반의 로그를 생성하며, 모노레포 아키텍처를 통해 확장성 있는 구조로 설계되었습니다.
 
 **[🔗 App Store 다운로드](https://apps.apple.com/kr/app/%EB%A1%9C%EA%B7%B8%ED%8A%B8%EB%A6%BD-%EB%82%B4-%EC%97%AC%ED%96%89%EC%9D%84-%EC%84%B8%EA%B3%84%EC%A7%80%EB%8F%84%EC%97%90-%EA%B8%B0%EB%A1%9D/id6751894902)**
-**[🔗 개발 과정 및 회고](https://kyung-a.tistory.com/category/Project/%EB%A1%9C%EA%B7%B8%ED%8A%B8%EB%A6%BD)**
 
 <img src="app-img1.jpg" width="20%" alt="일기 화면" /> <img src="app-img2.jpg" width="20%" alt="세계지도 화면" />
 
@@ -23,33 +22,31 @@
 
 ## 🛠 Tech Stack
 
-### Frontend
+### Frontend & Mobile
 
-- **Framework**: React Native, Next.js (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **State Management**: React Query
+- **Mobile**: React Native (WebView 기반 하이브리드 구조)
+- **Web**: Next.js 14+ (App Router), TypeScript, Tailwind CSS
+- **State & Data**: TanStack Query → **Next.js Server Caching(unstable_cache)으로 고도화**
 
 ### Backend & Infrastructure
 
 - **BaaS**: Supabase (Database, Auth, Storage, Edge Functions)
 - **Monorepo Management**: Turborepo
 - **Package Manager**: pnpm
-- **Deployment**: Vercel(web), ios(mobile)
+- **Deployment**: Vercel (Web), iOS App Store (Mobile)
 
-## 📁 프로젝트 구조 (Monorepo)
+## 🚀 핵심 기술적 도전 (Deep Dive)
 
-Turborepo를 사용하여 패키지와 앱을 효율적으로 분리 관리합니다.
+_프로젝트를 진행하며 고민한 상세 과정은 [개발 블로그](https://kyung-a.tistory.com/category/Project/%EB%A1%9C%EA%B7%B8%ED%8A%B8%EB%A6%BD)에 기록되어 있습니다._
 
-```text
-log-trip/
-├── apps/
-│   ├── mobile/          # App React Native 모바일
-│   └── web/             # Webview Next.js 웹
-├── supabase/
-│   └── functions/       # Supabase Edge Functions 모음
-├── .npmrc               # npm 설정 파일 (모바일쪽 빌드를 위한 설정 필수)
-├── package.json
-├── turbo.json           # Turborepo 설정
-└── pnpm-workspace.yaml  # pnpm 워크스페이스 설정
-```
+### ✅ 하이브리드 앱의 인증 체계 설계 (Native ↔ Web)
+
+- **도전**: 네이티브 소셜 로그인 후 웹뷰(Next.js) 환경에 인증 세션을 안전하게 공유해야 하는 과제.
+- **해결**: React Native에서 발급받은 토큰을 WebView의 **Cookie**로 직접 주입하고, Next.js의 Middleware와 Supabase SSR 기능을 활용하여 **서버 컴포넌트에서도 인증된 데이터를 즉시 조회**할 수 있는 워크플로우를 구축했습니다.
+- [🔗 관련 블로그 포스팅](https://kyung-a.tistory.com/78)
+
+### ✅ 데이터 캐싱 전략: Client-side에서 Server-side로의 전환
+
+- **도전**: 네이티브 탭바 사용 시, 각 탭의 웹뷰가 **독립된 브라우저 인스턴스**로 동작하여 React Query의 메모리 캐시가 공유되지 않는 문제 발생.
+- **해결**: 클라이언트 기반 캐싱의 한계를 인지하고, Next.js의 서버 단 캐싱(`unstable_cache`) 및 `revalidateTag` 전략으로 전환하여 **탭 간 데이터 불일치 문제를 해결**하고 지도의 대용량 GeoJSON 데이터 조회 효율을 높였습니다.
+- [🔗 관련 블로그 포스팅](https://kyung-a.tistory.com/79)
