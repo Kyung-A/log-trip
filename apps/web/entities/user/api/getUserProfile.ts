@@ -3,8 +3,6 @@ import { unstable_cache } from "next/cache";
 import { createServerClient } from "@/shared";
 
 export const getUserProfile = async (userId?: string) => {
-  if (!userId) throw new Error("id가 없습니다");
-
   const fetchProfile = unstable_cache(
     async () => {
       const { data, error } = await supabase
@@ -17,7 +15,7 @@ export const getUserProfile = async (userId?: string) => {
 
       return data;
     },
-    ["user-profile", userId],
+    ["user-profile", userId!],
     { tags: ["user-profile", `user-profile-${userId}`], revalidate: 86400 },
   );
 
