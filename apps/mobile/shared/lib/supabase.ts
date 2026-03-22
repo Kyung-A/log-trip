@@ -15,6 +15,8 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
 });
 
 export const setSupabaseCookie = async (session: any) => {
+  if (!session) return;
+
   const url = process.env.EXPO_PUBLIC_WEBVIEW_URL as string;
   const projectId = process.env.EXPO_PUBLIC_SUPABASE_ID as string;
   const cookieName = `sb-${projectId}-auth-token`;
@@ -29,8 +31,10 @@ export const setSupabaseCookie = async (session: any) => {
       path: "/",
       secure: false, // TODO: http 환경이므로 false
       httpOnly: false, // TODO: SDK가 읽어야 하므로 false
-      expires: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toUTCString(),
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString(),
     });
+
+    await NitroCookies.flush();
   } catch (e) {
     console.error("❌ 쿠키 주입 에러:", e);
   }

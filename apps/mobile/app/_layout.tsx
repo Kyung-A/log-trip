@@ -3,65 +3,21 @@ import {
   setSupabaseCookie,
   supabase,
   TabBarProvider,
+  toastConfig,
   WebviewProvider,
 } from "@/shared";
 import { router, SplashScreen, Stack } from "expo-router";
-import Toast, {
-  BaseToastProps,
-  ErrorToast,
-  SuccessToast,
-} from "react-native-toast-message";
+import Toast from "react-native-toast-message";
 import "react-native-reanimated";
 import { useEffect } from "react";
 import NitroCookies from "react-native-nitro-cookies";
+import { AppState } from "react-native";
 
 export const unstable_settings = {
   initialRouteName: "(auth)/login",
 };
 
 SplashScreen.preventAutoHideAsync();
-
-const toastConfig = {
-  error: (props: BaseToastProps) => (
-    <ErrorToast
-      {...props}
-      contentContainerStyle={{
-        paddingHorizontal: 12,
-        height: 50,
-      }}
-      style={{
-        height: 50,
-        backgroundColor: "#ecc8c4",
-        borderLeftColor: "transparent",
-        borderRadius: 999,
-      }}
-      text1Style={{
-        color: "#a43336",
-        fontSize: 16,
-        fontWeight: 600,
-        textAlign: "center",
-      }}
-    />
-  ),
-  success: (props: BaseToastProps) => (
-    <SuccessToast
-      {...props}
-      contentContainerStyle={{ paddingHorizontal: 12, height: 50 }}
-      style={{
-        height: 50,
-        backgroundColor: "#def3d6",
-        borderLeftColor: "transparent",
-        borderRadius: 999,
-      }}
-      text1Style={{
-        color: "#596e50",
-        fontSize: 16,
-        fontWeight: 600,
-        textAlign: "center",
-      }}
-    />
-  ),
-};
 
 export default function RootLayout() {
   // * 세션 여부 검사
@@ -111,21 +67,46 @@ export default function RootLayout() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session) {
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
         await setSupabaseCookie(session);
       } else if (event === "SIGNED_OUT") {
         const domain = process.env.EXPO_PUBLIC_WEBVIEW_URL as string;
         const projectId = process.env.EXPO_PUBLIC_SUPABASE_ID as string;
         const cookieName = `sb-${projectId}-auth-token`;
 
-        await supabase.auth.signOut();
-        await NitroCookies.clearByName(domain, cookieName);
+        try {
+          await NitroCookies.clearByName(domain, cookieName);
+        } catch (e) {
+          console.error("쿠키 삭제 실패:", e);
+        }
+
         router.replace("/(auth)/login");
       }
     });
 
     return () => {
       subscription.unsubscribe();
+    };
+  }, []);
+
+  // * 앱 상태 감지 로직 예시
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      "change",
+      async (nextAppState) => {
+        if (nextAppState === "active") {
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+          if (session) {
+            await setSupabaseCookie(session);
+          }
+        }
+      },
+    );
+
+    return () => {
+      subscription.remove();
     };
   }, []);
 
