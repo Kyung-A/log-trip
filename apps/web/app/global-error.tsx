@@ -1,18 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
-
 export default function GlobalError({
-  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
-
   return (
     <html
       lang="ko"
@@ -71,6 +64,17 @@ export default function GlobalError({
             <br />
             nek1717@naver.com으로 메일을 남겨주세요.
           </p>
+          <button
+            onClick={() => reset()}
+            style={{
+              textAlign: "center",
+              padding: "0px 12px",
+              fontSize: "14px",
+              marginTop: 6,
+            }}
+          >
+            새로고침
+          </button>
         </main>
       </body>
     </html>

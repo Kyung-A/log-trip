@@ -19,10 +19,6 @@ export default async function WorldMapPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    // TODO: 유저가 없으면 로그인 페이지로 보내거나 에러 처리
-  }
-
   const diaryRegions = await getDiaryRegions(user?.id);
 
   const uniqueByCountry: ICountry[] = diaryRegions
