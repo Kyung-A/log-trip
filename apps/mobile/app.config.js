@@ -2,7 +2,7 @@ export default ({ config }) => ({
   expo: {
     name: "logtrip",
     slug: "logtrip",
-    version: "1.1.1",
+    version: "1.1.2",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "com.nek777.mytripapp",
@@ -23,7 +23,7 @@ export default ({ config }) => ({
       supportsTablet: true,
       usesAppleSignIn: true,
       bundleIdentifier: "com.nek777.mytripapp",
-      buildNumber: "24",
+      buildNumber: "26",
       infoPlist: {
         CFBundleDisplayName: "로그트립",
         CFBundleName: "로그트립",

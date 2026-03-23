@@ -26,34 +26,36 @@ export default function RootLayout() {
       try {
         const {
           data: { session },
+          error,
         } = await supabase.auth.getSession();
 
-        if (session) {
-          const isUserExists = await checkIfUserExists(session.user.id);
-
-          if (isUserExists) {
-            await setSupabaseCookie(session);
-
-            router.replace({
-              pathname: "/(tabs)",
-            });
-          } else {
-            Toast.show({
-              type: "error",
-              text1: "회원가입을 완료해주세요.",
-            });
-            router.replace({
-              pathname: "/(auth)/user-info",
-              params: {
-                session: JSON.stringify(session),
-                platform: session.user.app_metadata.provider,
-              },
-            });
-          }
-        } else {
+        if (error || !session) {
           router.replace("/(auth)/login");
+          return;
+        }
+
+        const isUserExists = await checkIfUserExists(session.user.id);
+
+        if (isUserExists) {
+          await setSupabaseCookie(session);
+          await new Promise((resolve) => setTimeout(resolve, 100));
+
+          router.replace("/(tabs)");
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "회원가입을 완료해주세요.",
+          });
+          router.replace({
+            pathname: "/(auth)/user-info",
+            params: {
+              session: JSON.stringify(session),
+              platform: session.user.app_metadata.provider,
+            },
+          });
         }
       } catch (e) {
+        await supabase.auth.signOut();
         router.replace("/(auth)/login");
       } finally {
         await SplashScreen.hideAsync();
