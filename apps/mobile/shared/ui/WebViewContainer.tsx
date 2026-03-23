@@ -6,7 +6,7 @@ import {
 } from "@/shared";
 import { router } from "expo-router";
 import { useState, forwardRef, useImperativeHandle, useRef } from "react";
-import { Alert } from "react-native";
+import { RefreshControl, ScrollView } from "react-native";
 import NitroCookies from "react-native-nitro-cookies";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView, WebViewProps } from "react-native-webview";
@@ -19,6 +19,8 @@ interface WebViewContainerProps extends WebViewProps {
 const WebViewContainer = forwardRef(
   ({ url, showSafeArea = true, ...props }: WebViewContainerProps, ref) => {
     const [isLoading, setIsLoading] = useState(true);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
     const internalWebViewRef = useRef<WebView>(null);
     const {
       mapWebviewRef,
@@ -28,7 +30,13 @@ const WebViewContainer = forwardRef(
     } = useWebviewRefs();
     const { setTabBarVisible } = useTabBarVisibility();
 
-    useImperativeHandle(ref, () => internalWebViewRef.current);
+    useImperativeHandle(ref, () => ({
+      injectJavaScript: (data: string) =>
+        internalWebViewRef.current?.injectJavaScript(data),
+      startRefresh: () => {
+        setIsRefreshing(true);
+      },
+    }));
 
     const handleMessage = async (event: any) => {
       try {
@@ -105,13 +113,29 @@ const WebViewContainer = forwardRef(
     };
 
     const content = (
-      <>
+      <ScrollView
+        contentContainerStyle={{ flex: 1 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            tintColor="#d5b2a8"
+            colors={["#d5b2a8"]}
+            onRefresh={() => {
+              setIsRefreshing(true);
+              internalWebViewRef.current?.reload();
+            }}
+          />
+        }
+      >
         <WebView
           ref={internalWebViewRef}
           source={{ uri: url }}
           style={{ flex: 1 }}
           onLoadStart={() => setIsLoading(true)}
-          onLoadEnd={() => setIsLoading(false)}
+          onLoadEnd={() => {
+            setIsLoading(false);
+            setIsRefreshing(false);
+          }}
           webviewDebuggingEnabled={true}
           pullToRefreshEnabled={true}
           allowsInlineMediaPlayback={true}
@@ -140,7 +164,7 @@ const WebViewContainer = forwardRef(
           {...props}
         />
         {isLoading && <LoadingView />}
-      </>
+      </ScrollView>
     );
 
     if (showSafeArea) {
