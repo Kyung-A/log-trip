@@ -9,17 +9,16 @@ import {
 import { router, SplashScreen, Stack } from "expo-router";
 import Toast from "react-native-toast-message";
 import "react-native-reanimated";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import NitroCookies from "react-native-nitro-cookies";
 import { AppState } from "react-native";
-
-export const unstable_settings = {
-  initialRouteName: "(auth)/login",
-};
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [isReady, setIsReady] = useState(false);
+  const [initialRoute, setInitialRoute] = useState<string | null>(null);
+
   // * 세션 여부 검사
   useEffect(() => {
     const bootstrap = async () => {
@@ -30,7 +29,7 @@ export default function RootLayout() {
         } = await supabase.auth.getSession();
 
         if (error || !session) {
-          router.replace("/(auth)/login");
+          setInitialRoute("/(auth)/login");
           return;
         }
 
@@ -38,26 +37,16 @@ export default function RootLayout() {
 
         if (isUserExists) {
           await setSupabaseCookie(session);
-          await new Promise((resolve) => setTimeout(resolve, 100));
-
-          router.replace("/(tabs)");
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          setInitialRoute("(tabs)");
         } else {
-          Toast.show({
-            type: "error",
-            text1: "회원가입을 완료해주세요.",
-          });
-          router.replace({
-            pathname: "/(auth)/user-info",
-            params: {
-              session: JSON.stringify(session),
-              platform: session.user.app_metadata.provider,
-            },
-          });
+          setInitialRoute("/(auth)/user-info");
         }
       } catch (e) {
         await supabase.auth.signOut();
-        router.replace("/(auth)/login");
+        setInitialRoute("/(auth)/login");
       } finally {
+        setIsReady(true);
         await SplashScreen.hideAsync();
       }
     };
@@ -112,10 +101,12 @@ export default function RootLayout() {
     };
   }, []);
 
+  if (!isReady) return null;
+
   return (
     <WebviewProvider>
       <TabBarProvider>
-        <Stack>
+        <Stack initialRouteName={initialRoute as any}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
           <Stack.Screen
