@@ -5,12 +5,10 @@ import { createServerClient } from "@/shared";
 export const getDiaryRegions = async (userId?: string | null) => {
   const fetchDiaryRegions = unstable_cache(
     async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("diary_regions")
         .select(`*, diaries!inner(user_id)`)
         .eq("diaries.user_id", userId);
-
-      if (error) throw new Error("id가 없습니다");
 
       return data;
     },
