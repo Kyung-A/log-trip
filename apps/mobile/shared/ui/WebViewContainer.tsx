@@ -9,6 +9,7 @@ import { useState, forwardRef, useImperativeHandle, useRef } from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import NitroCookies from "react-native-nitro-cookies";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import { WebView, WebViewProps } from "react-native-webview";
 
 interface WebViewContainerProps extends WebViewProps {
@@ -21,6 +22,7 @@ const WebViewContainer = forwardRef(
     const [isLoading, setIsLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(false);
 
+    const lastErrorTime = useRef<number>(0);
     const internalWebViewRef = useRef<WebView>(null);
     const {
       mapWebviewRef,
@@ -37,6 +39,20 @@ const WebViewContainer = forwardRef(
         setIsRefreshing(true);
       },
     }));
+
+    const sendErrorToWeb = (message: string) => {
+      const now = Date.now();
+      if (now - lastErrorTime.current < 1000) return;
+      lastErrorTime.current = now;
+
+      const jsCode = `
+        if (window.showWebAlert) {
+          window.showWebAlert("${message}");
+        }
+        true;
+      `;
+      internalWebViewRef.current?.injectJavaScript(jsCode);
+    };
 
     const handleMessage = async (event: any) => {
       try {
@@ -64,19 +80,31 @@ const WebViewContainer = forwardRef(
             break;
 
           case "LOGOUT":
-            await supabase.auth.signOut();
-            await NitroCookies.clearByName(domain, cookieName);
-            router.replace("/(auth)/login");
+            try {
+              await supabase.auth.signOut();
+              await NitroCookies.clearByName(domain, cookieName);
+              router.replace("/(auth)/login");
+            } catch (e) {
+              sendErrorToWeb("다시 시도해주세요.");
+            }
             break;
 
           case "DELETE_USER":
-            await supabase.auth.signOut();
-            await NitroCookies.clearByName(domain, cookieName);
-            router.replace("/(auth)/login");
+            try {
+              await supabase.auth.signOut();
+              await NitroCookies.clearByName(domain, cookieName);
+              router.replace("/(auth)/login");
+            } catch (e) {
+              sendErrorToWeb("다시 시도해주세요.");
+            }
             break;
 
           case "NOT_SESSION":
             await NitroCookies.clearByName(domain, cookieName);
+            Toast.show({
+              type: "error",
+              text1: "다시 로그인해주세요.",
+            });
             router.replace("/(auth)/login");
             break;
 
