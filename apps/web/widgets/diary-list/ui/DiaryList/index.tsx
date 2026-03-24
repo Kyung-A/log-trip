@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
@@ -57,13 +58,11 @@ export const DiaryList = ({
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
     if (inView && hasMore) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       loadMoreDiaries();
     }
   }, [inView]);
@@ -144,6 +143,37 @@ export const DiaryList = ({
     },
     [router],
   );
+
+  useEffect(() => {
+    if (!data || data.length === 0) return;
+
+    setDiaries((prev) => {
+      if (page === 1) return data;
+
+      const combined = [...data, ...prev];
+      const uniqueMap = new Map();
+      combined.forEach((item) => {
+        if (!uniqueMap.has(item.id)) {
+          uniqueMap.set(item.id, item);
+        }
+      });
+
+      return Array.from(uniqueMap.values());
+    });
+  }, [data]);
+
+  useEffect(() => {
+    window.forceRefreshList = () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setPage(1);
+      setHasMore(true);
+      router.refresh();
+    };
+
+    return () => {
+      delete window.forceRefreshList;
+    };
+  }, [router, page]);
 
   useEffect(() => {
     window.forceRefreshMap = () => {

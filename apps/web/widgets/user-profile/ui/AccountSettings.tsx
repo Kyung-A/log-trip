@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 import { IProfile } from "@/entities/user";
 
@@ -40,6 +41,16 @@ export const AccountSettings = ({
       navigateNative("/(auth)/login", "DELETE_USER");
     }
   }, [userId, profile?.platform]);
+
+  useEffect(() => {
+    window.showWebAlert = (message: string) => {
+      toast.error(message);
+    };
+
+    return () => {
+      delete window.showWebAlert;
+    };
+  }, []);
 
   return (
     <>
