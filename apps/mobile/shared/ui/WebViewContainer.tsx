@@ -91,7 +91,7 @@ const WebViewContainer = forwardRef(
 
           case "DELETE_USER":
             try {
-              await supabase.auth.signOut();
+              await supabase.auth.signOut({ scope: "local" });
               await NitroCookies.clearByName(domain, cookieName);
               router.replace("/(auth)");
             } catch (e) {
@@ -100,11 +100,8 @@ const WebViewContainer = forwardRef(
             break;
 
           case "NOT_SESSION":
+            await supabase.auth.signOut({ scope: "local" });
             await NitroCookies.clearByName(domain, cookieName);
-            // Toast.show({
-            //   type: "error",
-            //   text1: "다시 로그인해주세요.",
-            // });
             router.replace("/(auth)");
             break;
 
