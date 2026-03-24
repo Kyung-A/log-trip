@@ -29,7 +29,7 @@ export default function RootLayout() {
         } = await supabase.auth.getSession();
 
         if (error || !session) {
-          setInitialRoute("/(auth)/login");
+          setInitialRoute("(auth)/login");
           return;
         }
 
@@ -44,7 +44,7 @@ export default function RootLayout() {
         }
       } catch (e) {
         await supabase.auth.signOut();
-        setInitialRoute("/(auth)/login");
+        setInitialRoute("(auth)/login");
       } finally {
         setIsReady(true);
         await SplashScreen.hideAsync();
