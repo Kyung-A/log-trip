@@ -18,7 +18,7 @@ export const AuthBridgeClient = ({
 
   useEffect(() => {
     if (isAuthRequired && window.ReactNativeWebView) {
-      navigateNative("/(auth)/login", "NOT_SESSION");
+      navigateNative("/(auth)", "NOT_SESSION");
       return;
     }
 
@@ -37,7 +37,7 @@ export const AuthBridgeClient = ({
         lastSessionToken.current = currentToken;
 
         if (!currentToken && isAuthRequired) {
-          navigateNative("/(auth)/login", "NOT_SESSION");
+          navigateNative("/(auth)", "NOT_SESSION");
         } else {
           router.refresh();
           console.log("🔄 세션 변경 감지: 서버 데이터를 갱신합니다.");

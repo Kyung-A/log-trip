@@ -24,7 +24,7 @@ export const AccountSettings = ({
   const handleLogout = useCallback(async () => {
     const { success } = await logoutAction();
     if (success) {
-      navigateNative("/(auth)/login", "LOGOUT");
+      navigateNative("/(auth)", "LOGOUT");
     }
   }, []);
 
@@ -38,7 +38,7 @@ export const AccountSettings = ({
 
     const { success } = await deleteUserAction(userId, profile?.platform);
     if (success) {
-      navigateNative("/(auth)/login", "DELETE_USER");
+      navigateNative("/(auth)", "DELETE_USER");
     }
   }, [userId, profile?.platform]);
 

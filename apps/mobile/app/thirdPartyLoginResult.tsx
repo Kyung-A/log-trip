@@ -19,7 +19,7 @@ export default function NaverCallbackHandler() {
       if (router.canGoBack()) {
         router.back();
       } else {
-        router.replace("/(auth)/login");
+        router.replace("/(auth)");
       }
     };
 

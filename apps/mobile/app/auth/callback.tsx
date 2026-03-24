@@ -49,7 +49,7 @@ export default function AuthCallback() {
       if (!url) return;
 
       if (url.includes("access_denied")) {
-        router.replace("/(auth)/login");
+        router.replace("/(auth)");
         setTimeout(() => {
           Toast.show({
             type: "error",

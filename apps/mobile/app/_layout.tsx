@@ -9,44 +9,37 @@ import {
 import { router, SplashScreen, Stack } from "expo-router";
 import Toast from "react-native-toast-message";
 import "react-native-reanimated";
-import { useEffect, useState } from "react";
-import NitroCookies from "react-native-nitro-cookies";
+import { useEffect } from "react";
 import { AppState } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [isReady, setIsReady] = useState(false);
-  const [initialRoute, setInitialRoute] = useState<string | null>(null);
-
-  // * 세션 여부 검사
   useEffect(() => {
     const bootstrap = async () => {
       try {
-        const {
-          data: { session },
-          error,
-        } = await supabase.auth.getSession();
+        const { data: claims, error: userError } =
+          await supabase.auth.getClaims();
 
-        if (error || !session) {
-          setInitialRoute("(auth)/login");
-          return;
-        }
-
-        const isUserExists = await checkIfUserExists(session.user.id);
-
-        if (isUserExists) {
-          await setSupabaseCookie(session);
-          await new Promise((resolve) => setTimeout(resolve, 300));
-          setInitialRoute("(tabs)");
+        if (userError || !claims) {
+          router.replace("/(auth)");
         } else {
-          setInitialRoute("/(auth)/user-info");
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+          const isUserExists = await checkIfUserExists(session?.user.id);
+
+          if (isUserExists && session) {
+            await setSupabaseCookie(session);
+            router.replace("/(tabs)");
+          } else {
+            router.replace("/(auth)/user-info");
+          }
         }
       } catch (e) {
-        await supabase.auth.signOut();
-        setInitialRoute("(auth)/login");
+        await supabase.auth.signOut({ scope: "local" });
+        router.replace("/(auth)");
       } finally {
-        setIsReady(true);
         await SplashScreen.hideAsync();
       }
     };
@@ -58,20 +51,8 @@ export default function RootLayout() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+      if (event === "TOKEN_REFRESHED") {
         await setSupabaseCookie(session);
-      } else if (event === "SIGNED_OUT") {
-        const domain = process.env.EXPO_PUBLIC_WEBVIEW_URL as string;
-        const projectId = process.env.EXPO_PUBLIC_SUPABASE_ID as string;
-        const cookieName = `sb-${projectId}-auth-token`;
-
-        try {
-          await NitroCookies.clearByName(domain, cookieName);
-        } catch (e) {
-          console.error("쿠키 삭제 실패:", e);
-        }
-
-        router.replace("/(auth)/login");
       }
     });
 
@@ -101,44 +82,18 @@ export default function RootLayout() {
     };
   }, []);
 
-  if (!isReady) return null;
-
   return (
     <WebviewProvider>
       <TabBarProvider>
-        <Stack initialRouteName={initialRoute as any}>
+        <Stack>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="(auth)/email-login"
-            options={{
-              title: "로그인",
-              headerBackTitle: "뒤로",
-            }}
-          />
-          <Stack.Screen
-            name="(auth)/email-signup"
-            options={{
-              title: "회원가입",
-              headerBackTitle: "뒤로",
-            }}
-          />
-          <Stack.Screen
-            name="(auth)/user-info"
-            options={{
-              title: "프로필 입력",
-              headerBackTitle: "",
-              headerLeft: () => null,
-              headerBackVisible: false,
-            }}
-          />
           <Stack.Screen name="createDiary" options={{ headerShown: false }} />
           <Stack.Screen
             name="thirdPartyLoginResult"
             options={{ headerShown: false }}
           />
           <Stack.Screen name="auth/callback" options={{ headerShown: false }} />
-          {/* <Stack.Screen name="createCompanion" options={{ headerShown: false }} /> // TODO: 추후 추가 예정 서비스 */}
         </Stack>
         <Toast config={toastConfig} topOffset={80} />
       </TabBarProvider>

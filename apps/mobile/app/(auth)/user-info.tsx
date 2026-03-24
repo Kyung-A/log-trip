@@ -79,7 +79,7 @@ export default function UserInfoScreen() {
         ) {
           // * 앱이 백그라운드 모드로 들어가면 세션 삭제
           await supabase.auth.signOut();
-          router.replace("/(auth)/login");
+          router.replace("/(auth)");
         }
         appState.current = nextAppState;
       },

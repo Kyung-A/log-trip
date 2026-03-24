@@ -81,9 +81,9 @@ const WebViewContainer = forwardRef(
 
           case "LOGOUT":
             try {
-              await supabase.auth.signOut();
+              await supabase.auth.signOut({ scope: "local" });
               await NitroCookies.clearByName(domain, cookieName);
-              router.replace("/(auth)/login");
+              router.replace("/(auth)");
             } catch (e) {
               sendErrorToWeb("다시 시도해주세요.");
             }
@@ -93,7 +93,7 @@ const WebViewContainer = forwardRef(
             try {
               await supabase.auth.signOut();
               await NitroCookies.clearByName(domain, cookieName);
-              router.replace("/(auth)/login");
+              router.replace("/(auth)");
             } catch (e) {
               sendErrorToWeb("다시 시도해주세요.");
             }
@@ -101,11 +101,11 @@ const WebViewContainer = forwardRef(
 
           case "NOT_SESSION":
             await NitroCookies.clearByName(domain, cookieName);
-            Toast.show({
-              type: "error",
-              text1: "다시 로그인해주세요.",
-            });
-            router.replace("/(auth)/login");
+            // Toast.show({
+            //   type: "error",
+            //   text1: "다시 로그인해주세요.",
+            // });
+            router.replace("/(auth)");
             break;
 
           case "REFRESH_MAP_DATA":
