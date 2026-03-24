@@ -3,15 +3,17 @@ import { unstable_cache } from "next/cache";
 import { createServerClient } from "@/shared";
 
 export const getUserProfile = async (userId?: string) => {
+  if (!userId) {
+    return { data: null };
+  }
+
   const fetchProfile = unstable_cache(
     async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("users")
         .select("*")
         .eq("id", userId)
         .maybeSingle();
-
-      if (error) throw new Error(error.message);
 
       return data;
     },

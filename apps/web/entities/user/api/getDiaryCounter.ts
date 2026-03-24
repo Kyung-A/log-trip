@@ -3,7 +3,9 @@ import { unstable_cache } from "next/cache";
 import { createServerClient } from "@/shared";
 
 export const getDiaryCounter = async (userId?: string | null) => {
-  if (!userId) throw new Error("id가 없습니다");
+  if (!userId) {
+    return { data: null };
+  }
 
   const fetchDiaryCounter = unstable_cache(
     async () => {

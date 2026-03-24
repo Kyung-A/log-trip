@@ -22,10 +22,7 @@ export const AccountSettings = ({
   const router = useRouter();
 
   const handleLogout = useCallback(async () => {
-    const { success } = await logoutAction();
-    if (success) {
-      navigateNative("/(auth)", "LOGOUT");
-    }
+    await logoutAction();
   }, []);
 
   const handleDeleteUser = useCallback(async () => {

@@ -12,6 +12,8 @@ export default async function MyPage() {
   const { data: profile } = await getUserProfile(user?.id);
   const { data: counters } = await getDiaryCounter(user?.id);
 
+  if (!profile && !counters) return null;
+
   return (
     <UserProfileWidget isMine profile={profile} counters={counters}>
       <AccountSettings profile={profile} userId={user?.id} />
