@@ -1,6 +1,6 @@
 import { memo, useCallback, useState } from "react";
 
-import { EllipsisVertical, UserRound } from "lucide-react";
+import { EllipsisVertical, LoaderCircle, UserRound } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -15,6 +15,7 @@ interface IDiaryITemHeader {
     state: boolean,
     userId?: string,
   ) => void;
+  isPending: boolean;
 }
 
 export const DiaryItemHeader = memo(
@@ -23,6 +24,7 @@ export const DiaryItemHeader = memo(
     onToggle,
     isNotFeed,
     handleIsPublicDiaryChange,
+    isPending,
   }: IDiaryITemHeader) => {
     const router = useRouter();
     const [publicChecked, setPublicChecked] = useState<boolean>(item.is_public);
@@ -72,7 +74,18 @@ export const DiaryItemHeader = memo(
           {isNotFeed && (
             <div className="flex items-center gap-x-2">
               <p className="text-sm text-zinc-600">공개</p>
-              <label className="flex items-center space-x-2 cursor-pointer select-none">
+
+              <label className="flex items-center space-x-2 cursor-pointer select-none relative">
+                {isPending && (
+                  <div className="absolute z-10 bg-white opacity-70 w-full mx-auto h-full rounded-full flex items-center justify-center">
+                    <LoaderCircle
+                      className="animate-spin"
+                      size={24}
+                      color="#9f9fa9"
+                    />
+                  </div>
+                )}
+
                 <input
                   type="checkbox"
                   defaultChecked={publicChecked}

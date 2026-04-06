@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
@@ -36,6 +35,7 @@ export const DiaryList = ({
   const router = useRouter();
 
   const [isMounted, setIsMounted] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   const [diaries, setDiaries] = useState(data);
   const [page, setPage] = useState(1);
@@ -69,28 +69,35 @@ export const DiaryList = ({
 
   const handleReportDiary = useCallback(
     async (id: string, userId: string) => {
-      if (confirm("정말 신고하시겠습니까?")) {
+      if (isPending) return;
+      if (!confirm("정말 신고하시겠습니까?")) return;
+
+      setIsPending(true);
+      try {
         const { success } = await updateIsReportAction(id, userId);
         if (success) {
           if (window.ReactNativeWebView) {
             window.ReactNativeWebView.postMessage(
-              JSON.stringify({
-                type: "REFRESH_DIARY_DATA",
-              }),
+              JSON.stringify({ type: "REFRESH_DIARY_DATA" }),
             );
           }
-
           toast.success("신고 처리 되었습니다.");
           router.refresh();
         }
+      } finally {
+        setIsPending(false);
       }
     },
-    [router],
+    [router, isPending],
   );
 
   const handleDeleteDiary = useCallback(
     async (item: IDiary) => {
-      if (confirm("정말 삭제하시겠습니까?")) {
+      if (isPending) return;
+      if (!confirm("정말 삭제하시겠습니까?")) return;
+
+      setIsPending(true);
+      try {
         const { success } = await deleteDiaryAction(item);
         if (!success) return;
 
@@ -115,6 +122,8 @@ export const DiaryList = ({
         }
 
         router.refresh();
+      } finally {
+        setIsPending(false);
       }
     },
     [router],
@@ -122,23 +131,30 @@ export const DiaryList = ({
 
   const handleIsPublicDiaryChange = useCallback(
     async (id: string, state: boolean, userId?: string) => {
-      const { success } = await toggleVisibilityAction(id, state, userId);
+      if (isPending) return;
 
-      if (success) {
-        if (window.ReactNativeWebView) {
-          window.ReactNativeWebView.postMessage(
-            JSON.stringify({
-              type: "REFRESH_PUBLIC_DIARY_DATA",
-            }),
-          );
-          window.ReactNativeWebView.postMessage(
-            JSON.stringify({
-              type: "REFRESH_MYPAGE_DATA",
-            }),
-          );
+      setIsPending(true);
+      try {
+        const { success } = await toggleVisibilityAction(id, state, userId);
+
+        if (success) {
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({
+                type: "REFRESH_PUBLIC_DIARY_DATA",
+              }),
+            );
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({
+                type: "REFRESH_MYPAGE_DATA",
+              }),
+            );
+          }
+
+          router.refresh();
         }
-
-        router.refresh();
+      } finally {
+        setIsPending(false);
       }
     },
     [router],
@@ -213,6 +229,7 @@ export const DiaryList = ({
           handleDeleteDiary={handleDeleteDiary}
           handleIsPublicDiaryChange={handleIsPublicDiaryChange}
           isNotFeed={isNotFeed}
+          isPending={isPending}
         />
       ))}
       {hasMore && (

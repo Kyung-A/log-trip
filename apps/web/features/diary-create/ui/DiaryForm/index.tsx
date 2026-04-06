@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, LoaderCircle } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
@@ -54,7 +54,13 @@ export const DiaryForm = ({
 
   const [, startTransition] = useTransition();
 
-  const { control, watch, setValue, handleSubmit } = useForm<IDiary>({
+  const {
+    control,
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<IDiary>({
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
@@ -240,13 +246,21 @@ export const DiaryForm = ({
           <ChevronLeft size={30} color="#646464" />
           <span className="text-lg">뒤로</span>
         </button>
-        <button
-          type="submit"
-          onClick={handleCreateDiary}
-          className="ml-auto text-lg text-blue-500 font-semibold px-2"
-        >
-          등록
-        </button>
+        {isSubmitting ? (
+          <LoaderCircle
+            className="animate-spin ml-auto w-12"
+            size={24}
+            color="#9f9fa9"
+          />
+        ) : (
+          <button
+            type="submit"
+            onClick={handleCreateDiary}
+            className="ml-auto text-lg text-blue-500 font-semibold px-2"
+          >
+            등록
+          </button>
+        )}
       </header>
 
       <UploadDiaryImageField

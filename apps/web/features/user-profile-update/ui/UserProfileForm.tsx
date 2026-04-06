@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { Camera, ChevronLeft, UserRound, X } from "lucide-react";
+import { Camera, ChevronLeft, LoaderCircle, UserRound, X } from "lucide-react";
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
@@ -27,7 +27,11 @@ export const UserProfileForm = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { control, handleSubmit } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm({
     defaultValues: profile,
   });
 
@@ -130,13 +134,21 @@ export const UserProfileForm = ({
           <ChevronLeft size={22} color="#646464" />
           <span className="text-lg">뒤로</span>
         </button>
-        <button
-          type="submit"
-          className="text-lg text-blue-500"
-          onClick={handleSubmit(handleSaveProfile)}
-        >
-          완료
-        </button>
+        {isSubmitting ? (
+          <LoaderCircle
+            className="animate-spin ml-auto"
+            size={24}
+            color="#9f9fa9"
+          />
+        ) : (
+          <button
+            type="submit"
+            className="text-lg text-blue-500"
+            onClick={handleSubmit(handleSaveProfile)}
+          >
+            완료
+          </button>
+        )}
       </header>
 
       <main className="items-center flex flex-col w-full min-h-screen">

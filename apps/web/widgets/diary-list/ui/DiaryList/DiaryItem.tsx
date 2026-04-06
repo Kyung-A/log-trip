@@ -23,6 +23,7 @@ interface IDiaryItem {
     userId?: string,
   ) => void;
   isNotFeed: boolean;
+  isPending: boolean;
 }
 
 export const DiaryItem = ({
@@ -31,6 +32,7 @@ export const DiaryItem = ({
   handleDeleteDiary,
   handleIsPublicDiaryChange,
   isNotFeed,
+  isPending,
 }: IDiaryItem) => {
   const [openId, setOpenId] = useState<string | null>(null);
   const popoverRef = useClickOutside<HTMLDivElement>(() => {
@@ -57,6 +59,7 @@ export const DiaryItem = ({
             onToggle={onToggle}
             isNotFeed={isNotFeed}
             handleIsPublicDiaryChange={handleIsPublicDiaryChange}
+            isPending={isPending}
           />
 
           {item.diary_images && item.diary_images.length > 0 && (
@@ -80,6 +83,7 @@ export const DiaryItem = ({
               onDelete={() => handleDeleteDiary(item)}
               ref={popoverRef}
               isNotFeed={isNotFeed}
+              isPending={isPending}
             />
           )}
         </article>
