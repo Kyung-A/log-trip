@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -19,8 +19,6 @@ import {
   updateIsReportAction,
 } from "@/features/diary-update";
 
-import { EmptyView } from "@/shared";
-
 import { DiaryItem } from "./DiaryItem";
 
 export const DiaryList = ({
@@ -34,38 +32,125 @@ export const DiaryList = ({
 }) => {
   const router = useRouter();
 
+  const [cache, setCache] = useState<{
+    [key: string]: { diaries: IDiary[]; page: number; hasMore: boolean };
+  }>({
+    diary: { diaries: [], page: 1, hasMore: true },
+    community: { diaries: [], page: 1, hasMore: true },
+  });
+
   const [isMounted, setIsMounted] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
-  const [diaries, setDiaries] = useState(data);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-
   const { ref, inView } = useInView();
 
-  const loadMoreDiaries = async () => {
-    const nextPage = page + 1;
-    const newData = isNotFeed
-      ? await getDiariesAction(nextPage, userId)
-      : await getPublicDiariesAction(nextPage);
+  const scrollPositions = useRef<{ [key: string]: number }>({});
 
-    if (newData.length === 0) {
-      setHasMore(false);
-    } else {
-      setDiaries((prev) => [...prev, ...newData]);
-      setPage(nextPage);
+  const currentTabKey = isNotFeed ? "diary" : "community";
+  const currentTab = cache[currentTabKey];
+  const currentDiaries = currentTab.diaries;
+  const currentHasMore = currentTab.hasMore;
+
+  useEffect(() => {
+    setIsMounted(true);
+
+    setCache((prev) => {
+      if (prev[currentTabKey].diaries.length > 0) return prev;
+
+      return {
+        ...prev,
+        [currentTabKey]: {
+          diaries: data,
+          page: 1,
+          hasMore: data.length >= 10,
+        },
+      };
+    });
+  }, [data, currentTabKey]);
+
+  const loadMoreDiaries = useCallback(async () => {
+    const tabState = cache[currentTabKey];
+    if (!tabState.hasMore || isPending) return;
+
+    setIsPending(true);
+    try {
+      const nextPage = tabState.page + 1;
+      const newData = isNotFeed
+        ? await getDiariesAction(nextPage, userId)
+        : await getPublicDiariesAction(nextPage);
+
+      if (newData.length === 0) {
+        setCache((prev) => ({
+          ...prev,
+          [currentTabKey]: { ...prev[currentTabKey], hasMore: false },
+        }));
+      } else {
+        setCache((prev) => {
+          const existingIds = new Set(
+            prev[currentTabKey].diaries.map((d) => d.id),
+          );
+          const filteredNewData = newData.filter(
+            (item) => !existingIds.has(item.id),
+          );
+
+          return {
+            ...prev,
+            [currentTabKey]: {
+              diaries: [...prev[currentTabKey].diaries, ...filteredNewData],
+              page: nextPage,
+              hasMore: newData.length >= 10,
+            },
+          };
+        });
+      }
+    } finally {
+      setIsPending(false);
     }
-  };
+  }, [cache, currentTabKey, isNotFeed, userId, isPending]);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    if (inView && hasMore) {
+    if (inView && isMounted) {
       loadMoreDiaries();
     }
   }, [inView]);
+
+  useEffect(() => {
+    if (inView && isMounted && !isPending) {
+      loadMoreDiaries();
+    }
+  }, [inView, isMounted, isPending, loadMoreDiaries]);
+
+  useEffect(() => {
+    window.forceRefreshList = () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setCache({
+        diary: { diaries: [], page: 1, hasMore: true },
+        community: { diaries: [], page: 1, hasMore: true },
+      });
+      router.refresh();
+    };
+    return () => {
+      delete window.forceRefreshList;
+    };
+  }, [router]);
+
+  useEffect(() => {
+    const savedPosition = scrollPositions.current[currentTabKey];
+    if (savedPosition !== undefined) {
+      window.scrollTo(0, savedPosition);
+    }
+
+    const handleScroll = () => {
+      scrollPositions.current[currentTabKey] = window.scrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [currentTabKey]);
 
   const handleReportDiary = useCallback(
     async (id: string, userId: string) => {
@@ -160,70 +245,15 @@ export const DiaryList = ({
     [router],
   );
 
-  useEffect(() => {
-    if (!data || data.length === 0) return;
-
-    setDiaries((prev) => {
-      if (page === 1) return data;
-
-      const combined = [...data, ...prev];
-      const uniqueMap = new Map();
-      combined.forEach((item) => {
-        if (!uniqueMap.has(item.id)) {
-          uniqueMap.set(item.id, item);
-        }
-      });
-
-      return Array.from(uniqueMap.values());
-    });
-  }, [data]);
-
-  useEffect(() => {
-    window.forceRefreshList = () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      setPage(1);
-      setHasMore(true);
-      router.refresh();
-    };
-
-    return () => {
-      delete window.forceRefreshList;
-    };
-  }, [router, page]);
-
-  useEffect(() => {
-    window.forceRefreshMap = () => {
-      if (document.visibilityState === "hidden") {
-        router.refresh();
-      }
-    };
-
-    return () => {
-      delete window.forceRefreshMap;
-    };
-  }, [router]);
-
   if (!isMounted) {
     return <div className="w-full min-h-dvh bg-zinc-100" />;
   }
 
-  if (!data || data?.length === 0) {
-    return (
-      <EmptyView
-        message={
-          !isNotFeed
-            ? "공개된 일기가 없습니다\n가장 먼저 내 일기를 공개 해보세요!"
-            : "작성된 일기가 없습니다"
-        }
-      />
-    );
-  }
-
   return (
     <ul className="w-full min-h-dvh bg-zinc-100">
-      {diaries.map((item) => (
+      {currentDiaries.map((item) => (
         <DiaryItem
-          key={item.id}
+          key={`${currentTabKey}-${item.id}`}
           item={item}
           handleReportDiary={handleReportDiary}
           handleDeleteDiary={handleDeleteDiary}
@@ -232,7 +262,7 @@ export const DiaryList = ({
           isPending={isPending}
         />
       ))}
-      {hasMore && (
+      {currentHasMore && (
         <li ref={ref} className="h-10 flex items-center justify-center">
           <Image
             src="/images/loading.svg"
