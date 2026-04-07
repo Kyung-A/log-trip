@@ -41,7 +41,9 @@ export const UserProfileWidget = ({
       {!isMine && (
         <header className="bg-white max-w-3xl fixed w-full py-2 border-b border-gray-200 flex items-center justify-between px-4 z-10">
           <button
-            onClick={() => navigateNative("/public-diary", "WINDOW_LOCATION")}
+            onClick={() =>
+              navigateNative("/diary?tab=community", "WINDOW_LOCATION")
+            }
             className="flex items-center gap-x-1"
           >
             <ChevronLeft size={22} color="#646464" />

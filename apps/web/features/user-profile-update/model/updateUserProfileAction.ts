@@ -13,7 +13,6 @@ export const updateUserProfileAction = async (data: IUpdateProfileData) => {
     revalidateTag("user-profile", "default");
     revalidateTag(`user-profile-${data.userId}`, "default");
 
-    revalidatePath("/public-diary");
     revalidatePath("/diary");
     revalidatePath("/mypage");
     revalidatePath(`/profile/${data.userId}`);

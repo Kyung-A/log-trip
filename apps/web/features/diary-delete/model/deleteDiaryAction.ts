@@ -20,7 +20,6 @@ export const deleteDiaryAction = async (data: IDiary) => {
 
     revalidatePath("/mypage");
     revalidatePath(`/profile/${data.user_id}`);
-    revalidatePath("/public-diary");
     revalidatePath("/world-map");
     revalidatePath("/diary");
 

@@ -38,7 +38,7 @@ export default async function Diary({ searchParams }: IDiaryProps) {
   return (
     <div>
       <header className="p-4 sticky top-0 z-30 bg-white">
-        <h1 className="text-2xl font-semibold">여행</h1>
+        <h1 className="text-3xl font-semibold">여행</h1>
         <nav className="mt-2 flex items-center">
           <Link
             href="?tab=diary"

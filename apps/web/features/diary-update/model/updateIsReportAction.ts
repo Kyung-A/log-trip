@@ -11,7 +11,6 @@ export const updateIsReportAction = async (id: string, userId: string) => {
     revalidateTag(`diaries-${userId}`, "default");
     revalidateTag("public-diaries", "default");
 
-    revalidatePath("/public-diary");
     revalidatePath("/diary");
 
     return { success: true, result };

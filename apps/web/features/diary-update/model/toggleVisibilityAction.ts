@@ -19,7 +19,6 @@ export const toggleVisibilityAction = async (
 
     revalidatePath("/mypage");
     revalidatePath(`/profile/${userId}`);
-    revalidatePath("/public-diary");
 
     return { success: true, result };
   } catch (e) {
