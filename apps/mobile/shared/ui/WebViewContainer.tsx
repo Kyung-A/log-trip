@@ -24,12 +24,8 @@ const WebViewContainer = forwardRef(
 
     const lastErrorTime = useRef<number>(0);
     const internalWebViewRef = useRef<WebView>(null);
-    const {
-      mapWebviewRef,
-      publicDiaryWebviewRef,
-      mypageWebviewRef,
-      diaryWebviewRef,
-    } = useWebviewRefs();
+    const { mapWebviewRef, planWebviewRef, mypageWebviewRef, diaryWebviewRef } =
+      useWebviewRefs();
     const { setTabBarVisible } = useTabBarVisibility();
 
     useImperativeHandle(ref, () => ({
@@ -111,11 +107,11 @@ const WebViewContainer = forwardRef(
             );
             break;
 
-          case "REFRESH_PUBLIC_DIARY_DATA":
-            publicDiaryWebviewRef?.current?.injectJavaScript(
-              `if(window.forceRefreshMap) window.forceRefreshMap(); true;`,
-            );
-            break;
+          // case "REFRESH_PUBLIC_DIARY_DATA":
+          //   publicDiaryWebviewRef?.current?.injectJavaScript(
+          //     `if(window.forceRefreshMap) window.forceRefreshMap(); true;`,
+          //   );
+          //   break;
 
           case "REFRESH_MYPAGE_DATA":
             mypageWebviewRef?.current?.injectJavaScript(

@@ -3,7 +3,7 @@ import WebView from "react-native-webview";
 
 interface WebviewRefContextType {
   mapWebviewRef: React.RefObject<WebView | null>;
-  publicDiaryWebviewRef: React.RefObject<WebView | null>;
+  planWebviewRef: React.RefObject<WebView | null>;
   diaryWebviewRef: React.RefObject<WebView | null>;
   mypageWebviewRef: React.RefObject<WebView | null>;
 }
@@ -16,7 +16,7 @@ export const WebviewProvider = ({
   children: React.ReactNode;
 }) => {
   const mapWebviewRef = useRef<WebView>(null);
-  const publicDiaryWebviewRef = useRef<WebView>(null);
+  const planWebviewRef = useRef<WebView>(null);
   const diaryWebviewRef = useRef<WebView>(null);
   const mypageWebviewRef = useRef<WebView>(null);
 
@@ -24,7 +24,7 @@ export const WebviewProvider = ({
     <WebviewRefContext.Provider
       value={{
         mapWebviewRef,
-        publicDiaryWebviewRef,
+        planWebviewRef,
         diaryWebviewRef,
         mypageWebviewRef,
       }}
