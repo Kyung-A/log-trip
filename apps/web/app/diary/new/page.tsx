@@ -15,7 +15,7 @@ export default async function CreateDiary() {
 
   return (
     <AuthLayout>
-      <DiaryForm userId={user?.id} regions={regions} />;
+      <DiaryForm userId={user?.id} regions={regions} />
     </AuthLayout>
   );
 }

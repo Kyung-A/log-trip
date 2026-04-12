@@ -39,13 +39,13 @@ export default async function Diary({ searchParams }: IDiaryProps) {
     <div>
       <header className="p-4 sticky top-0 z-30 bg-white">
         <h1 className="text-3xl font-semibold">여행</h1>
-        <nav className="mt-2 flex items-center">
+        <nav className="mt-2 flex items-center gap-x-2">
           <Link
             href="?tab=diary"
-            className={`px-4 rounded-full py-0.5 text-base cursor-pointer ${
+            className={`px-4 rounded-full py-0.5 text-base cursor-pointer border ${
               currentTab === "diary"
-                ? "bg-[#e9dcd9] text-[#a38f86] font-semibold"
-                : "text-zinc-500"
+                ? "bg-[#e9dcd9] border-[#e9dcd9] text-[#a38f86] font-semibold"
+                : "text-zinc-500 border-zinc-300"
             }`}
             scroll={false}
           >
@@ -53,10 +53,10 @@ export default async function Diary({ searchParams }: IDiaryProps) {
           </Link>
           <Link
             href="?tab=community"
-            className={`px-4 rounded-full py-0.5 text-base cursor-pointer ${
+            className={`px-4 rounded-full py-0.5 text-base cursor-pointer border ${
               currentTab === "community"
-                ? "bg-[#e9dcd9] text-[#a38f86] font-semibold"
-                : "text-zinc-500"
+                ? "bg-[#e9dcd9] border-[#e9dcd9] text-[#a38f86] font-semibold"
+                : "text-zinc-500 border-zinc-300"
             }`}
             scroll={false}
           >
