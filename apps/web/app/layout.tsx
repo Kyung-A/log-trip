@@ -3,6 +3,7 @@ import { ToastContainer } from "react-toastify";
 import type { Metadata, Viewport } from "next";
 
 import "react-toastify/dist/ReactToastify.css";
+import "react-calendar/dist/Calendar.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
