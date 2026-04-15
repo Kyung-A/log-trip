@@ -17,7 +17,7 @@ export const Field = ({
       className="flex items-center justify-center w-full py-2 bg-beige gap-x-2"
     >
       <ImagePlus size={20} color="#a38f86" />
-      <p className="text-[#a38f86] font-semibold">사진 추가하기</p>
+      <p className="text-latte font-semibold">사진 추가하기</p>
       <input
         type="file"
         accept="image/*"

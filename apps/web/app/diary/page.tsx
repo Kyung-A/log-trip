@@ -44,7 +44,7 @@ export default async function Diary({ searchParams }: IDiaryProps) {
             href="?tab=diary"
             className={`px-4 rounded-full py-0.5 text-base cursor-pointer border ${
               currentTab === "diary"
-                ? "bg-[#e9dcd9] border-[#e9dcd9] text-[#a38f86] font-semibold"
+                ? "bg-[#e9dcd9] border-[#e9dcd9] text-latte font-semibold"
                 : "text-zinc-500 border-zinc-300"
             }`}
             scroll={false}
@@ -55,7 +55,7 @@ export default async function Diary({ searchParams }: IDiaryProps) {
             href="?tab=community"
             className={`px-4 rounded-full py-0.5 text-base cursor-pointer border ${
               currentTab === "community"
-                ? "bg-[#e9dcd9] border-[#e9dcd9] text-[#a38f86] font-semibold"
+                ? "bg-[#e9dcd9] border-[#e9dcd9] text-latte font-semibold"
                 : "text-zinc-500 border-zinc-300"
             }`}
             scroll={false}

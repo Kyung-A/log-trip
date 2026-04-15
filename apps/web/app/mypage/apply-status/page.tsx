@@ -51,9 +51,7 @@ const StatusCard = React.memo(({ item }: { item: IApplyStatus }) => {
             // onClick={() => mutate(item)}
             className="w-full mt-4 bg-beige rounded-lg"
           >
-            <p className="text-[#a38f86] py-4 text-center font-bold">
-              취소하기
-            </p>
+            <p className="text-latte py-4 text-center font-bold">취소하기</p>
           </button>
         )}
       </div>

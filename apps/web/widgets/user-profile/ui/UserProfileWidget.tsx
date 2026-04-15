@@ -74,7 +74,7 @@ export const UserProfileWidget = ({
         <div className="flex items-center mt-6">
           <div className="flex items-center px-6 flex-col">
             <p className="text-sm text-gray-500">공개 여행 일기</p>
-            <p className="text-lg mt-0.5 font-semibold text-[#a38f86]">
+            <p className="text-lg mt-0.5 font-semibold text-latte">
               {counters?.public_diaries_count}
             </p>
           </div>
@@ -83,7 +83,7 @@ export const UserProfileWidget = ({
 
           <div className="flex items-center px-6 flex-col">
             <p className="text-sm text-gray-500">총 여행 일기</p>
-            <p className="text-lg mt-0.5 font-semibold text-[#a38f86]">
+            <p className="text-lg mt-0.5 font-semibold text-latte">
               {counters?.diaries_count}
             </p>
           </div>
@@ -93,7 +93,7 @@ export const UserProfileWidget = ({
           className="flex items-center px-6 flex-col"
         >
           <p className="text-sm text-gray-500">동행 신청 현황</p>
-          <p className="text-lg mt-0.5 font-semibold text-[#a38f86]">
+          <p className="text-lg mt-0.5 font-semibold text-latte">
             {counters?.applied_count}
           </p>
         </button>
@@ -103,7 +103,7 @@ export const UserProfileWidget = ({
           className="flex flex-col items-center px-6"
         >
           <p className="text-sm text-gray-500">동행 모집 현황</p>
-          <p className="text-lg mt-0.5 font-semibold text-[#a38f86]">
+          <p className="text-lg mt-0.5 font-semibold text-latte">
             {counters?.received_count}
           </p>
         </button> */}

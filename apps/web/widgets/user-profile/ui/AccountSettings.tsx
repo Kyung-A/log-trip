@@ -53,15 +53,15 @@ export const AccountSettings = ({
     <>
       <button
         onClick={() => router.push("/mypage/update")}
-        className="px-20 py-2 mt-14 border rounded-lg border-[#a38f86]"
+        className="px-20 py-2 mt-14 border rounded-lg border-latte"
       >
-        <p className="text-[#a38f86]">프로필 수정</p>
+        <p className="text-latte">프로필 수정</p>
       </button>
       <button onClick={() => handleLogout()} className="mt-6">
-        <p className="text-[#a38f86] underline">로그아웃</p>
+        <p className="text-latte underline">로그아웃</p>
       </button>
       <button onClick={handleDeleteUser} className="mt-4">
-        <p className="text-[#a38f86] text-sm">계정 탈퇴</p>
+        <p className="text-latte text-sm">계정 탈퇴</p>
       </button>
     </>
   );
