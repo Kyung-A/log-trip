@@ -98,7 +98,7 @@ export const DiaryItemHeader = memo(
                 <div
                   className={`
                     relative w-12 h-6 rounded-full transition-colors duration-300 ease-in-out 
-                    ${publicChecked ? "bg-[#d5b2a8]" : "bg-gray-300"}
+                    ${publicChecked ? "bg-milk-pink" : "bg-gray-300"}
                   `}
                   aria-hidden="true"
                 >

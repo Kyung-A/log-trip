@@ -2,6 +2,8 @@
 
 @theme {
   --color-beige: #f2eeec;
+  --color-milk-pink: #d5b2a8;
+  --color-latte: #a38f86;
 }
 
 html,
@@ -108,4 +110,62 @@ body:has(dialog[open]) {
 #upload-slide .swiper-wrapper {
   height: auto !important;
   aspect-ratio: 1;
+}
+
+/* 캘린더 커스텀 */
+.read-only-calendar-wrapper .react-calendar__tile {
+  pointer-events: none;
+  cursor: default;
+}
+
+.read-only-calendar-wrapper .react-calendar__tile--now {
+  background-color: transparent !important;
+}
+.read-only-calendar-wrapper .trip-range {
+  background-color: #d5b2a8 !important;
+  color: white !important;
+  font-weight: 600;
+  margin: 4px 0px;
+}
+.read-only-calendar-wrapper .trip-start {
+  background-color: #d5b2a8 !important;
+  color: white !important;
+  font-weight: 600;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  margin: 4px 0px;
+}
+.read-only-calendar-wrapper .trip-end {
+  background-color: #d5b2a8 !important;
+  color: white !important;
+  font-weight: 600;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  margin: 4px 0px;
+}
+
+.react-calendar__navigation__label__labelText {
+  font-size: 16px;
+}
+
+.react-calendar__navigation__arrow {
+  font-size: 26px;
+}
+
+abbr:where([title]) {
+  text-decoration: none !important;
+  color: #9f9fa9;
+}
+.react-calendar__navigation button:disabled {
+  background-color: transparent !important;
+  opacity: 0.2;
+}
+
+.react-calendar__navigation button:enabled:hover {
+  background-color: transparent !important;
+}
+
+.read-only-calendar-wrapper .react-calendar__tile--now:enabled:hover,
+.read-only-calendar-wrapper .react-calendar__tile--now:enabled:focus {
+  background: transparent !important;
 }

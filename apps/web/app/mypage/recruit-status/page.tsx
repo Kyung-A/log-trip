@@ -72,7 +72,7 @@ const StatusCard = React.memo(
                 <Link
                   href={`/mypage/recruit?postId=${item.id}&companionId=${item.companion.id}&userId=${userId}`}
                   scroll={false}
-                  className="bg-[#a38f86] rounded-lg w-1/2"
+                  className="bg-latte rounded-lg w-1/2"
                 >
                   <p className="text-beige py-4 text-center font-bold">수락</p>
                 </Link>
@@ -89,9 +89,7 @@ const StatusCard = React.memo(
                   // }
                   className="bg-beige rounded-lg w-1/2"
                 >
-                  <p className="text-[#a38f86] py-4 text-center font-bold">
-                    거절
-                  </p>
+                  <p className="text-latte py-4 text-center font-bold">거절</p>
                 </button>
               </div>
             )}
