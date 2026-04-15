@@ -18,7 +18,7 @@ export default async function Plan({ searchParams }: IPlanProps) {
             href="?tab=all"
             className={`px-4 rounded-full py-0.5 text-base cursor-pointer border shrink-0 ${
               currentTab === "all"
-                ? "bg-[#e9dcd9] border-[#e9dcd9] text-[#a38f86] font-semibold"
+                ? "bg-[#e9dcd9] border-[#e9dcd9] text-latte font-semibold"
                 : "text-zinc-500 border-zinc-300"
             }`}
             scroll={false}
@@ -28,8 +28,8 @@ export default async function Plan({ searchParams }: IPlanProps) {
           <Link
             href="?tab=ing"
             className={`px-4 rounded-full py-0.5 text-base cursor-pointer border shrink-0 ${
-              currentTab === "community"
-                ? "bg-[#e9dcd9] border-[#e9dcd9] text-[#a38f86] font-semibold"
+              currentTab === "ing"
+                ? "bg-[#e9dcd9] border-[#e9dcd9] text-latte font-semibold"
                 : "text-zinc-500 border-zinc-300"
             }`}
             scroll={false}
@@ -37,10 +37,10 @@ export default async function Plan({ searchParams }: IPlanProps) {
             진행중인 여행
           </Link>
           <Link
-            href="?tab=diary"
+            href="?tab=early"
             className={`px-4 rounded-full py-0.5 text-base cursor-pointer border shrink-0 ${
               currentTab === "early"
-                ? "bg-[#e9dcd9] border-[#e9dcd9] text-[#a38f86] font-semibold"
+                ? "bg-[#e9dcd9] border-[#e9dcd9] text-latte font-semibold"
                 : "text-zinc-500 border-zinc-300"
             }`}
             scroll={false}
@@ -48,10 +48,10 @@ export default async function Plan({ searchParams }: IPlanProps) {
             예정
           </Link>
           <Link
-            href="?tab=community"
+            href="?tab=end"
             className={`px-4 rounded-full py-0.5 text-base cursor-pointer border shrink-0 ${
               currentTab === "end"
-                ? "bg-[#e9dcd9] border-[#e9dcd9] text-[#a38f86] font-semibold"
+                ? "bg-[#e9dcd9] border-[#e9dcd9] text-latte font-semibold"
                 : "text-zinc-500 border-zinc-300"
             }`}
             scroll={false}
@@ -63,7 +63,10 @@ export default async function Plan({ searchParams }: IPlanProps) {
       <ul className="w-full p-4 flex flex-col gap-y-4">
         {[1, 2, 3, 4, 5].map((day) => (
           <li key={day} className="px-8 py-4 bg-white rounded-full">
-            <Link href="#" className="flex items-center justify-between">
+            <Link
+              href={`/plan/${day}`}
+              className="flex items-center justify-between"
+            >
               <div>
                 <h2 className="text-lg font-semibold">인도네시아 발리 여행</h2>
                 <p className="text-sm text-zinc-500">
