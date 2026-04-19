@@ -1,1 +1,1 @@
-export { PlanListClient } from "./ui";
+export { PlanList } from "./ui";

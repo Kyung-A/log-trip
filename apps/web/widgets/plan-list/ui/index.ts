@@ -1,1 +1,1 @@
-export { PlanListClient } from "./PlanListClient";
+export { PlanList } from "./PlanList";

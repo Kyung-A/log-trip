@@ -33,13 +33,7 @@ export const PlanStep2 = ({ value, onChange }: PlanStep2Props) => {
     }
   };
 
-  const getTileClassName = ({
-    date,
-    view,
-  }: {
-    date: Date;
-    view: string;
-  }) => {
+  const getTileClassName = ({ date, view }: { date: Date; view: string }) => {
     if (view !== "month" || (!value.start && !value.end)) return null;
 
     const d = dayjs(date).startOf("day");
@@ -66,29 +60,30 @@ export const PlanStep2 = ({ value, onChange }: PlanStep2Props) => {
         )}
       </div>
 
-      <div className="flex-1 px-6 overflow-y-auto pb-40">
+      <div className="flex-1 px-6 overflow-y-auto pt-6 pb-40">
         {months.map((offset) => {
           const monthIndex = (currentMonth + offset) % 12;
-          const year =
-            currentYear + Math.floor((currentMonth + offset) / 12);
+          const year = currentYear + Math.floor((currentMonth + offset) / 12);
           return (
-            <div key={offset} className="mb-10">
-              <h3 className="text-sm font-semibold text-zinc-500 mb-2">
+            <div key={offset} className="mb-8">
+              <h3 className="text-base font-semibold mb-2">
                 {year}년 {monthIndex + 1}월
               </h3>
-              <Calendar
-                activeStartDate={new Date(year, monthIndex, 1)}
-                showNavigation={false}
-                formatShortWeekday={(_, date) =>
-                  ["S", "M", "T", "W", "T", "F", "S"][date.getDay()]
-                }
-                tileClassName={getTileClassName}
-                onClickDay={handleClickDay}
-                formatDay={(_, date) => date.getDate().toString()}
-                calendarType="gregory"
-                showNeighboringMonth={false}
-                className="w-full! border-none!"
-              />
+              <div className="plan-calendar-wrapper">
+                <Calendar
+                  activeStartDate={new Date(year, monthIndex, 1)}
+                  showNavigation={false}
+                  formatShortWeekday={(_, date) =>
+                    ["일", "월", "화", "수", "목", "금", "토"][date.getDay()]
+                  }
+                  tileClassName={getTileClassName}
+                  onClickDay={handleClickDay}
+                  formatDay={(_, date) => date.getDate().toString()}
+                  calendarType="gregory"
+                  showNeighboringMonth={false}
+                  className="w-full! border-none!"
+                />
+              </div>
             </div>
           );
         })}
