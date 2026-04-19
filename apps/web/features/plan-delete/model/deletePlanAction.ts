@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { deletePlan } from "@/entities/plan";
 
@@ -9,6 +9,8 @@ export const deletePlanAction = async (
 ): Promise<{ success: boolean }> => {
   try {
     await deletePlan(id);
+    revalidateTag("plans", "default");
+    revalidateTag("plan-items", "default");
     revalidatePath("/plan");
     return { success: true };
   } catch {

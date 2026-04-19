@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { createPlanItem, ICreatePlanItemInput } from "@/entities/plan";
 
@@ -9,6 +9,7 @@ export const createPlanItemAction = async (
 ): Promise<{ success: boolean; error?: string }> => {
   try {
     await createPlanItem(input);
+    revalidateTag(`plan-items-${input.plan_id}`, "default");
     revalidatePath(`/plan/${input.plan_id}`);
     return { success: true };
   } catch (e) {
