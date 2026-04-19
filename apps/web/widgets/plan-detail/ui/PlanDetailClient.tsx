@@ -1,10 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
-import { ChevronDown, ChevronLeft, ChevronUp, MapPin, Plus, Pencil } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronUp,
+  MapPin,
+  Plus,
+  Pencil,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import Calendar from "react-calendar";
 
@@ -40,8 +47,15 @@ export const PlanDetailClient = ({
   const [activeStartDate, setActiveStartDate] = useState<Date>(
     startDate.startOf("month").toDate(),
   );
-  const [openDays, setOpenDays] = useState<Record<number, boolean>>({ 1: true });
+  const [openDays, setOpenDays] = useState<Record<number, boolean>>({
+    1: true,
+  });
   const [items, setItems] = useState<IPlanItem[]>(initialItems);
+
+  useEffect(() => {
+    setItems(initialItems);
+  }, [initialItems]);
+
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [addTarget, setAddTarget] = useState<number | null>(null);
   const [editItem, setEditItem] = useState<IPlanItem | null>(null);
@@ -84,7 +98,7 @@ export const PlanDetailClient = ({
     <div className="w-full relative pb-6">
       <header className="bg-white max-w-3xl sticky top-0 w-full py-2 border-b border-zinc-200 flex items-center justify-between px-4 z-20">
         <button
-          onClick={() => navigateNative("/plan", "WINDOW_LOCATION")}
+          onClick={() => navigateNative("/plan", "BACK")}
           className="flex items-center gap-x-1"
         >
           <ChevronLeft size={22} color="#646464" />
@@ -157,83 +171,91 @@ export const PlanDetailClient = ({
                       <p className="text-zinc-400 font-semibold">
                         {date.format("MM-DD")}
                       </p>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setAddTarget(dayNum);
-                        }}
-                        className="ml-auto mr-2 flex items-center gap-x-0.5 text-xs text-latte font-semibold"
-                      >
-                        <Plus size={14} />
-                        추가
-                      </button>
+
                       {isOpen ? (
-                        <ChevronUp size={20} color="#9f9fa9" />
+                        <ChevronUp
+                          size={20}
+                          color="#9f9fa9"
+                          className="ml-auto"
+                        />
                       ) : (
-                        <ChevronDown size={20} color="#9f9fa9" />
+                        <ChevronDown
+                          size={20}
+                          color="#9f9fa9"
+                          className="ml-auto"
+                        />
                       )}
                     </button>
 
                     {isOpen && (
-                      <ul className="pb-4">
-                        {dayItems.length === 0 && (
-                          <li className="text-sm text-zinc-400 py-2">
-                            일정이 없습니다.
-                          </li>
-                        )}
-                        {dayItems.map((item, idx) => {
-                          const isLast = idx === dayItems.length - 1;
-                          return (
-                            <li
-                              key={item.id}
-                              className="flex items-stretch gap-x-4 mb-2 last:mb-0"
-                            >
-                              <div
-                                className={`flex-1 relative ${!isLast ? "after:border-l after:border-dashed after:border-latte after:absolute after:left-1/2 after:top-1 after:h-full after:-translate-x-1/2" : ""}`}
-                              >
-                                <p className="rounded border-latte text-latte text-sm border text-center py-0.5 bg-white z-20 relative">
-                                  {formatTime(item.time)}
-                                </p>
-                              </div>
+                      <>
+                        <ul>
+                          {dayItems.map((item, idx) => {
+                            const isLast = idx === dayItems.length - 1;
 
-                              <button
-                                className="border p-3 rounded border-zinc-300 flex-3 text-left"
-                                onClick={() => setEditItem(item)}
+                            return (
+                              <li
+                                key={item.id}
+                                className="flex items-stretch gap-x-4 mb-3"
                               >
-                                <div className="flex items-start justify-between">
-                                  <h4 className="text-base font-semibold">
-                                    {item.title}
-                                  </h4>
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDeleteItem(item);
-                                    }}
-                                    className="text-xs text-zinc-400 ml-2 shrink-0"
-                                  >
-                                    삭제
-                                  </button>
-                                </div>
-                                {item.place && (
-                                  <div className="flex items-center gap-x-1">
-                                    <MapPin size={16} color="#d5b2a8" />
-                                    <p className="text-sm text-milk-pink font-semibold">
-                                      {item.place}
-                                    </p>
-                                  </div>
-                                )}
-                                {item.memo && (
-                                  <p className="text-sm text-zinc-600 mt-1">
-                                    {item.memo}
+                                <div
+                                  className={`flex-1 relative ${!isLast ? "after:border-l after:border-dashed after:border-latte after:absolute after:left-1/2 after:top-2 after:h-full after:-translate-x-1/2" : ""}`}
+                                >
+                                  <p className="rounded border-latte text-latte text-sm border text-center py-0.5 bg-white z-20 relative">
+                                    {formatTime(item.time)}
                                   </p>
-                                )}
-                              </button>
-                            </li>
-                          );
-                        })}
-                      </ul>
+                                </div>
+
+                                <button
+                                  className="border p-3 rounded border-zinc-300 flex-3 text-left"
+                                  onClick={() => setEditItem(item)}
+                                >
+                                  <div className="flex items-start justify-between">
+                                    <h4 className="text-base font-semibold">
+                                      {item.title}
+                                    </h4>
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteItem(item);
+                                      }}
+                                      className="text-xs text-zinc-400 ml-2 shrink-0"
+                                    >
+                                      삭제
+                                    </button>
+                                  </div>
+                                  {item.place && (
+                                    <div className="flex items-center gap-x-1">
+                                      <MapPin size={16} color="#d5b2a8" />
+                                      <p className="text-sm text-milk-pink font-semibold">
+                                        {item.place}
+                                      </p>
+                                    </div>
+                                  )}
+                                  {item.memo && (
+                                    <p className="text-sm text-zinc-600 mt-1">
+                                      {item.memo}
+                                    </p>
+                                  )}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAddTarget(dayNum);
+                          }}
+                          className="flex items-center text-latte font-semibold border w-full justify-center py-2 text-sm rounded-md gap-x-1"
+                        >
+                          <Plus size={18} />
+                          일정 추가
+                        </button>
+                      </>
                     )}
                   </li>
                 );
@@ -243,7 +265,6 @@ export const PlanDetailClient = ({
         </div>
       </main>
 
-      {/* 세부 일정 추가 */}
       {addTarget !== null && (
         <PlanItemFormBottomSheet
           isOpen={addTarget !== null}
@@ -256,7 +277,6 @@ export const PlanDetailClient = ({
         />
       )}
 
-      {/* 세부 일정 수정 */}
       {editItem && (
         <PlanItemFormBottomSheet
           isOpen={!!editItem}

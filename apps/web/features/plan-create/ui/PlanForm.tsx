@@ -5,7 +5,7 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { IRegion } from "@/entities/region";
 
@@ -29,12 +29,13 @@ export const PlanForm = ({ regions }: { regions: IRegion[] | null }) => {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
 
-  const { watch, setValue, handleSubmit, formState } = useForm<PlanFormValues>({
-    defaultValues: {
-      cities: [],
-      dateRange: { start: null, end: null },
-    },
-  });
+  const { watch, setValue, handleSubmit, formState, control } =
+    useForm<PlanFormValues>({
+      defaultValues: {
+        cities: [],
+        dateRange: { start: null, end: null },
+      },
+    });
 
   const cities = watch("cities");
   const dateRange = watch("dateRange");
@@ -77,13 +78,19 @@ export const PlanForm = ({ regions }: { regions: IRegion[] | null }) => {
       <main className="flex-1 overflow-hidden">
         {step === 1 ? (
           <>
-            <h1 className="text-xl font-semibold px-6 pt-4 pb-2">
+            <h1 className="text-xl font-semibold px-6 pt-4">
               어디로 떠나시나요?
             </h1>
-            <CitySelectList
-              value={cities}
-              onConfirm={(val) => setValue("cities", val)}
-              options={regions || []}
+            <Controller
+              name="cities"
+              control={control}
+              render={({ field }) => (
+                <CitySelectList
+                  value={field.value}
+                  onChange={field.onChange}
+                  options={regions || []}
+                />
+              )}
             />
           </>
         ) : (
@@ -108,9 +115,7 @@ export const PlanForm = ({ regions }: { regions: IRegion[] | null }) => {
           <button
             type="submit"
             disabled={
-              !dateRange.start ||
-              !dateRange.end ||
-              formState.isSubmitting
+              !dateRange.start || !dateRange.end || formState.isSubmitting
             }
             className="w-full bg-latte text-white font-semibold disabled:text-zinc-400 py-3 text-base block rounded-lg disabled:bg-zinc-200"
           >
