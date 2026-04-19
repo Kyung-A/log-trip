@@ -64,6 +64,15 @@ export function ComposeTabButton() {
                 >
                   <Text style={textStyle}>일기 쓰기</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setVisible(false);
+                    router.navigate("/createPlan");
+                  }}
+                >
+                  <Text style={textStyle}>여행 일정</Text>
+                </TouchableOpacity>
               </View>
             )}
           </View>
@@ -79,7 +88,6 @@ const modalStyle: any = {
   bottom: 112,
   width: 92,
   transform: [{ translateX: -(92 / 2) }],
-  paddingVertical: 14,
   backgroundColor: "#d5b2a8",
   borderRadius: 8,
   elevation: 5,
@@ -87,6 +95,7 @@ const modalStyle: any = {
   shadowOffset: { width: 0, height: 0 },
   shadowOpacity: 0.2,
   shadowRadius: 20,
+  paddingVertical: 4,
 };
 const arrowStyle: any = {
   position: "absolute",
@@ -99,8 +108,9 @@ const arrowStyle: any = {
   transform: [{ rotate: "45deg" }],
 };
 const textStyle: any = {
-  fontSize: 18,
+  fontSize: 16,
   fontWeight: "600",
   textAlign: "center",
   color: "#fff",
+  paddingVertical: 8,
 };
