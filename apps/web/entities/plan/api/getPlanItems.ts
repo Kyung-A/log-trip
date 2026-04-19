@@ -1,23 +1,29 @@
 "use server";
 
+import { unstable_cache } from "next/cache";
+
 import { createServerClient } from "@/shared/lib/supabase";
 
 import { IPlanItem } from "../types";
-import { MOCK_PLAN_ITEMS } from "./mockData";
 
 export const getPlanItems = async (planId: string): Promise<IPlanItem[]> => {
-  try {
-    const supabase = await createServerClient();
-    const { data, error } = await supabase
-      .from("plan_items")
-      .select("*")
-      .eq("plan_id", planId)
-      .order("day_number")
-      .order("time");
+  const supabase = await createServerClient();
 
-    if (error) throw error;
-    return data ?? [];
-  } catch {
-    return MOCK_PLAN_ITEMS.filter((item) => item.plan_id === planId);
-  }
+  const fetchPlanItems = unstable_cache(
+    async () => {
+      const { data, error } = await supabase
+        .from("plan_items")
+        .select("*")
+        .eq("plan_id", planId)
+        .order("day_number")
+        .order("time");
+
+      if (error) throw error;
+      return data ?? [];
+    },
+    ["plan-items", planId],
+    { tags: ["plan-items", `plan-items-${planId}`] },
+  );
+
+  return await fetchPlanItems();
 };

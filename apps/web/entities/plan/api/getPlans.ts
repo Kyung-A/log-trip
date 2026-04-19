@@ -1,27 +1,32 @@
 "use server";
 
+import { unstable_cache } from "next/cache";
+
 import { createServerClient } from "@/shared/lib/supabase";
 
 import { ITravelPlan } from "../types";
-import { MOCK_PLANS } from "./mockData";
 
 export const getPlans = async (): Promise<ITravelPlan[]> => {
-  try {
-    const supabase = await createServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return [];
+  const supabase = await createServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
 
-    const { data, error } = await supabase
-      .from("travel_plans")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+  const fetchPlans = unstable_cache(
+    async () => {
+      const { data, error } = await supabase
+        .from("travel_plans")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
 
-    if (error) throw error;
-    return data ?? [];
-  } catch {
-    return MOCK_PLANS;
-  }
+      if (error) throw error;
+      return data ?? [];
+    },
+    ["plans", user.id],
+    { tags: ["plans", `plans-${user.id}`] },
+  );
+
+  return await fetchPlans();
 };
