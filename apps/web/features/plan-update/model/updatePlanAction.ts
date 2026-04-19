@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import { updatePlan } from "@/entities/plan";
 
@@ -27,6 +27,7 @@ export const updatePlanAction = async (
       end_date: input.end_date,
     });
 
+    revalidateTag("plans", "default");
     revalidatePath("/plan");
     revalidatePath(`/plan/${input.id}`);
     return { success: true };
