@@ -58,19 +58,22 @@ export const create<Feature>Action = async (data: ...) => { ... }
 ### import 순서 규칙 (ESLint 강제)
 
 ```ts
-import { external } from "library";   // external — 1그룹
+import { external } from "library";        // 1그룹: external
 
-import { Type } from "@/entities/..."; // internal (@/entities) — 2그룹
+import { Type } from "@/entities/...";     // 2그룹: @/entities (blank line 필요)
 
-import { util } from "@/features/..."; // internal (@/features) — 3그룹 (있을 경우)
+import { util } from "@/features/...";     // 3그룹: @/features (blank line 필요)
+import { fn } from "@/shared/...";         // @/shared/@/widgets는 @/features와 같은 그룹 (blank line 없이)
+import { Comp } from "@/widgets/...";
 
-import { util } from "@/shared/...";   // internal (@/shared) — 4그룹
-
-import { fn } from "../model";         // parent/sibling — 5그룹 (blank line 없이 묶음)
+import { fn } from "../model";             // 4그룹: parent/sibling (blank line 필요, 묶음)
 import { Comp } from "./Component";
 ```
 
-**규칙**: `@/entities`, `@/features`, `@/shared`는 각각 blank line으로 구분. `../` 와 `./` 상대경로는 하나의 그룹(blank line 없이).
+**핵심 규칙 요약**:
+- `@/entities` → blank line → `@/features` / `@/shared` / `@/widgets` (이 셋은 같은 그룹)
+- `@/features` 등 → blank line → `../` `./` 상대경로 (parent/sibling은 같은 그룹)
+- 모르면 `npx eslint <파일> --fix` 실행해서 auto-fix 적용
 
 ### STEP 2 — API 테스트 작성 및 실행
 

@@ -49,21 +49,29 @@ root/
 - `features/plan-delete/` — 삭제 버튼 (entities만 import) ✓
 - `widgets/plan-edit/` — plan-create의 CitySelectList + PlanStep2 재사용 → features 간 조합이므로 widgets ✓
 
-## app/의 page.tsx 작성 방법
+## app/ 디렉토리 규칙 (Next.js App Router — apps/web 전용)
 
-- RSC로 작성. 비즈니스 로직 직접 작성 금지.
-- 데이터 fetch → Client Component에 props로 전달.
+- `page.tsx` / `layout.tsx` 파일만 존재. **다른 컴포넌트 파일 절대 금지.**
+- 무조건 **RSC (Server Component)**. `"use client"` 절대 금지.
+- 비즈니스 로직 직접 작성 금지. 데이터 fetch 후 widgets/features에 props로 전달만 한다.
+- ※ apps/mobile은 Expo React Native 규칙을 따르므로 이 규칙과 무관.
 
 ```tsx
-// app/plan/[id]/page.tsx
-import { PlanDetailClient } from "@/widgets/plan-detail";
+// app/plan/[id]/page.tsx  ← RSC만
+import { getPlan, getPlanItems } from "@/entities/plan";
+import { PlanDetailClient } from "@/widgets/plan-detail"; // Client Component는 widgets에
 
 export default async function PlanDetailPage({ params }) {
   const { id } = await params;
   const plan = await getPlan(id);
-  return <PlanDetailClient plan={plan} />;
+  const items = await getPlanItems(id);
+  return <PlanDetailClient plan={plan} initialItems={items} />;
 }
 ```
+
+Client Component가 필요하면:
+- 여러 feature 조합 → `widgets/<feature-name>/ui/`
+- 단일 action UI → `features/<action>/ui/`
 
 ## 모든 Form은 react-hook-form 사용
 
