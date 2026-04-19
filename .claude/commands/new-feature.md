@@ -14,6 +14,17 @@ CRUD 기능을 하나씩 추가합니다.
 - 각 액션은 완전히 독립적인 커밋
 - 여러 액션이 필요하면 /new-feature를 여러 번 호출
 
+## features vs widgets 판단 (실행 전 반드시 확인)
+
+| 조건 | 위치 |
+|---|---|
+| UI가 entities, shared만 import | `features/` |
+| 다른 feature 컴포넌트/로직을 import | `widgets/` |
+
+**feature → feature import는 FSD 위반.** 다른 feature의 컴포넌트를 재사용해야 한다면 해당 UI를 `widgets/`에 생성한다.
+
+## 모든 Form은 react-hook-form 사용 (필수)
+
 ## 실행 순서
 
 ### STEP 1 — Supabase API 레이어
