@@ -48,7 +48,7 @@ export const PlanForm = ({ regions }: { regions: IRegion[] | null }) => {
       end_date: dayjs(data.dateRange.end).format("YYYY-MM-DD"),
     });
 
-    if (result.success || result.id) {
+    if (result.success && result.id) {
       router.push(`/plan/${result.id}`);
     }
   };
