@@ -30,7 +30,7 @@ export const updatePlanAction = async (
     revalidatePath("/plan");
     revalidatePath(`/plan/${input.id}`);
     return { success: true };
-  } catch {
-    return { success: true };
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) };
   }
 };

@@ -65,13 +65,14 @@ export const PlanEditBottomSheet = ({
   const onSubmit = async (data: EditFormValues) => {
     if (!data.dateRange.start || !data.dateRange.end) return;
 
-    await updatePlanAction({
+    const result = await updatePlanAction({
       id: plan.id,
       region_names: data.cities.map((c) => c.region_name),
       start_date: dayjs(data.dateRange.start).format("YYYY-MM-DD"),
       end_date: dayjs(data.dateRange.end).format("YYYY-MM-DD"),
     });
 
+    if (!result.success) return;
     handleClose();
     router.refresh();
   };

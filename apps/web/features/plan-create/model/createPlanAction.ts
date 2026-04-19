@@ -28,7 +28,7 @@ export const createPlanAction = async (
 
     revalidatePath("/plan");
     return { success: true, id: plan.id };
-  } catch {
-    return { success: false, id: "mock-plan-1", error: undefined };
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) };
   }
 };
