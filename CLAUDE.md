@@ -6,6 +6,9 @@
 
 **로그트립(LogTrip)** — 여행 기록을 다이어리로 남기고 세계 지도를 채워나가는 하이브리드 모바일 + 웹 앱입니다. React Native WebView 셸이 Next.js 웹 앱을 감싸는 구조이며, Supabase를 통해 인증을 공유합니다.
 
+- apps/web → Next.js 14 (App Router) — 핵심 기능 모두 여기
+- apps/mobile → Expo — WebView로 web을 띄우는 역할만 함
+
 ## 명령어
 
 패키지 매니저: **pnpm** (v10), **Turborepo** 워크스페이스 사용.
@@ -26,6 +29,13 @@ pnpm --filter=mobile lint
 ./dev.sh
 ```
 
+## 절대 규칙
+
+- `.env`, `.env.*`, `*secret*`, `*credential*` 등 환경변수 및 민감 정보가 담긴 파일은 절대 git commit/push하지 않는다.
+- Supabase 키, API 키, 토큰 등을 코드에 하드코딩하지 않는다.
+- 비즈니스 로직은 100% apps/web에 작성
+- apps/mobile은 WebView 경로 설정 및 Supabase 세션 인증 외 로직 없음
+
 ## 아키텍처
 
 ### 모노레포 구조
@@ -38,35 +48,41 @@ apps/
 
 공용 `packages/` 디렉토리는 없으며, 공유 로직은 각 앱 내부에 위치합니다.
 
-### Feature-Sliced Design (FSD)
-
-두 앱 모두 FSD 기반 레이어 구조를 따르며, ESLint import 규칙으로 강제됩니다.
+### Feature-Sliced Design (FSD) — apps/web
 
 ```
-entities/   → 도메인 모델 (diary, user, companion, region, companion-application)
-  /api      → Supabase 호출
-  /model    → 비즈니스 로직 / 데이터 변환
-  /ui       → 엔티티 전용 컴포넌트
-  /types.ts
-
+widgets/    → 페이지 조합 단위 (auth, diary-list, splash-screen, user-profile, world-map)
 features/   → 사용자 기능 단위 (diary-create, diary-update, companion, world-map-viewer, …)
-  /model    → 훅 및 로직
-  /ui       → 컴포넌트
-
-shared/     → 공통 유틸리티
-  /lib/supabase/   → client.ts, server.ts, proxy.ts
-  /lib/nativeBridge.ts  → 네이티브 ↔ WebView 메시지 브릿지
-  /api/storage/    → 이미지 업로드 헬퍼
-  /hooks, /ui, /util, /consts
+entities/   → 도메인 모델 (diary, user, companion, region, companion-application)
+shared/     → 공통 유틸리티 (lib/supabase/, api/storage/, hooks, ui, util, consts)
 ```
 
-**import 방향은 단방향으로 고정:** `shared → features → entities`. ESLint가 역방향 import를 금지합니다(예: entities에서 features import 불가).
+**import 방향:** `app → widgets → features → entities → shared` (단방향).  
+**같은 레이어 간 import 금지** — feature → feature import는 절대 금지.
+
+### features vs widgets 판단 기준
+
+- `features/` — 단일 액션 UI (form/button). entities, shared만 import.
+- `widgets/` — 다른 feature 컴포넌트를 재사용하거나 여러 feature를 조합하는 UI 블록.
+
+각 슬라이스 구조:
+```
+<layer>/<slice>/
+  ui/        → 컴포넌트
+  model/     → 훅 및 비즈니스 로직
+  api/       → Supabase 호출 (entities에만)
+  index.ts   → 배럴 export (필수)
+```
 
 ### 하이브리드 인증 흐름
 
 1. 네이티브 앱에서 Expo를 통해 소셜 로그인 처리 (카카오, 네이버, 애플).
 2. 세션 토큰을 쿠키 형태로 WebView에 주입.
 3. Next.js 미들웨어가 Supabase SSR(`@supabase/ssr`)로 쿠키를 읽어 서버 컴포넌트 인증.
+
+### Supabase
+
+- 새 테이블 필요 시 /add-supabase-table 먼저 실행
 
 ### 데이터 페칭 & 캐싱
 
@@ -76,32 +92,39 @@ shared/     → 공통 유틸리티
 
 ### 주요 라이브러리
 
-| 관심사 | Web | Mobile |
-|---|---|---|
-| 라우팅 | Next.js App Router | Expo Router |
-| 인증 | Supabase SSR | Expo + AsyncStorage |
-| 지도 | Mapbox GL | — |
-| 폼 | react-hook-form | react-hook-form |
-| 알림 | react-toastify | react-native-toast-message |
-| 캘린더 | react-calendar | — |
+| 관심사 | Web                | Mobile                     |
+| ------ | ------------------ | -------------------------- |
+| 라우팅 | Next.js App Router | Expo Router                |
+| 인증   | Supabase SSR       | Expo + AsyncStorage        |
+| 지도   | Mapbox GL          | —                          |
+| 폼     | react-hook-form    | react-hook-form            |
+| 알림   | react-toastify     | react-native-toast-message |
+| 캘린더 | react-calendar     | —                          |
 
 ### 경로 별칭
 
 `@/*`는 `web`과 `mobile` 모두 앱 루트로 resolve됩니다.
 
-## 절대 규칙
+## 기능 추가 2가지 타입
 
-- `.env`, `.env.*`, `*secret*`, `*credential*` 등 환경변수 및 민감 정보가 담긴 파일은 절대 git commit/push하지 않는다.
-- Supabase 키, API 키, 토큰 등을 코드에 하드코딩하지 않는다.
+### 타입 A — 메인 메뉴 (탭바)
+
+탭바에 진입점이 필요한 기능
+→ /new-main-page 명령 사용
+
+### 타입 B — 서브 페이지
+
+특정 플로우 내 세부 페이지 (생성/수정/상세 등)
+→ /new-page 명령 사용
 
 ## 코딩 컨벤션
 
 ### 네이밍 규칙
 
-| 대상 | 케이스 | 예시 |
-|---|---|---|
-| 컴포넌트 파일 | PascalCase | `DiaryCard.tsx` |
-| 유틸 / 훅 / API 호출 파일 | camelCase | `useDiary.ts`, `getDiary.ts` |
+| 대상                                  | 케이스     | 예시                                 |
+| ------------------------------------- | ---------- | ------------------------------------ |
+| 컴포넌트 파일                         | PascalCase | `DiaryCard.tsx`                      |
+| 유틸 / 훅 / API 호출 파일             | camelCase  | `useDiary.ts`, `getDiary.ts`         |
 | 페이지 / features / entities 디렉토리 | kebab-case | `diary-create/`, `world-map-viewer/` |
 
 ### 커밋 메시지
@@ -114,3 +137,14 @@ shared/     → 공통 유틸리티
 
 - **named export**를 사용한다 (default export 금지).
 - 각 도메인(entities, features)의 진입점은 **배럴 패턴**(`index.ts`)으로 export하여 외부에서 내부 구조를 직접 참조하지 않도록 한다.
+
+## 작업 사이클 (반드시 준수)
+
+기능 하나를 추가할 때마다 아래 5단계를 거친다.
+하나의 기능 = 하나의 커밋. 절대 묶어서 커밋하지 않는다.
+
+1. 기능 구현
+2. 테스트 실행 및 통과 확인
+3. 린트/포맷 체크
+4. 커밋
+5. 다음 기능으로
