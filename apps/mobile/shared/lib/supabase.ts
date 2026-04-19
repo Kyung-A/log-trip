@@ -37,5 +37,6 @@ export const setSupabaseCookie = async (session: any) => {
     await NitroCookies.flush();
   } catch (e) {
     console.error("❌ 쿠키 주입 에러:", e);
+    return;
   }
 };
