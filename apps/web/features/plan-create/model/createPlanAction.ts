@@ -2,10 +2,10 @@
 
 import { revalidatePath, revalidateTag } from "next/cache";
 
-import { createPlan } from "@/entities/plan";
+import { IPlanRegion, createPlan } from "@/entities/plan";
 
 interface CreatePlanActionInput {
-  region_names: string[];
+  region_names: IPlanRegion[];
   start_date: string;
   end_date: string;
 }
@@ -16,7 +16,7 @@ export const createPlanAction = async (
   try {
     const title =
       input.region_names.length > 0
-        ? `${input.region_names.join(", ")} 여행`
+        ? `${input.region_names.map((r) => r.region_name).join(", ")} 여행`
         : "새 여행 일정";
 
     const plan = await createPlan({
