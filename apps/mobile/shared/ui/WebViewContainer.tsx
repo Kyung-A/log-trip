@@ -9,7 +9,6 @@ import { useState, forwardRef, useImperativeHandle, useRef } from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import NitroCookies from "react-native-nitro-cookies";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
 import { WebView, WebViewProps } from "react-native-webview";
 
 interface WebViewContainerProps extends WebViewProps {
@@ -106,12 +105,6 @@ const WebViewContainer = forwardRef(
               `if(window.forceRefreshMap) window.forceRefreshMap(); true;`,
             );
             break;
-
-          // case "REFRESH_PUBLIC_DIARY_DATA":
-          //   publicDiaryWebviewRef?.current?.injectJavaScript(
-          //     `if(window.forceRefreshMap) window.forceRefreshMap(); true;`,
-          //   );
-          //   break;
 
           case "REFRESH_MYPAGE_DATA":
             mypageWebviewRef?.current?.injectJavaScript(
