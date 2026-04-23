@@ -44,7 +44,7 @@ export const PlanForm = ({ regions }: { regions: IRegion[] | null }) => {
     if (!data.dateRange.start || !data.dateRange.end) return;
 
     const result = await createPlanAction({
-      region_names: data.cities.map((c) => c.region_name),
+      region_names: data.cities.map((c) => ({ id: c.id, region_name: c.region_name })),
       start_date: dayjs(data.dateRange.start).format("YYYY-MM-DD"),
       end_date: dayjs(data.dateRange.end).format("YYYY-MM-DD"),
     });
