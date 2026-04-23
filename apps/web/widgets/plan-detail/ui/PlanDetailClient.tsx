@@ -10,7 +10,8 @@ import {
   ChevronUp,
   MapPin,
   Plus,
-  Pencil,
+  SquarePen,
+  Trash,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Calendar from "react-calendar";
@@ -24,7 +25,7 @@ import { deletePlanItemAction } from "@/features/plan-item-delete";
 import { updatePlanItemAction } from "@/features/plan-item-update";
 
 import { navigateNative } from "@/shared";
-import { PlanEditBottomSheet } from "@/widgets/plan-edit";
+import { PlanEditDialog } from "@/widgets/plan-edit";
 
 dayjs.extend(isBetween);
 
@@ -98,26 +99,19 @@ export const PlanDetailClient = ({
     <div className="w-full relative pb-6">
       <header className="bg-white max-w-3xl sticky top-0 w-full py-2 border-b border-zinc-200 flex items-center justify-between px-4 z-20">
         <button
-          onClick={() => navigateNative("/plan", "BACK")}
+          onClick={() => navigateNative("/plan", "WINDOW_LOCATION")}
           className="flex items-center gap-x-1"
         >
           <ChevronLeft size={22} color="#646464" />
           <span className="text-lg">뒤로</span>
         </button>
+
         <div className="flex items-center gap-x-3">
-          <button
-            onClick={() => setIsEditOpen(true)}
-            className="flex items-center gap-x-1 text-sm text-zinc-600"
-          >
-            <Pencil size={15} />
-            수정
+          <button onClick={() => setIsEditOpen(true)}>
+            <SquarePen size={20} color="#52525c" />
           </button>
-          <DeletePlanButton
-            planId={plan.id}
-            redirectTo="/plan"
-            className="text-sm text-red-400"
-          >
-            삭제
+          <DeletePlanButton planId={plan.id} redirectTo="/plan">
+            <Trash size={20} color="#e7000b" />
           </DeletePlanButton>
         </div>
       </header>
@@ -206,7 +200,7 @@ export const PlanDetailClient = ({
                                   </p>
                                 </div>
 
-                                <button
+                                <div
                                   className="border p-3 rounded border-zinc-300 flex-3 text-left"
                                   onClick={() => setEditItem(item)}
                                 >
@@ -220,9 +214,9 @@ export const PlanDetailClient = ({
                                         e.stopPropagation();
                                         handleDeleteItem(item);
                                       }}
-                                      className="text-xs text-zinc-400 ml-2 shrink-0"
+                                      className="ml-2 shrink-0"
                                     >
-                                      삭제
+                                      <Trash size={16} color="#9f9fa9" />
                                     </button>
                                   </div>
                                   {item.place && (
@@ -238,7 +232,7 @@ export const PlanDetailClient = ({
                                       {item.memo}
                                     </p>
                                   )}
-                                </button>
+                                </div>
                               </li>
                             );
                           })}
@@ -299,7 +293,7 @@ export const PlanDetailClient = ({
       )}
 
       {/* 일정 수정 */}
-      <PlanEditBottomSheet
+      <PlanEditDialog
         isOpen={isEditOpen}
         setIsOpen={setIsEditOpen}
         plan={plan}

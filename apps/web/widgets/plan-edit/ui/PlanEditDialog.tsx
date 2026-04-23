@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import dayjs from "dayjs";
+import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
@@ -11,8 +12,6 @@ import { IRegion } from "@/entities/region";
 
 import { CitySelectList, PlanStep2 } from "@/features/plan-create";
 import { updatePlanAction } from "@/features/plan-update";
-
-import { FormBottomSheet } from "@/shared/ui";
 
 interface DateRange {
   start: Date | null;
@@ -24,19 +23,19 @@ interface EditFormValues {
   dateRange: DateRange;
 }
 
-interface PlanEditBottomSheetProps {
+interface PlanEditDialogProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   plan: ITravelPlan;
   regions: IRegion[];
 }
 
-export const PlanEditBottomSheet = ({
+export const PlanEditDialog = ({
   isOpen,
   setIsOpen,
   plan,
   regions,
-}: PlanEditBottomSheetProps) => {
+}: PlanEditDialogProps) => {
   const router = useRouter();
   const [editStep, setEditStep] = useState<1 | 2>(1);
 
@@ -44,7 +43,7 @@ export const PlanEditBottomSheet = ({
     useForm<EditFormValues>({
       defaultValues: {
         cities: regions.filter((r) =>
-          plan.region_names.includes(r.region_name),
+          plan.region_names.some((rn) => rn.id === r.id),
         ),
         dateRange: {
           start: new Date(plan.start_date),
@@ -67,7 +66,7 @@ export const PlanEditBottomSheet = ({
 
     const result = await updatePlanAction({
       id: plan.id,
-      region_names: data.cities.map((c) => c.region_name),
+      region_names: data.cities.map((c) => ({ id: c.id, region_name: c.region_name })),
       start_date: dayjs(data.dateRange.start).format("YYYY-MM-DD"),
       end_date: dayjs(data.dateRange.end).format("YYYY-MM-DD"),
     });
@@ -77,30 +76,44 @@ export const PlanEditBottomSheet = ({
     router.refresh();
   };
 
+  if (!isOpen) return null;
+
   return (
-    <FormBottomSheet isOpen={isOpen} setIsOpen={setIsOpen} title="일정 수정">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {editStep === 1 ? (
-          <div className="min-h-[60vh]">
-            <p className="px-4 py-3 text-sm font-semibold text-zinc-500">
-              여행 지역
-            </p>
+    <dialog
+      open={isOpen}
+      className="fixed inset-0 z-50 w-full h-full bg-white max-w-3xl mx-auto flex flex-col"
+    >
+      <header className="flex items-center justify-between px-4 py-2 border-b border-zinc-200 shrink-0">
+        <button
+          type="button"
+          onClick={handleClose}
+          className="flex items-center gap-x-1"
+        >
+          <ChevronLeft size={22} color="#646464" />
+          <span className="text-lg">뒤로</span>
+        </button>
+      </header>
+
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col flex-1 overflow-hidden"
+      >
+        <div className="flex-1 overflow-y-auto">
+          {editStep === 1 ? (
             <CitySelectList
               value={cities}
-              onConfirm={(val) => setValue("cities", val)}
+              onChange={(val) => setValue("cities", val)}
               options={regions}
             />
-          </div>
-        ) : (
-          <div className="min-h-[60vh]">
+          ) : (
             <PlanStep2
               value={dateRange}
               onChange={(val) => setValue("dateRange", val)}
             />
-          </div>
-        )}
+          )}
+        </div>
 
-        <div className="px-4 pb-8 pt-3 flex gap-x-2">
+        <div className="px-4 pb-8 pt-3 flex gap-x-2 shrink-0 border-t border-zinc-100">
           {editStep === 1 ? (
             <button
               type="button"
@@ -122,9 +135,7 @@ export const PlanEditBottomSheet = ({
               <button
                 type="submit"
                 disabled={
-                  !dateRange.start ||
-                  !dateRange.end ||
-                  formState.isSubmitting
+                  !dateRange.start || !dateRange.end || formState.isSubmitting
                 }
                 className="flex-1 bg-latte text-white font-semibold py-3 rounded-lg disabled:bg-zinc-200 disabled:text-zinc-400"
               >
@@ -134,6 +145,6 @@ export const PlanEditBottomSheet = ({
           )}
         </div>
       </form>
-    </FormBottomSheet>
+    </dialog>
   );
 };
