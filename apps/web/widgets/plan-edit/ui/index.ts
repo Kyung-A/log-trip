@@ -1,1 +1,1 @@
-export { PlanEditBottomSheet } from "./PlanEditBottomSheet";
+export { PlanEditDialog } from "./PlanEditDialog";
