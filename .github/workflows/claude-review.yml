@@ -1,44 +1,24 @@
-name: Claude 코드리뷰
+name: PR 머지 처리
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-
   # MINOR 리뷰 후 댓글에 /merge 포함 시 머지 진행
   # 예: "이건 다음에 수정하겠습니다 /merge"
   issue_comment:
     types: [created]
 
-  # Actions UI에서 수동으로 실행 (토큰 없어서 리뷰 실패했을 때 사용)
-  # /not-reviewed 커맨드에서도 이 workflow를 트리거함
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: '리뷰할 PR 번호'
-        required: true
-
-# 같은 PR에 동시에 리뷰가 돌지 않도록 직렬 실행
-concurrency:
-  group: claude-review-${{ github.event.pull_request.number || inputs.pr_number }}
-  cancel-in-progress: true
-
 jobs:
-  # ─────────────────────────────────────────────────────────
-  # MINOR 리뷰가 달린 PR에 /merge 댓글 시 rebase merge 실행
-  # ─────────────────────────────────────────────────────────
   merge-on-comment:
-    # issue_comment 이벤트이고, 댓글에 /merge가 포함된 경우에만 실행
+    # PR 댓글이고, /merge 키워드가 포함된 경우에만 실행
     if: |
-      github.event_name == 'issue_comment' &&
-      contains(github.event.comment.body, '/merge') &&
-      github.event.issue.pull_request != null
+      github.event.issue.pull_request != null &&
+      contains(github.event.comment.body, '/merge')
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
 
     steps:
-      - name: MINOR 리뷰 여부 확인
+      - name: CRITICAL 리뷰 여부 확인
         id: check
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -47,28 +27,29 @@ jobs:
           PR_NUMBER=${{ github.event.issue.number }}
 
           # Claude가 CRITICAL request-changes 리뷰를 남긴 적 있는지 확인
-          # → CRITICAL이 있으면 /merge 댓글이 있어도 머지 차단
+          # → CRITICAL이 해결되지 않은 상태면 /merge 댓글이 있어도 머지 차단
           HAS_CRITICAL=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
             --jq '[.[] | select(
               (.body | test("<!-- claude-review -->")) and
               (.state == "CHANGES_REQUESTED")
             )] | length')
 
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
           if [ "$HAS_CRITICAL" -gt 0 ]; then
             echo "blocked=true" >> $GITHUB_OUTPUT
           else
             echo "blocked=false" >> $GITHUB_OUTPUT
           fi
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
 
-      # CRITICAL 리뷰가 있으면 머지 거부 안내 댓글 작성
+      # CRITICAL 이슈가 남아있으면 머지 거부
       - name: CRITICAL 이슈로 머지 거부
         if: steps.check.outputs.blocked == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr comment ${{ steps.check.outputs.pr_number }} --body \
-            "🚨 **머지 불가** — CRITICAL 코드리뷰 이슈가 해결되지 않았습니다. 이슈를 수정한 후 다시 push 해주세요."
+            "🚨 **머지 불가** — CRITICAL 코드리뷰 이슈가 아직 해결되지 않았습니다. 수정 후 다시 push 해주세요."
 
       # CRITICAL 없으면 rebase merge 진행
       - name: Rebase merge 실행
@@ -78,120 +59,3 @@ jobs:
         run: |
           gh pr merge ${{ steps.check.outputs.pr_number }} \
             --rebase --delete-branch --yes
-
-  # ─────────────────────────────────────────────────────────
-  # 코드리뷰 job
-  # ─────────────────────────────────────────────────────────
-  review:
-    # issue_comment 이벤트에서는 코드리뷰 job 실행 안 함 (/merge 처리는 위 job에서)
-    if: github.event_name != 'issue_comment'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write       # rebase merge 시 필요
-      pull-requests: write  # 리뷰 댓글 작성
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # 이전 리뷰 시점의 커밋과 현재 HEAD 사이의 diff를 구하려면 전체 히스토리 필요
-          fetch-depth: 0
-
-      # pull_request 이벤트냐 workflow_dispatch냐에 따라 PR 번호 소스가 다름
-      - name: PR 번호 설정
-        id: pr
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "number=${{ inputs.pr_number }}" >> $GITHUB_OUTPUT
-          else
-            echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
-          fi
-
-      # PR에 이미 Claude가 작성한 리뷰가 있는지 확인
-      # → 있으면 "재리뷰" (이전 리뷰 이후 변경사항만 분석)
-      # → 없으면 "첫 리뷰" (전체 PR diff 분석)
-      # Claude 리뷰는 본문에 <!-- claude-review --> 마커로 식별
-      - name: 이전 Claude 리뷰 확인
-        id: prev
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
-        run: |
-          PR_NUMBER=${{ steps.pr.outputs.number }}
-
-          LAST_REVIEW=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" \
-            --jq '[.[] | select(.body | test("<!-- claude-review -->"))] | last // empty')
-
-          if [ -z "$LAST_REVIEW" ]; then
-            echo "is_first=true" >> $GITHUB_OUTPUT
-          else
-            # 이전 리뷰가 작성된 시점의 커밋 SHA 추출
-            COMMIT=$(echo "$LAST_REVIEW" | jq -r '.commit_id')
-            echo "is_first=false" >> $GITHUB_OUTPUT
-            echo "last_commit=$COMMIT" >> $GITHUB_OUTPUT
-            # 이전 리뷰 본문을 파일로 저장 (재리뷰 프롬프트에서 참고)
-            echo "$LAST_REVIEW" | jq -r '.body' > prev_review.txt
-          fi
-
-      # 첫 리뷰: PR 전체 diff (base 브랜치 대비)
-      - name: diff 추출 (첫 리뷰)
-        if: steps.prev.outputs.is_first == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr diff ${{ steps.pr.outputs.number }} > pr.diff
-
-      # 재리뷰: 이전 Claude 리뷰 이후에 추가된 커밋들의 diff만 추출
-      # → 이미 리뷰된 코드를 다시 분석하지 않음 (토큰 절약)
-      - name: diff 추출 (재리뷰 — 이전 리뷰 이후 변경사항만)
-        if: steps.prev.outputs.is_first == 'false'
-        run: |
-          git fetch origin
-          git diff ${{ steps.prev.outputs.last_commit }}..HEAD > pr.diff
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Anthropic SDK 설치
-        run: npm install @anthropic-ai/sdk
-
-      # Claude에게 diff를 전달해 코드리뷰 실행
-      # 결과는 review-result.json에 저장됨
-      # → { severity, githubEvent, body }
-      - name: Claude 코드리뷰 실행
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          IS_FIRST_REVIEW: ${{ steps.prev.outputs.is_first }}
-        run: node .github/scripts/claude-review.mjs
-
-      # 리뷰 결과에 따라 GitHub PR에 액션 수행
-      #   CRITICAL  → request-changes (머지 차단)
-      #   MINOR     → comment (보류, 수정 권장)
-      #   APPROVED  → approve + rebase merge + 브랜치 삭제
-      #   SKIPPED   → comment (API 실패 안내)
-      - name: 리뷰 결과 적용
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PR_NUMBER=${{ steps.pr.outputs.number }}
-          SEVERITY=$(jq -r '.severity' review-result.json)
-          EVENT=$(jq -r '.githubEvent' review-result.json)
-          BODY=$(jq -r '.body' review-result.json)
-
-          # gh pr review가 실패하는 경우(봇이 자신의 PR을 리뷰할 수 없는 등)
-          # gh pr comment로 폴백해 댓글만 남김
-          case "$EVENT" in
-            REQUEST_CHANGES)
-              gh pr review $PR_NUMBER --request-changes --body "$BODY" \
-                || gh pr comment $PR_NUMBER --body "$BODY"
-              ;;
-            APPROVE)
-              gh pr review $PR_NUMBER --approve --body "$BODY" \
-                || gh pr comment $PR_NUMBER --body "$BODY"
-              # 승인이든 폴백이든 머지는 항상 시도
-              gh pr merge $PR_NUMBER --rebase --delete-branch --yes
-              ;;
-            *)
-              # COMMENT (MINOR, SKIPPED)
-              gh pr comment $PR_NUMBER --body "$BODY"
-              ;;
-          esac

@@ -31,9 +31,13 @@ function buildFallbackMeta() {
     : "chore";
 
   // 커밋 메시지 중 첫 번째를 제목 후보로 사용
+  // git log --oneline 출력 형식이 "04fd01b feat: 내용" 이므로 해시를 먼저 제거
   const firstCommit = commitMessages.split("\n").find((l) => l.trim()) || "";
   const titleSuffix = firstCommit
-    ? firstCommit.replace(/^[a-z]+:\s*/i, "").trim() // 기존 prefix 중복 제거
+    ? firstCommit
+        .replace(/^[0-9a-f]+\s+/, "")      // 커밋 해시 제거 (예: "04fd01b ")
+        .replace(/^[a-zA-Z]+(!)?:\s*/, "")  // 기존 prefix 제거 (예: "feat: ", "fix!: ")
+        .trim()
     : branchName.split("/").slice(1).join(" ").replace(/-/g, " ");
 
   const title = `${prefix}: ${titleSuffix}`;
