@@ -3,6 +3,9 @@
 # post-push 훅 — push 직후 자동으로 실행됨
 # setup-hooks.sh 를 한 번 실행하면 .git/hooks/post-push 에 심볼릭 링크가 생성됨
 
+# git 훅은 터미널과 다른 최소 환경에서 실행되므로 claude 경로를 명시적으로 추가
+export PATH="$HOME/.local/bin:$PATH"
+
 BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
 
 # main 브랜치나 detached HEAD는 건너뜀
