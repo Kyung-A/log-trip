@@ -9,8 +9,13 @@ export const getPublicDiaries = async (
   const from = (page - 1) * limit;
   const to = from + limit - 1;
 
+  const supabase = await createServerClient();
+
   const fetchPublicDiaries = unstable_cache(
-    async () => {
+    async (p: number, l: number) => {
+      const from = (p - 1) * l;
+      const to = from + l - 1;
+
       const { data, error } = await supabase
         .from("diaries")
         .select(
@@ -29,10 +34,9 @@ export const getPublicDiaries = async (
       if (error) throw new Error(error.message);
       return data;
     },
-    ["public-diaries", page.toString(), limit.toString()],
+    ["public-diaries"],
     { tags: ["public-diaries"] },
   );
 
-  const supabase = await createServerClient();
-  return await fetchPublicDiaries();
+  return await fetchPublicDiaries(page, limit);
 };

@@ -9,11 +9,13 @@ export const getDiaries = async (
 ) => {
   if (!userId) throw new Error("id가 없습니다");
 
-  const from = (page - 1) * limit;
-  const to = from + limit - 1;
+  const supabase = await createServerClient();
 
   const fetchDiaries = unstable_cache(
-    async () => {
+    async (uid: string, p: number, l: number) => {
+      const from = (p - 1) * l;
+      const to = from + l - 1;
+
       const { data, error } = await supabase
         .from("diaries")
         .select(
@@ -24,18 +26,16 @@ export const getDiaries = async (
           diary_regions ( * )
         `,
         )
-        .eq("user_id", userId)
+        .eq("user_id", uid)
         .order("created_at", { ascending: false })
         .range(from, to);
 
       if (error) throw new Error(error.message);
-
       return data;
     },
-    ["diaries", userId, page.toString(), limit.toString()],
+    ["diaries"],
     { tags: ["diaries", `diaries-${userId}`] },
   );
 
-  const supabase = await createServerClient();
-  return await fetchDiaries();
+  return await fetchDiaries(userId, page, limit);
 };
