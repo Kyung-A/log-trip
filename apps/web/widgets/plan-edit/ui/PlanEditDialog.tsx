@@ -5,7 +5,7 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import { ITravelPlan } from "@/entities/plan";
 import { IRegion } from "@/entities/region";
@@ -39,7 +39,7 @@ export const PlanEditDialog = ({
   const router = useRouter();
   const [editStep, setEditStep] = useState<1 | 2>(1);
 
-  const { watch, setValue, handleSubmit, formState, reset } =
+  const { setValue, handleSubmit, formState, reset, control } =
     useForm<EditFormValues>({
       defaultValues: {
         cities: regions.filter((r) =>
@@ -52,8 +52,8 @@ export const PlanEditDialog = ({
       },
     });
 
-  const cities = watch("cities");
-  const dateRange = watch("dateRange");
+  const cities = useWatch({ control, name: "cities" });
+  const dateRange = useWatch({ control, name: "dateRange" });
 
   const handleClose = () => {
     setIsOpen(false);

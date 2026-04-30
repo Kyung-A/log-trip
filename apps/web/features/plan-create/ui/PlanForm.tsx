@@ -5,7 +5,7 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 import { IRegion } from "@/entities/region";
 
@@ -29,7 +29,7 @@ export const PlanForm = ({ regions }: { regions: IRegion[] | null }) => {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
 
-  const { watch, setValue, handleSubmit, formState, control } =
+  const { setValue, handleSubmit, formState, control } =
     useForm<PlanFormValues>({
       defaultValues: {
         cities: [],
@@ -37,14 +37,17 @@ export const PlanForm = ({ regions }: { regions: IRegion[] | null }) => {
       },
     });
 
-  const cities = watch("cities");
-  const dateRange = watch("dateRange");
+  const cities = useWatch({ control, name: "cities" });
+  const dateRange = useWatch({ control, name: "dateRange" });
 
   const onSubmit = async (data: PlanFormValues) => {
     if (!data.dateRange.start || !data.dateRange.end) return;
 
     const result = await createPlanAction({
-      region_names: data.cities.map((c) => ({ id: c.id, region_name: c.region_name })),
+      region_names: data.cities.map((c) => ({
+        id: c.id,
+        region_name: c.region_name,
+      })),
       start_date: dayjs(data.dateRange.start).format("YYYY-MM-DD"),
       end_date: dayjs(data.dateRange.end).format("YYYY-MM-DD"),
     });

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import Picker from "react-mobile-picker";
 import { toast } from "react-toastify";
 
@@ -25,11 +25,10 @@ export function CompanionForm({
 }) {
   const router = useRouter();
 
-  const { control, watch, setValue, handleSubmit } = useForm<
-    Partial<ICompanionRequest>
-  >({
-    defaultValues: { ...detailData },
-  });
+  const { control, setValue, handleSubmit } = useForm<Partial<ICompanionRequest>>(
+    { defaultValues: { ...detailData } }
+  );
+  const startDate = useWatch({ control, name: "start_date" });
   const [cities, setCities] = useState<IRegion[]>([]);
 
   const handleCreateCompanion = handleSubmit(
@@ -250,7 +249,7 @@ export function CompanionForm({
                 disabled={!!detailData}
                 onChange={(e) => {
                   const selected = dayjs(e.target.value);
-                  const now = dayjs(watch("start_date"));
+                  const now = dayjs(startDate);
 
                   if (selected.isBefore(now)) {
                     alert("동행 시작 시간 이후만 선택할 수 있습니다.");
@@ -259,7 +258,7 @@ export function CompanionForm({
 
                   onChange(selected.toISOString());
                 }}
-                min={dayjs(watch("start_date")).format("YYYY-MM-DDTHH:mm")}
+                min={dayjs(startDate).format("YYYY-MM-DDTHH:mm")}
                 className="text-right text-gray-500"
               />
             </label>
