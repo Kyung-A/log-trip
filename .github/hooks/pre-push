@@ -34,9 +34,13 @@ echo ""
 echo "🔍 린트 및 타입 체크를 실행합니다..."
 echo ""
 
+# auto-fix 가능한 오류 먼저 자동 수정 (import 순서 등)
+pnpm --filter=web lint --fix 2>/dev/null
+
+# auto-fix 후에도 남은 error가 있으면 차단 (warnings은 통과)
 if ! pnpm --filter=web lint; then
   echo ""
-  echo "❌ 린트 오류가 있습니다. 수정 후 다시 push 해주세요."
+  echo "❌ 자동 수정 후에도 린트 오류가 남아있습니다. 수정 후 다시 push 해주세요."
   exit 1
 fi
 
