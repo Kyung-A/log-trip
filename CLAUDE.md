@@ -66,6 +66,7 @@ shared/     → 공통 유틸리티 (lib/supabase/, api/storage/, hooks, ui, uti
 - `widgets/` — 다른 feature 컴포넌트를 재사용하거나 여러 feature를 조합하는 UI 블록.
 
 각 슬라이스 구조:
+
 ```
 <layer>/<slice>/
   ui/        → 컴포넌트
@@ -82,7 +83,7 @@ shared/     → 공통 유틸리티 (lib/supabase/, api/storage/, hooks, ui, uti
 
 ### Supabase
 
-- 새 테이블 필요 시 /add-supabase-table 먼저 실행
+<!-- - 새 테이블 필요 시 /add-supabase-table 먼저 실행 -->
 
 ### 데이터 페칭 & 캐싱
 
@@ -110,12 +111,14 @@ shared/     → 공통 유틸리티 (lib/supabase/, api/storage/, hooks, ui, uti
 ### 타입 A — 메인 메뉴 (탭바)
 
 탭바에 진입점이 필요한 기능
-→ /new-main-page 명령 사용
+
+<!-- → /new-main-page 명령 사용 -->
 
 ### 타입 B — 서브 페이지
 
 특정 플로우 내 세부 페이지 (생성/수정/상세 등)
-→ /new-page 명령 사용
+
+<!-- → /new-page 명령 사용 -->
 
 ## 코딩 컨벤션
 
