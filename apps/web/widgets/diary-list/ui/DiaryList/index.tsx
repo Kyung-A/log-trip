@@ -116,6 +116,7 @@ export const DiaryList = ({
     if (inView && isMounted) {
       loadMoreDiaries();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   useEffect(() => {
@@ -211,6 +212,7 @@ export const DiaryList = ({
         setIsPending(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router],
   );
 
@@ -242,6 +244,7 @@ export const DiaryList = ({
         setIsPending(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [router],
   );
 

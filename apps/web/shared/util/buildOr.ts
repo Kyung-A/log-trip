@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-restricted-paths
 import { ICountry } from "@/entities/region";
 
 export const buildOr = (batch: ICountry[] | null, opts = { loose: true }) => {

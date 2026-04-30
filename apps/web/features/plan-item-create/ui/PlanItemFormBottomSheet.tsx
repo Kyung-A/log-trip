@@ -44,7 +44,7 @@ export const PlanItemFormBottomSheet = ({
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<PlanItemFormValues>({
     defaultValues: {
       title: defaultValues?.title ?? "",
