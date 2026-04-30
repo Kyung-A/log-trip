@@ -10,7 +10,7 @@ export const getPublicDiaries = async (
   const to = from + limit - 1;
 
   const fetchPublicDiaries = unstable_cache(
-    async (p: number, l: number) => {
+    async () => {
       const { data, error } = await supabase
         .from("diaries")
         .select(
@@ -34,5 +34,5 @@ export const getPublicDiaries = async (
   );
 
   const supabase = await createServerClient();
-  return await fetchPublicDiaries(page, limit);
+  return await fetchPublicDiaries();
 };

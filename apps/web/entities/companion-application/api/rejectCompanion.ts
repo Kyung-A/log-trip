@@ -5,6 +5,7 @@ import { IRejectCompanion } from "..";
 export const rejectCompanion = async (data: IRejectCompanion) => {
   const supabase = createClient();
 
+  // eslint-disable-next-line unused-imports/no-unused-vars
   const { companion_id, ...body } = data;
 
   try {

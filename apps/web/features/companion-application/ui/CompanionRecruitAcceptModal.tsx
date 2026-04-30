@@ -2,17 +2,16 @@
 
 import { useCallback, useState } from "react";
 
-import dayjs from "dayjs";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 export const CompanionRecruitAcceptModal = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
 
-  const postId = searchParams.get("postId");
-  const companionId = searchParams.get("companionId");
-  const userId = searchParams.get("userId");
+  // const postId = searchParams.get("postId");
+  // const companionId = searchParams.get("companionId");
+  // const userId = searchParams.get("userId");
 
   const [applyMessage, setApplyMessage] = useState<string>();
 
@@ -22,20 +21,20 @@ export const CompanionRecruitAcceptModal = () => {
       return;
     }
 
-    const body = {
-      id: postId!,
-      decided_by: userId!,
-      companion_id: companionId!,
-      decision_message: applyMessage,
-      decided_at: dayjs(),
-    };
+    // const body = {
+    //   id: postId!,
+    //   decided_by: userId!,
+    //   companion_id: companionId!,
+    //   decision_message: applyMessage,
+    //   decided_at: dayjs(),
+    // };
 
     // TODO: action 함수 필요
     // const status = await acceptMutateAsync(body);
     // if (status === 204) {
     //   navigateNative("/mypage", "WINDOW_LOCATION");
     // }
-  }, [applyMessage, companionId, postId, userId]);
+  }, [applyMessage]);
 
   return (
     <dialog

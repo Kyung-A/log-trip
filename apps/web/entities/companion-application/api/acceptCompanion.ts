@@ -5,6 +5,7 @@ import { IAcceptCompanion } from "..";
 export const acceptCompanion = async (data: IAcceptCompanion) => {
   const supabase = createClient();
 
+  // eslint-disable-next-line unused-imports/no-unused-vars
   const { companion_id, ...body } = data;
 
   const { status, error } = await supabase

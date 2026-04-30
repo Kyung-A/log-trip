@@ -13,7 +13,7 @@ export const getDiaries = async (
   const to = from + limit - 1;
 
   const fetchDiaries = unstable_cache(
-    async (p: number, l: number) => {
+    async () => {
       const { data, error } = await supabase
         .from("diaries")
         .select(
@@ -37,5 +37,5 @@ export const getDiaries = async (
   );
 
   const supabase = await createServerClient();
-  return await fetchDiaries(page, limit);
+  return await fetchDiaries();
 };

@@ -26,6 +26,7 @@ export const CompanionDetailContent = ({
     if (isOpen) setIsOpen(false);
   });
 
+  // eslint-disable-next-line unused-imports/no-unused-vars
   const handleDeleteCompanion = useCallback(async (id: string) => {
     // TODO: action 함수 필요
     // const status = await deleteMutateAsync(id);
