@@ -1,7 +1,10 @@
-// eslint-disable-next-line import/no-restricted-paths
-import { ICountry } from "@/entities/region";
+type CountryFilter = {
+  country_code: string;
+  region_code: string;
+  shape_name: string | null;
+};
 
-export const buildOr = (batch: ICountry[] | null, opts = { loose: true }) => {
+export const buildOr = (batch: CountryFilter[] | null, opts = { loose: true }) => {
   const groups: string[] = [];
   if (!batch) return null;
 
