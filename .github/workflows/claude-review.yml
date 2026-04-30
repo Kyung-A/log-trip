@@ -18,6 +18,22 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Assignee 권한 확인
+        id: auth
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          COMMENTER: ${{ github.event.comment.user.login }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          IS_ASSIGNEE=$(gh api "repos/$REPO/issues/$PR_NUMBER/assignees" \
+            --jq "[.[] | select(.login == \"$COMMENTER\")] | length")
+
+          if [ "$IS_ASSIGNEE" -eq 0 ]; then
+            gh pr comment $PR_NUMBER --body "❌ PR assignee만 \`/merge\`를 사용할 수 있습니다."
+            exit 1
+          fi
+
       - name: CRITICAL 리뷰 여부 확인
         id: check
         env:

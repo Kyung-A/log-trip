@@ -30,6 +30,9 @@ echo ""
 echo "🤖 push 완료 후 Claude 코드리뷰를 시작합니다 (브랜치: $BRANCH)"
 echo ""
 
+# PR assignee로 지정할 GitHub 사용자명 조회
+GH_USER=$(gh api user --jq .login 2>/dev/null || echo "")
+
 # push가 완료된 뒤 실행되도록 백그라운드에서 3초 대기 후 시작
 # pre-push는 push 직전에 실행되므로, 3초면 push가 충분히 완료됨
 # 백그라운드 실행이라 push를 막지 않으며, 결과는 터미널에 그대로 출력됨
@@ -83,7 +86,7 @@ git diff origin/main...HEAD
 PR을 생성합니다.
 
 \`\`\`
-gh pr create --title \"[생성한 제목]\" --body \"[생성한 본문]\" --base main --head \"${BRANCH}\"
+gh pr create --title \"[생성한 제목]\" --body \"[생성한 본문]\" --base main --head \"${BRANCH}\" --assignee \"${GH_USER}\"
 \`\`\`
 
 ---
