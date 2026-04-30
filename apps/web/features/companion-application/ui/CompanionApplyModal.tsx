@@ -2,29 +2,28 @@
 
 import { useCallback, useState } from "react";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export const CompanionApplyModal = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const postId = searchParams.get("postId");
-  const userId = searchParams.get("userId");
+  // const searchParams = useSearchParams();
+  // const postId = searchParams.get("postId");
+  // const userId = searchParams.get("userId");
 
-  const [applyMessage, setApplyMessage] = useState<string>();
+  const [, setApplyMessage] = useState<string>();
 
   const handleCompanionApplication = useCallback(async () => {
-    const body = {
-      companion_id: postId!,
-      applicant_id: userId!,
-      message: applyMessage,
-    };
-
+    // const body = {
+    //   companion_id: postId!,
+    //   applicant_id: userId!,
+    //   message: applyMessage,
+    // };
     // TODO: action 함수 필요
     // const status = await applyMutateAsync(body);
     // if (status === 201 || status === 200) {
     //   router.replace(`/companion/${postId}`);
     // }
-  }, [applyMessage, postId, router, userId]);
+  }, []);
 
   return (
     <dialog

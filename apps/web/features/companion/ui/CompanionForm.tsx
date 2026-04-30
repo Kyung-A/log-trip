@@ -33,18 +33,18 @@ export function CompanionForm({
   const [cities, setCities] = useState<IRegion[]>([]);
 
   const handleCreateCompanion = handleSubmit(
+    // eslint-disable-next-line unused-imports/no-unused-vars
     async (formData) => {
-      const body = {
-        ...formData,
-        companion_regions: cities.map((v) => ({
-          region_code: v.region_code,
-          region_name: v.region_name,
-          shape_name: v.shape_name,
-          country_code: v.country_code,
-          country_name: v.country_name,
-        })),
-      } as ICompanionRequest;
-
+      // const body = {
+      //   ...formData,
+      //   companion_regions: cities.map((v) => ({
+      //     region_code: v.region_code,
+      //     region_name: v.region_name,
+      //     shape_name: v.shape_name,
+      //     country_code: v.country_code,
+      //     country_name: v.country_name,
+      //   })),
+      // } as ICompanionRequest;
       // TODO: action 함수 필요
       // const resp = await mutateAsync(body);
       // if (resp.status === 201) {
