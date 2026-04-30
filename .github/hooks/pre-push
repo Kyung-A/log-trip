@@ -4,8 +4,12 @@
 # Claude 리뷰는 백그라운드로 실행해서 push를 막지 않음
 # setup-hooks.sh 를 한 번 실행하면 .git/hooks/pre-push 에 심볼릭 링크가 생성됨
 
-# git 훅은 터미널과 다른 최소 환경에서 실행되므로 claude 경로를 명시적으로 추가
+# git 훅은 터미널과 다른 최소 환경에서 실행되므로 경로를 명시적으로 추가
 export PATH="$HOME/.local/bin:$PATH"
+
+# nvm 로드 (pnpm이 nvm 관리 node 경로에 있으므로 필요)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
 
@@ -26,6 +30,24 @@ if ! command -v gh &>/dev/null; then
   exit 0
 fi
 
+echo ""
+echo "🔍 린트 및 타입 체크를 실행합니다..."
+echo ""
+
+if ! pnpm --filter=web lint; then
+  echo ""
+  echo "❌ 린트 오류가 있습니다. 수정 후 다시 push 해주세요."
+  exit 1
+fi
+
+if ! pnpm --filter=web typecheck; then
+  echo ""
+  echo "❌ 타입 오류가 있습니다. 수정 후 다시 push 해주세요."
+  exit 1
+fi
+
+echo ""
+echo "✅ 린트 및 타입 체크 통과"
 echo ""
 echo "🤖 push 완료 후 Claude 코드리뷰를 시작합니다 (브랜치: $BRANCH)"
 echo ""
