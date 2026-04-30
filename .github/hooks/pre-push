@@ -58,7 +58,7 @@ GH_USER=$(gh api user --jq .login 2>/dev/null || echo "")
 # push가 완료된 뒤 실행되도록 백그라운드에서 3초 대기 후 시작
 # pre-push는 push 직전에 실행되므로, 3초면 push가 충분히 완료됨
 # 백그라운드 실행이라 push를 막지 않으며, 결과는 터미널에 그대로 출력됨
-(sleep 3 && export PATH="$HOME/.local/bin:$PATH" && claude -p "
+(sleep 3 && export PATH="$HOME/.local/bin:$PATH" && \. "$NVM_DIR/nvm.sh" && claude -p "
 브랜치 '${BRANCH}'에 push가 발생했습니다. 아래 워크플로우를 순서대로 실행해주세요.
 
 ---
@@ -198,6 +198,8 @@ gh pr merge [PR번호] --rebase --delete-branch --yes
 
 _이 리뷰는 Claude가 자동으로 작성했습니다._
 \`\`\`
-" --allowedTools "Bash") &
+" --allowedTools "Bash" \
+  && osascript -e "display notification \"${BRANCH} 브랜치 코드리뷰가 완료되었습니다. PR을 확인해주세요.\" with title \"✅ LogTrip 코드리뷰\"" \
+  || osascript -e "display notification \"Claude 코드리뷰 실행에 실패했습니다. 터미널을 확인해주세요.\" with title \"⚠️ LogTrip 코드리뷰\" sound name \"Basso\"") &
 
 exit 0
