@@ -2,7 +2,7 @@ export default ({ config }) => ({
   expo: {
     name: "logtrip",
     slug: "logtrip",
-    version: "1.2.0",
+    version: "1.2.1",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "com.nek777.mytripapp",
