@@ -1,12 +1,13 @@
 name: Mobile iOS Deploy
 
 # apps/mobile/** 경로의 파일이 main에 머지될 때만 트리거됩니다.
-# web 코드만 변경된 경우에는 발동되지 않습니다.
+# web 코드만 변경된 경우 또는 mobile 문서(*.md)만 변경된 경우에는 발동되지 않습니다.
 on:
   push:
     branches: [main]
     paths:
       - 'apps/mobile/**'
+      - '!apps/mobile/**/*.md'
   # 긴급 배포 / 수동 재시도용
   workflow_dispatch:
 
