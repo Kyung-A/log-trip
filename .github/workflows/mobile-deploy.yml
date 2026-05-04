@@ -1,0 +1,47 @@
+name: Mobile iOS Deploy
+
+# apps/mobile/** 경로의 파일이 main에 머지될 때만 트리거됩니다.
+# web 코드만 변경된 경우에는 발동되지 않습니다.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/mobile/**'
+  # 긴급 배포 / 수동 재시도용
+  workflow_dispatch:
+
+jobs:
+  deploy-ios:
+    name: Build & Submit to TestFlight
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      # eas build → 빌드 큐 등록 후 빌드 완료 대기
+      # --auto-submit → 빌드 성공 시 곧바로 App Store Connect (TestFlight + 심사 제출) 까지 자동 수행
+      # --non-interactive → CI 환경에서 prompt 없이 진행
+      - name: Build & Submit iOS
+        working-directory: apps/mobile
+        run: eas build --platform ios --profile production --non-interactive --auto-submit
