@@ -10,6 +10,10 @@ on:
   # 긴급 배포 / 수동 재시도용
   workflow_dispatch:
 
+# 자동 버전 bump 결과를 main에 커밋하기 위해 write 권한 필요
+permissions:
+  contents: write
+
 jobs:
   deploy-ios:
     name: Build & Submit to TestFlight
@@ -18,6 +22,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # bump 단계에서 git log로 commit 메시지를 분석하므로 전체 히스토리 필요
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -30,6 +38,51 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      # commit prefix 기반 자동 버전 bump
+      # feat → minor, feat!/BREAKING → major, 그 외 → patch
+      - name: Bump version
+        id: bump
+        working-directory: apps/mobile
+        run: |
+          CURRENT=$(grep -E '^\s*version:' app.config.js | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            BUMP=patch
+          else
+            COMMITS=$(git log ${{ github.event.before }}..${{ github.sha }} --pretty=format:"%s%n%b")
+            if echo "$COMMITS" | grep -qE "(BREAKING CHANGE|^[a-z]+!:)"; then
+              BUMP=major
+            elif echo "$COMMITS" | grep -qE "^feat(\(.+\))?:"; then
+              BUMP=minor
+            else
+              BUMP=patch
+            fi
+          fi
+
+          IFS='.' read -r MAJ MIN PAT <<< "$CURRENT"
+          case "$BUMP" in
+            patch) PAT=$((PAT+1)) ;;
+            minor) MIN=$((MIN+1)); PAT=0 ;;
+            major) MAJ=$((MAJ+1)); MIN=0; PAT=0 ;;
+          esac
+          NEW="$MAJ.$MIN.$PAT"
+
+          sed -i "s/version: \"$CURRENT\"/version: \"$NEW\"/" app.config.js
+          echo "new_version=$NEW" >> $GITHUB_OUTPUT
+          echo "bump_type=$BUMP" >> $GITHUB_OUTPUT
+          echo "📱 Version bumped: $CURRENT → $NEW ($BUMP)"
+
+      # 변경된 version을 main에 커밋 (다음 빌드부터 새 버전 기준으로 동작)
+      # [skip ci]로 워크플로우 재트리거 방지
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/mobile/app.config.js
+          git commit -m "chore: iOS v${{ steps.bump.outputs.new_version }} 자동 버전 업 [skip ci]"
+          git pull --rebase origin main
+          git push origin main
 
       - name: Setup EAS
         uses: expo/expo-github-action@v8
